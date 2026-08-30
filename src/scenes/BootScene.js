@@ -6,9 +6,48 @@ import { loadGame } from '../state/GameState.js';
 import { generateSounds } from '../audio/SoundBank.js';
 import { initMute } from '../audio/AudioManager.js';
 
+// Lote de sprites desenhados à mão (Piskel), testado nesta branch —
+// substitui só as chaves abaixo, geradas hoje pelo pixelGrid; tudo mais
+// continua 100% procedural. Ficam de fora deste teste (arquitetura não
+// aceita ainda sem mudança extra): npc_worker (vem composto num arquivo só,
+// NPC.js espera `_body`/`_head` separados), o loop de 4 frames do drone
+// (Enemy.js usa `add.image`, não `add.sprite` — sem suporte a `anims`), e os
+// frames extras do jogador (`_2`/`_3`, `_atk1`) — dá pra ligar depois, sem
+// mexer aqui, se a arte for aprovada.
+const ART_KEY_OVERRIDES = {
+  wall: 'wall', door: 'door', floor: 'floor', floor_vent: 'floor_vent', floor_hazard: 'floor_hazard',
+  enemy: 'enemy_0',
+  item_sword: 'item_sword', item_pistol: 'item_pistol', item_armor: 'item_armor',
+  item_medkit: 'item_medkit', item_keycard: 'item_keycard',
+  player_down_0: 'player_down_0', player_down_1: 'player_down_1',
+  player_up_0: 'player_up_0', player_up_1: 'player_up_1',
+  player_side_0: 'player_side_0', player_side_1: 'player_side_1',
+  player_down_atk: 'player_down_atk', player_up_atk: 'player_up_atk', player_side_atk: 'player_side_atk'
+};
+
 export default class BootScene extends Phaser.Scene {
   constructor() {
     super('BootScene');
+  }
+
+  // Carrega o lote de sprites de teste (se a pasta existir) ANTES do
+  // pixelGrid rodar — as texturas carregadas aqui "vencem" as equivalentes
+  // geradas em create() (cada generateXxx() abaixo checa this.textures.exists
+  // antes de desenhar por cima). Sem essa pasta, o glob só fica vazio e o
+  // jogo roda 100% procedural como sempre.
+  preload() {
+    // O caminho precisa ser um literal aqui — o plugin de glob do Vite lê a
+    // string estaticamente, não aceita vir de uma const/variável.
+    const modules = import.meta.glob('../../art/neo-sprites-lote1/neo-sprites/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const urlByFileKey = {};
+    for (const [path, url] of Object.entries(modules)) {
+      const fileKey = path.split('/').pop().replace(/\.png$/, '');
+      urlByFileKey[fileKey] = url;
+    }
+    for (const [gameKey, fileKey] of Object.entries(ART_KEY_OVERRIDES)) {
+      const url = urlByFileKey[fileKey];
+      if (url) this.load.image(gameKey, url);
+    }
   }
 
   create() {
@@ -18,12 +57,12 @@ export default class BootScene extends Phaser.Scene {
     initMute(this);
     generateSounds(this);
 
-    this.generateFloor('floor', 0x232742, 0x2c3156);
-    this.generateFloorVent('floor_vent', 0x232742, 0x2c3156);
+    if (!this.textures.exists('floor')) this.generateFloor('floor', 0x232742, 0x2c3156);
+    if (!this.textures.exists('floor_vent')) this.generateFloorVent('floor_vent', 0x232742, 0x2c3156);
     this.generateFloor('floor_town', 0x1e2338, 0x272c4a);
     this.generateFloorTownPanel('floor_town_panel', 0x1e2338, 0x272c4a);
     this.generateFloorTownLight('floor_town_light', 0x1e2338, 0x272c4a);
-    this.generateHazardFloor('floor_hazard', 0x18161a);
+    if (!this.textures.exists('floor_hazard')) this.generateHazardFloor('floor_hazard', 0x18161a);
     this.generateFloor('floor_foundry', 0x2a1a1a, 0x4a2c22);
     this.generateFloorVent('floor_foundry_vent', 0x2a1a1a, 0x4a2c22);
     this.generateFloor('floor_reactor', 0x1a2438, 0x243252);
@@ -57,7 +96,7 @@ export default class BootScene extends Phaser.Scene {
     // faixa central) em todas as 4 fases — a "família" que o usuário pediu
     // pra manter — mas cada uma com seu próprio acento de cor, ecoando a
     // identidade que o piso da fase já tem, em vez de tudo idêntico.
-    this.generateWall('wall');
+    if (!this.textures.exists('wall')) this.generateWall('wall');
     this.generateWall('wall_foundry', { body: 0x3a2420, frame: 0x1c1210, accent: 0xff6a3d, plate: 0x5a3226, outline: 0x120a08 });
     this.generateWall('wall_reactor', { body: 0x223048, frame: 0x101a2a, accent: 0x37f0ff, plate: 0x2f5f78, outline: 0x08121e });
     this.generateWall('wall_core', { body: 0x2a2450, frame: 0x140f2a, accent: 0xb37aff, plate: 0x4a3a7a, outline: 0x0c081c });
@@ -74,7 +113,7 @@ export default class BootScene extends Phaser.Scene {
     // no mesmo espírito de diferenciação já aplicado ao Distrito Neon.
     this.generateWallSubmundo('wall_submundo');
     this.generateWallFantasma('wall_fantasma');
-    this.generateDoor('door');
+    if (!this.textures.exists('door')) this.generateDoor('door');
     // Portas de entrada do Distrito Neon — uma pra cada destino, em vez do
     // mesmo 'door' genérico só retintado (o que o pedia pra ser diferenciado).
     this.generateDoorTower('door_tower');
@@ -82,7 +121,7 @@ export default class BootScene extends Phaser.Scene {
     this.generateDoorNexus('door_nexus');
     this.generateDoorVigilance('door_vigilancia');
     this.generatePlayerFrames();
-    this.generateEnemy();
+    if (!this.textures.exists('enemy')) this.generateEnemy();
     this.generateTankEnemy();
     this.generateBoss();
     this.generateFoundryEnemy();
@@ -116,11 +155,11 @@ export default class BootScene extends Phaser.Scene {
     this.generateWorkerNPC();
     this.generateCoordinatorNPC();
     this.generateHeraldNPC();
-    this.generateItem();
-    this.generateArmorItem();
-    this.generateKeycardItem();
-    this.generateMedkitItem();
-    this.generatePistolItem();
+    if (!this.textures.exists('item_sword')) this.generateItem();
+    if (!this.textures.exists('item_armor')) this.generateArmorItem();
+    if (!this.textures.exists('item_keycard')) this.generateKeycardItem();
+    if (!this.textures.exists('item_medkit')) this.generateMedkitItem();
+    if (!this.textures.exists('item_pistol')) this.generatePistolItem();
     this.generateAmmoItem();
     this.generatePilebunkerItem();
     this.generateSmgItem();
@@ -884,61 +923,72 @@ export default class BootScene extends Phaser.Scene {
     const antenna = 0x18e8ff;
     const helmetSeam = 0x171a33;
 
-    for (let frame = 0; frame < 2; frame++) {
-      const down = this._buildPlayerBase(frame);
-      paintOver(down, 3, 6, 10, 2, visor);
-      const gDown = this.add.graphics();
-      renderGrid(gDown, down);
-      gDown.generateTexture(`player_down_${frame}`, 16, 22);
-      gDown.destroy();
+    // Lote de sprites de teste: se player_down_0 já existe (carregado no
+    // preload), o par de frames inteiro (down/up/side × 0/1) veio de lá —
+    // pula a geração procedural desses 6 pra não desenhar por cima.
+    if (!this.textures.exists('player_down_0')) {
+      for (let frame = 0; frame < 2; frame++) {
+        const down = this._buildPlayerBase(frame);
+        paintOver(down, 3, 6, 10, 2, visor);
+        const gDown = this.add.graphics();
+        renderGrid(gDown, down);
+        gDown.generateTexture(`player_down_${frame}`, 16, 22);
+        gDown.destroy();
 
-      const up = this._buildPlayerBase(frame);
-      setPixel(up, 7, 0, antenna);
-      setPixel(up, 8, 0, antenna);
-      paintOver(up, 7, 2, 2, 7, helmetSeam);
-      const gUp = this.add.graphics();
-      renderGrid(gUp, up);
-      gUp.generateTexture(`player_up_${frame}`, 16, 22);
-      gUp.destroy();
+        const up = this._buildPlayerBase(frame);
+        setPixel(up, 7, 0, antenna);
+        setPixel(up, 8, 0, antenna);
+        paintOver(up, 7, 2, 2, 7, helmetSeam);
+        const gUp = this.add.graphics();
+        renderGrid(gUp, up);
+        gUp.generateTexture(`player_up_${frame}`, 16, 22);
+        gUp.destroy();
 
-      const side = this._buildPlayerBase(frame);
-      paintOver(side, 10, 6, 2, 2, visor);
-      fillRect(side, 13, 11, 2, 1, 0xbfe9ff);
-      const gSide = this.add.graphics();
-      renderGrid(gSide, side);
-      gSide.generateTexture(`player_side_${frame}`, 16, 22);
-      gSide.destroy();
+        const side = this._buildPlayerBase(frame);
+        paintOver(side, 10, 6, 2, 2, visor);
+        fillRect(side, 13, 11, 2, 1, 0xbfe9ff);
+        const gSide = this.add.graphics();
+        renderGrid(gSide, side);
+        gSide.generateTexture(`player_side_${frame}`, 16, 22);
+        gSide.destroy();
+      }
     }
 
     const blade = 0xf2ffff;
     const downAtkPoints = [[13, 10], [14, 9], [14, 8], [15, 7], [15, 6], [15, 5], [15, 4]];
     const sideAtkPoints = [[14, 11], [15, 10], [15, 9], [15, 8], [15, 7], [15, 6]];
 
-    const downAtk = this._buildPlayerBase(0);
-    paintOver(downAtk, 3, 6, 10, 2, visor);
-    for (const [x, y] of downAtkPoints) setPixel(downAtk, x, y, blade);
-    const gDownAtk = this.add.graphics();
-    renderGrid(gDownAtk, downAtk);
-    gDownAtk.generateTexture('player_down_atk', 16, 22);
-    gDownAtk.destroy();
+    if (!this.textures.exists('player_down_atk')) {
+      const downAtk = this._buildPlayerBase(0);
+      paintOver(downAtk, 3, 6, 10, 2, visor);
+      for (const [x, y] of downAtkPoints) setPixel(downAtk, x, y, blade);
+      const gDownAtk = this.add.graphics();
+      renderGrid(gDownAtk, downAtk);
+      gDownAtk.generateTexture('player_down_atk', 16, 22);
+      gDownAtk.destroy();
+    }
 
-    const upAtk = this._buildPlayerBase(0);
-    setPixel(upAtk, 7, 0, antenna);
-    setPixel(upAtk, 8, 0, antenna);
-    paintOver(upAtk, 7, 2, 2, 7, helmetSeam);
-    for (const [x, y] of downAtkPoints) setPixel(upAtk, x, y, blade);
-    const gUpAtk = this.add.graphics();
-    renderGrid(gUpAtk, upAtk);
-    gUpAtk.generateTexture('player_up_atk', 16, 22);
-    gUpAtk.destroy();
+    if (!this.textures.exists('player_up_atk')) {
+      const upAtk = this._buildPlayerBase(0);
+      setPixel(upAtk, 7, 0, antenna);
+      setPixel(upAtk, 8, 0, antenna);
+      paintOver(upAtk, 7, 2, 2, 7, helmetSeam);
+      for (const [x, y] of downAtkPoints) setPixel(upAtk, x, y, blade);
+      const gUpAtk = this.add.graphics();
+      renderGrid(gUpAtk, upAtk);
+      gUpAtk.generateTexture('player_up_atk', 16, 22);
+      gUpAtk.destroy();
+    }
 
+    if (!this.textures.exists('player_side_atk')) {
     const sideAtk = this._buildPlayerBase(0);
-    paintOver(sideAtk, 10, 6, 2, 2, visor);
-    for (const [x, y] of sideAtkPoints) setPixel(sideAtk, x, y, blade);
-    const gSideAtk = this.add.graphics();
-    renderGrid(gSideAtk, sideAtk);
-    gSideAtk.generateTexture('player_side_atk', 16, 22);
-    gSideAtk.destroy();
+      paintOver(sideAtk, 10, 6, 2, 2, visor);
+      for (const [x, y] of sideAtkPoints) setPixel(sideAtk, x, y, blade);
+      const gSideAtk = this.add.graphics();
+      renderGrid(gSideAtk, sideAtk);
+      gSideAtk.generateTexture('player_side_atk', 16, 22);
+      gSideAtk.destroy();
+    }
 
     this.anims.create({
       key: 'walk_down',
