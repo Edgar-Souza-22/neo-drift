@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_electric",
+    "description": "Neo Drift electric drone hover",
+    "fps": 8,
+    "height": 16,
+    "width": 18,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAQCAYAAAC1MDndAAABk0lEQVR4nOWXPZKCQBCFH5ZIIkSW3GCDDUk9gvfwCnuGvYKRl9gjbEpo4A2kNgITNcBgbaoZumGQn6VqXxVVjDP91XsjDDMO/qHcxTLn7fvt4mhj532BxlBXP1TvBqtyR4pc44kT9ArIxhhpjGASo1JPffR7itxkVcB1INI9/bE2VTLA6oHuwWz9mIzl23up/3I6qqwStAuoyZSkIYNpHJNhsqwnqC1oasH4a20yzt9fODz7PjZbkUVy+gKZ5oYKRgob/ERJBgCI136F88k4PBvnUP0sSrKiYerA7k0oNxIl2e+k0CUEo4tEfW6wKtXurxn2V9kP11nxY1tvq1lfoKkFi9c+4rUv9vG3gd9L9XMNQsX05NSBAAA9hdt5up9wsy0mOFT8UH1pXUuRu8EKl9OxeHLNPIMv0nVrBwAx2JBrmZZLYo3+mZ9CsCaWJIkxyEZxCsE0FtBu46r+c21BEmNKO3KTxz8IO89XGeJZrBicwhokMp5npa7BuJ8b87No4edV1Z7mu+ovgzX52nl+ztva2Afis9lcG0DhQwAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "items",
+    "description": "Neo Drift items",
+    "fps": 1,
+    "height": 20,
+    "width": 20,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":5,\"chunks\":[{\"layout\":[[0,1,2,3,4]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAUCAYAAAB7wJiVAAACZUlEQVR4nO2Zv2vbQBTHvxdqD7YDXexAEoS0RjV0iMFZTJaWDoVCoUvpFCj5N7r0P8hSCplCl0KhW3GWkBAiEIRAbC8doobU4LiUDI4p9nAdypWTfLJPPy6SiD+LZd3T8azvvffunYE5qYLIGBXKOgWAYd+RslfNWgVUxq5zLff70sRMhwtlnbYvLwAApmYkLspaBbR9fihla1YbmRNlqrO8GIwkRQkiBsNPlFW9LhVlflw5lmvOXL4Uab7xaEAA4EGUSe6SMGIAQPv8EGa1QXlRVvU6/fxlN5I/r15uUSZKLl+iS8uPIs3X67boeDQgUwUZ9h1iakbolBVk1bAVkmVWzk5CPffz8cb/a2URksuX6Ou3e9L2nz6+cYkXSKDeN8A+Ap6/l37E0JaF95debLmn/hotkoKiNGV971hSdpcXB+BDfuXsBKeVRcqL0rkGMasNcdqyj3znTqKw8yueRyaCFuJ2Jg5+/EnaA7VYN9uwbraFY6ko6pqxCft4h7uxKExZU6NEgGx0eNOU35hs+poVCfWHH3zHlAkyHg2IfbwzsfvodVu+9qp8yRJCQVhnzjA1QzgWth+J8vJloySLTSEgEKRQ1umt/VTq4WKtSZNoEidE8eyusioGkJIaEga/SAkjBl8bUrftHfYdUqw1XSnr3ZPiv8/92wlblc7NwitKHJFx1wJ4EUYI/6K99SRpEbwwUdh1kr749R9BUJ6yfv9yXN9z+RIA0Dh3VUGFuHIssr7+LLbDxfFoQHrd1v06XIwb72ltVOJaYFL/h7BdV7HWDJyyRAeM854jIoWyTr21ZI4a/gI57h41wyJqTAAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

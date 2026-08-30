@@ -5,7 +5,12 @@ import { playSfx } from '../audio/AudioManager.js';
 
 const SPEED = 3.4; // tiles por segundo
 const RADIUS = 0.32;
-const ATTACK_POSE_DURATION = 160;
+// Duração da pose de ataque visual — só cosmética (o dano/alcance real já
+// aconteceu em tryAttack/tryRangedAttack). Cada uma dá tempo pro respectivo
+// ciclo de frames (melee 4 @10fps, arremesso 3 @8fps — ver MANIFEST do lote
+// de sprites) rodar por completo antes de voltar pro idle/walk.
+const MELEE_POSE_DURATION = 260;
+const RANGED_POSE_DURATION = 220;
 const INVULN_TIME = 500;
 
 const BULLET_HIT_RADIUS = 0.4;
@@ -27,6 +32,8 @@ export default class Player {
     this.facing = { x: 0, y: 1 };
     this.lastAttackAt = -9999;
     this.attackingUntil = -9999;
+    this.attackStartAt = -9999;
+    this.attackPose = 'melee';
     this.lastHitAt = -9999;
     this.lastRangedAt = -9999;
     this.bullets = [];
@@ -81,7 +88,9 @@ export default class Player {
     const now = this.scene.time.now;
     if (now - this.lastAttackAt < kind.cooldown) return false;
     this.lastAttackAt = now;
-    this.attackingUntil = now + ATTACK_POSE_DURATION;
+    this.attackStartAt = now;
+    this.attackingUntil = now + MELEE_POSE_DURATION;
+    this.attackPose = 'melee';
     playSfx(this.scene, 'sfx_attack_melee');
 
     const isPlasma = GameState.weaponName.includes('Plasma');
@@ -158,7 +167,9 @@ export default class Player {
       return false;
     }
     this.lastRangedAt = now;
-    this.attackingUntil = now + ATTACK_POSE_DURATION;
+    this.attackStartAt = now;
+    this.attackingUntil = now + RANGED_POSE_DURATION;
+    this.attackPose = 'ranged';
     GameState.pistolAmmo -= kind.ammoCost;
     playSfx(this.scene, 'sfx_attack_ranged');
 
@@ -326,7 +337,17 @@ export default class Player {
 
     if (attacking) {
       this.sprite.anims.stop();
-      this.sprite.setTexture(`player_${dirKey}_atk`);
+      // Sem anims.play aqui de propósito: o frame é escolhido por progresso
+      // de tempo dentro da pose (não por loop), então facing mudando no meio
+      // do golpe (ex.: virar de lado enquanto ataca) já reflete no próximo
+      // frame igual ao comportamento anterior (frame único) fazia.
+      const total = Math.max(1, this.attackingUntil - this.attackStartAt);
+      const elapsed = Phaser.Math.Clamp(this.scene.time.now - this.attackStartAt, 0, total);
+      const frameCount = this.attackPose === 'ranged' ? 3 : 4;
+      const prefix = this.attackPose === 'ranged' ? 'throw' : 'atk';
+      const idx = Math.min(frameCount - 1, Math.floor((elapsed / total) * frameCount));
+      const key = `player_${dirKey}_${prefix}${idx}`;
+      this.sprite.setTexture(this.scene.textures.exists(key) ? key : `player_${dirKey}_atk`);
     } else if (this.isMoving && this.alive) {
       const animKey = `walk_${dirKey}`;
       if (this.sprite.anims.currentAnim?.key !== animKey) {

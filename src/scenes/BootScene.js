@@ -6,24 +6,58 @@ import { loadGame } from '../state/GameState.js';
 import { generateSounds } from '../audio/SoundBank.js';
 import { initMute } from '../audio/AudioManager.js';
 
-// Lote de sprites desenhados à mão (Piskel), testado nesta branch —
-// substitui só as chaves abaixo, geradas hoje pelo pixelGrid; tudo mais
-// continua 100% procedural. Ficam de fora deste teste (arquitetura não
-// aceita ainda sem mudança extra): npc_worker (vem composto num arquivo só,
-// NPC.js espera `_body`/`_head` separados), o loop de 4 frames do drone
-// (Enemy.js usa `add.image`, não `add.sprite` — sem suporte a `anims`), e os
-// frames extras do jogador (`_2`/`_3`, `_atk1`) — dá pra ligar depois, sem
-// mexer aqui, se a arte for aprovada.
-const ART_KEY_OVERRIDES = {
-  wall: 'wall', door: 'door', floor: 'floor', floor_vent: 'floor_vent', floor_hazard: 'floor_hazard',
-  enemy: 'enemy_0',
-  item_sword: 'item_sword', item_pistol: 'item_pistol', item_armor: 'item_armor',
-  item_medkit: 'item_medkit', item_keycard: 'item_keycard',
-  player_down_0: 'player_down_0', player_down_1: 'player_down_1',
-  player_up_0: 'player_up_0', player_up_1: 'player_up_1',
-  player_side_0: 'player_side_0', player_side_1: 'player_side_1',
-  player_down_atk: 'player_down_atk', player_up_atk: 'player_up_atk', player_side_atk: 'player_side_atk'
+// Lote de sprites desenhados à mão (Piskel) — lote2 é um superset do lote1
+// (parede/piso/porta de cada região, todo tipo de inimigo com loop de
+// hover/pulso, ataque corpo-a-corpo de 4 frames + arremesso de 3, bullet/
+// slash e os tiles de puzzle). Cada chave abaixo só troca a arte SE o
+// arquivo existir na pasta — sem ele, cai automaticamente pro gerador
+// procedural (guard `this.textures.exists()` em cada generateXxx). Ficam de
+// fora por incompatibilidade de arquitetura, não por falta de arte carregada:
+// npc_worker (vem composto num PNG só; NPC.js espera `_body`/`_head`
+// separados) e os chefes únicos boss_* (o lote não cobre chefe nenhum, só o
+// "elite" genérico enemy_miniboss).
+const TILE_KEYS = [
+  'wall', 'door', 'floor', 'floor_vent', 'floor_hazard', 'floor_electric',
+  'floor_town', 'floor_town_panel', 'floor_town_light',
+  'floor_foundry', 'floor_foundry_vent', 'wall_foundry',
+  'floor_reactor', 'floor_reactor_vent', 'wall_reactor',
+  'floor_core', 'floor_core_vent', 'wall_core',
+  'floor_tower', 'floor_tower_vent', 'wall_tower', 'door_tower',
+  'floor_district', 'floor_district_puddle', 'wall_district',
+  'floor_arsenal', 'floor_arsenal_vent', 'wall_arsenal', 'door_arsenal',
+  'floor_nexus', 'floor_nexus_vent', 'wall_nexus', 'door_nexus',
+  'floor_vigilancia', 'floor_vigilancia_vent', 'wall_vigilancia', 'door_vigilancia',
+  'floor_submundo', 'floor_submundo_vent', 'wall_submundo',
+  'floor_fantasma', 'floor_fantasma_vent', 'wall_fantasma',
+  'tile_sequence_off', 'tile_sequence_on', 'tile_circuit_off', 'tile_circuit_on',
+  'trap_off', 'trap_warn', 'trap_on', 'tile_signal_off', 'tile_signal_on'
+];
+
+const ITEM_KEYS = ['item_sword', 'item_pistol', 'item_armor', 'item_medkit', 'item_keycard'];
+
+const FX_KEYS = ['bullet', 'slash'];
+
+// tipo -> nº de frames do loop de hover/pulso do inimigo. O arquivo
+// `<tipo>.png` é o frame estático usado quando o sprite é criado; os
+// `<tipo>_0..N-1` são os frames da animação (ver Enemy.js `_setupHoverAnim`).
+const ENEMY_ANIM_TYPES = {
+  enemy: 4, enemy_tank: 4, enemy_foundry: 4, enemy_electric: 4, enemy_jammer: 4,
+  enemy_shooter: 4, enemy_miniboss: 4, enemy_phasejumper: 4, enemy_portalguardian: 4,
+  enemy_sentry: 4, enemy_dweller: 4, enemy_sentinel: 2
 };
+
+const ART_KEY_OVERRIDES = {};
+for (const key of [...TILE_KEYS, ...ITEM_KEYS, ...FX_KEYS]) ART_KEY_OVERRIDES[key] = key;
+for (const [type, frames] of Object.entries(ENEMY_ANIM_TYPES)) {
+  ART_KEY_OVERRIDES[type] = type;
+  for (let i = 0; i < frames; i++) ART_KEY_OVERRIDES[`${type}_${i}`] = `${type}_${i}`;
+}
+for (const dir of ['down', 'up', 'side']) {
+  for (let i = 0; i < 4; i++) ART_KEY_OVERRIDES[`player_${dir}_${i}`] = `player_${dir}_${i}`;
+  ART_KEY_OVERRIDES[`player_${dir}_atk`] = `player_${dir}_atk`;
+  for (let i = 0; i < 4; i++) ART_KEY_OVERRIDES[`player_${dir}_atk${i}`] = `player_${dir}_atk${i}`;
+  for (let i = 0; i < 3; i++) ART_KEY_OVERRIDES[`player_${dir}_throw${i}`] = `player_${dir}_throw${i}`;
+}
 
 export default class BootScene extends Phaser.Scene {
   constructor() {
@@ -38,7 +72,7 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     // O caminho precisa ser um literal aqui — o plugin de glob do Vite lê a
     // string estaticamente, não aceita vir de uma const/variável.
-    const modules = import.meta.glob('../../art/neo-sprites-lote1/neo-sprites/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const modules = import.meta.glob('../../art/neo-sprites-lote2/neo-sprites/png/*.png', { eager: true, query: '?url', import: 'default' });
     const urlByFileKey = {};
     for (const [path, url] of Object.entries(modules)) {
       const fileKey = path.split('/').pop().replace(/\.png$/, '');
@@ -228,6 +262,7 @@ export default class BootScene extends Phaser.Scene {
   // Piso em placas: base + rebaixo de 1px separando 4 placas, rebites nos
   // cantos e um leve bisel claro no canto superior-esquerdo (luz vindo de cima).
   generateFloor(key, base, edge) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const bevel = Phaser.Display.Color.GetColor(
       Math.min(255, ((base >> 16) & 255) + 18),
@@ -262,6 +297,7 @@ export default class BootScene extends Phaser.Scene {
   // Variante de piso com grade de ventilação — usada em pequena proporção
   // pelo TileMap para quebrar a repetição visual das salas maiores.
   generateFloorVent(key, base, edge) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, base);
@@ -282,6 +318,7 @@ export default class BootScene extends Phaser.Scene {
   // Variante de piso da Ala Central com emendas verticais (tubulação/painel),
   // contraste com a grade horizontal usada no Setor de Contenção.
   generateFloorTownPanel(key, base, edge) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, base);
@@ -302,6 +339,7 @@ export default class BootScene extends Phaser.Scene {
   // Variante de piso com luminária embutida — usada em pequena proporção
   // pra dar pontos de luz espalhados pelo chão da Ala Central.
   generateFloorTownLight(key, base, edge) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, base);
@@ -548,6 +586,7 @@ export default class BootScene extends Phaser.Scene {
   // estrutura é sempre a mesma (isso é a "similaridade" entre elas); só o
   // acento de cor muda, ecoando a identidade que o piso de cada fase já tem.
   generateWall(key, opts = {}) {
+    if (this.textures.exists(key)) return;
     const { body = 0x272c4e, frame = 0x14172a, accent = 0xffb347, plate = 0x3a4178, outline = 0x0a0b16 } = opts;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
@@ -575,6 +614,7 @@ export default class BootScene extends Phaser.Scene {
   // painel industrial: concreto desgastado com trincas e um letreiro de neon
   // embutido, assimétrico (referência: fachadas cyberpunk exteriores).
   generateWallDistrict(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const base = 0x22252e;
     const grid = createGrid(s, s);
@@ -604,6 +644,7 @@ export default class BootScene extends Phaser.Scene {
   // "Blue Star"): quase sem ruído/sujeira, poucas costuras finas e brilhantes
   // em vez de rebites — lê como tecnologia limpa, não fábrica desgastada.
   generateWallTower(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const base = 0x1c2436;
     const grid = createGrid(s, s);
@@ -629,6 +670,7 @@ export default class BootScene extends Phaser.Scene {
   // Industrial Cyberpunk): parafusos grandes nos 4 cantos, corrosão e uma
   // faixa de risco diagonal amarelo/preto, bem mais "pesada" que a família.
   generateWallArsenal(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const base = 0x2c3a20;
     const grid = createGrid(s, s);
@@ -662,6 +704,7 @@ export default class BootScene extends Phaser.Scene {
   // luminosos ramificando pelo painel (referência RASAK, variante "Pipeline"
   // com o roxo/magenta do portal), lê como tecnologia viva, não estática.
   generateWallNexus(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const base = 0x241a3c;
     const grid = createGrid(s, s);
@@ -688,6 +731,7 @@ export default class BootScene extends Phaser.Scene {
   // tela verde-sinal com scanlines e uma luz de gravação vermelha, lê como
   // "sala de controle" em vez de porta/painel industrial das outras fases.
   generateWallVigilance(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const base = 0x18201e;
     const grid = createGrid(s, s);
@@ -715,6 +759,7 @@ export default class BootScene extends Phaser.Scene {
   // linguagem "tech" (sem moldura/rebite/tela) pra contrastar com todo o
   // resto do jogo até aqui.
   generateWallSubmundo(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const base = 0x1c1815;
     const grid = createGrid(s, s);
@@ -743,6 +788,7 @@ export default class BootScene extends Phaser.Scene {
   // pequenos com rejunte, alguns quebrados/faltando (vãos escuros), grime
   // por cima. Bem diferente da rocha crua do hub do Submundo.
   generateWallFantasma(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grout = 0x1e2024;
     const tile = 0x2a2d33;
@@ -789,6 +835,7 @@ export default class BootScene extends Phaser.Scene {
   // brilhante, ecoando o acabamento "sci-fi limpo" da parede da Torre, em
   // vez da porta dupla industrial genérica.
   generateDoorTower(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, 0x0a1420);
@@ -808,6 +855,7 @@ export default class BootScene extends Phaser.Scene {
   // base, roda de trava central e rebites grandes, bem mais "pesada" que uma
   // porta comum, ecoando o metal industrial arranhado da parede do Arsenal.
   generateDoorArsenal(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, 0x10160c);
@@ -841,6 +889,7 @@ export default class BootScene extends Phaser.Scene {
   // núcleo brilhante) em vez de uma porta deslizante, coerente com o tema de
   // teleporte da fase.
   generateDoorNexus(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const cx = s / 2;
     const cy = s / 2;
@@ -861,6 +910,7 @@ export default class BootScene extends Phaser.Scene {
   // fresta/roda/anel, ecoando o tema de vigilância: íris verde-sinal com
   // pupila escura, moldura tipo lente.
   generateDoorVigilance(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const cx = s / 2;
     const cy = s / 2;
@@ -990,24 +1040,14 @@ export default class BootScene extends Phaser.Scene {
       gSideAtk.destroy();
     }
 
-    this.anims.create({
-      key: 'walk_down',
-      frames: [{ key: 'player_down_0' }, { key: 'player_down_1' }],
-      frameRate: 6,
-      repeat: -1
-    });
-    this.anims.create({
-      key: 'walk_up',
-      frames: [{ key: 'player_up_0' }, { key: 'player_up_1' }],
-      frameRate: 6,
-      repeat: -1
-    });
-    this.anims.create({
-      key: 'walk_side',
-      frames: [{ key: 'player_side_0' }, { key: 'player_side_1' }],
-      frameRate: 6,
-      repeat: -1
-    });
+    // 4 frames de andar quando o lote de sprites trouxe player_<dir>_2/_3
+    // (drop-in do MANIFEST); sem eles, cai pros 2 frames de sempre.
+    for (const dir of ['down', 'up', 'side']) {
+      const frames = [{ key: `player_${dir}_0` }, { key: `player_${dir}_1` }];
+      if (this.textures.exists(`player_${dir}_2`)) frames.push({ key: `player_${dir}_2` });
+      if (this.textures.exists(`player_${dir}_3`)) frames.push({ key: `player_${dir}_3` });
+      this.anims.create({ key: `walk_${dir}`, frames, frameRate: 6, repeat: -1 });
+    }
   }
 
   // Drone hover: casco oval, "olho" central, nadadeiras laterais e brilho de
@@ -1030,6 +1070,7 @@ export default class BootScene extends Phaser.Scene {
   // Unidade blindada: base tipo esteira, corte de visor deslocado (fica visível
   // quando o sprite é espelhado) e sensor no topo.
   generateTankEnemy() {
+    if (this.textures.exists('enemy_tank')) return;
     const grid = createGrid(22, 20);
     fillRect(grid, 2, 17, 5, 3, 0x1c1d24);
     fillRect(grid, 15, 17, 5, 3, 0x1c1d24);
@@ -1099,6 +1140,7 @@ export default class BootScene extends Phaser.Scene {
   // Drone da fundição: núcleo incandescente (amarelo-branco) em vez do
   // vermelho dos drones do Setor de Contenção — leitura clara de "outra fase".
   generateFoundryEnemy() {
+    if (this.textures.exists('enemy_foundry')) return;
     const grid = createGrid(18, 16);
     fillCircle(grid, 9, 7, 6, 0x1a1010);
     fillCircle(grid, 9, 7, 4, 0x3a1a0a);
@@ -1167,6 +1209,7 @@ export default class BootScene extends Phaser.Scene {
   // zigue-zague (cyan/branco), bem diferente da faixa de risco amarela do
   // piso perigoso das fases anteriores, pra ficar claro que é "elétrico".
   generateElectricFloor(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, 0x0a1420);
@@ -1187,6 +1230,7 @@ export default class BootScene extends Phaser.Scene {
   // mais clara sugerindo reflexo de poça, bem diferente do piso "placa
   // industrial" da fábrica.
   generateDistrictFloor(key, base, edge) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, base);
@@ -1211,6 +1255,7 @@ export default class BootScene extends Phaser.Scene {
   // Variante com poça refletindo neon — usada em pequena proporção pelo
   // TileMap pra quebrar a repetição do asfalto liso.
   generateDistrictPuddle(key, base, edge) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, base);
@@ -1230,6 +1275,7 @@ export default class BootScene extends Phaser.Scene {
   // (bem menor/mais arredondado que os drones anteriores), com eletrodos
   // laterais salientes — a silhueta que dispara o pulso de choque em área.
   generateElectricEnemy() {
+    if (this.textures.exists('enemy_electric')) return;
     const grid = createGrid(18, 16);
     fillCircle(grid, 9, 8, 6, 0x0a1420);
     fillCircle(grid, 9, 8, 4, 0x163a4a);
@@ -1248,6 +1294,7 @@ export default class BootScene extends Phaser.Scene {
   // núcleo âmbar no peito (elite, não elétrico) e um "capacete" sensor no
   // topo — maior e mais robusto que o blindado comum das fases anteriores.
   generateMiniBossEnemy() {
+    if (this.textures.exists('enemy_miniboss')) return;
     const grid = createGrid(26, 24);
     fillRect(grid, 2, 20, 6, 4, 0x1c1d24);
     fillRect(grid, 18, 20, 6, 4, 0x1c1d24);
@@ -1311,6 +1358,7 @@ export default class BootScene extends Phaser.Scene {
   // cortados, não um círculo liso) em violeta/magenta, com uma antena
   // saliente no topo — a "arma" que dispara o pulso EMP.
   generateJammerDrone() {
+    if (this.textures.exists('enemy_jammer')) return;
     const grid = createGrid(18, 16);
     fillRect(grid, 4, 2, 10, 12, 0x140a1e);
     setPixel(grid, 4, 2, null);
@@ -1334,6 +1382,7 @@ export default class BootScene extends Phaser.Scene {
   // Sentinela de Defesa — turret fraca e estacionária invocada pelo chefe
   // da Fase 04. Silhueta de câmera/torreta compacta, não um drone flutuante.
   generateSentinelTurret() {
+    if (this.textures.exists('enemy_sentinel')) return;
     const grid = createGrid(16, 14);
     fillRect(grid, 3, 8, 10, 5, 0x1c1830);
     fillRect(grid, 5, 3, 6, 6, 0x2a2450);
@@ -1413,6 +1462,7 @@ export default class BootScene extends Phaser.Scene {
   // azul-branco de segurança (bem diferente dos vermelhos/âmbares/violetas
   // das fases anteriores).
   generateShooterDrone() {
+    if (this.textures.exists('enemy_shooter')) return;
     const grid = createGrid(18, 16);
     fillCircle(grid, 9, 8, 6, 0x0c1420);
     fillCircle(grid, 9, 8, 4, 0x1c3a5a);
@@ -1548,6 +1598,7 @@ export default class BootScene extends Phaser.Scene {
   // contínuo como todos os inimigos anteriores) — vende a ideia de "não
   // está totalmente presente neste plano" antes mesmo dele piscar.
   generatePhaseJumperEnemy() {
+    if (this.textures.exists('enemy_phasejumper')) return;
     const grid = createGrid(18, 18);
     fillRect(grid, 6, 6, 6, 6, 0x1a0e2a);
     fillCircle(grid, 9, 9, 3, 0xff5fd0);
@@ -1569,6 +1620,7 @@ export default class BootScene extends Phaser.Scene {
   // aberto no meio, núcleo brilhante, marcas assimétricas no anel e dois
   // "braços" angulares quebrando a silhueta de disco perfeito.
   generatePortalGuardianEnemy() {
+    if (this.textures.exists('enemy_portalguardian')) return;
     const s = 30;
     const c = s / 2;
     const grid = createGrid(s, s);
@@ -1654,6 +1706,7 @@ export default class BootScene extends Phaser.Scene {
   // setTexture — antes era a mesma cor escura só com/sem tint, e ficava
   // ilegível contra o piso escuro (mais ainda com o jogador em cima).
   generateSequenceTile() {
+    if (this.textures.exists('tile_sequence_off')) return;
     const s = TILE_SIZE;
     const frame = 0x3a4050;
     const panelBg = 0x0d0f16;
@@ -1684,6 +1737,7 @@ export default class BootScene extends Phaser.Scene {
   // escura. A TownScene/TowerScene ainda soma um brilho ADD por cima (ver
   // `tile.glow`), pra dar pra ler o estado mesmo com o jogador em cima da célula.
   generateCircuitTile() {
+    if (this.textures.exists('tile_circuit_off')) return;
     const s = TILE_SIZE;
     const frame = 0x3a4050;
     const panelBg = 0x0d0f16;
@@ -1718,6 +1772,7 @@ export default class BootScene extends Phaser.Scene {
   // erguendo (aviso âmbar, ainda dá tempo de sair) e erguida (vermelho vivo,
   // machuca).
   generateTrapTile() {
+    if (this.textures.exists('trap_off')) return;
     const s = TILE_SIZE;
     const frame = 0x2c3a20;
     const plateBg = 0x0d0f16;
@@ -1763,6 +1818,7 @@ export default class BootScene extends Phaser.Scene {
   // gravação vermelha no topo, reaproveitando o mesmo vocabulário visual da
   // parede/porta da fase.
   generateSentrySentinelEnemy() {
+    if (this.textures.exists('enemy_sentry')) return;
     const w = 18;
     const h = 18;
     const grid = createGrid(w, h);
@@ -1789,6 +1845,7 @@ export default class BootScene extends Phaser.Scene {
   // reaproveitados nas outras fases), com a mesma luz de gravação vermelha
   // usada na parede/porta/inimigo da fase.
   generateSignalTile() {
+    if (this.textures.exists('tile_signal_off')) return;
     const s = TILE_SIZE;
     const frame = 0x3a4050;
     const panelBg = 0x0d0f16;
@@ -1877,6 +1934,7 @@ export default class BootScene extends Phaser.Scene {
   // degraus, não uma borda reta), bem diferente dos drones geométricos das
   // fases anteriores. Olhos acesos são a única cor viva na silhueta escura.
   generateDwellerEnemy() {
+    if (this.textures.exists('enemy_dweller')) return;
     const w = 16;
     const h = 20;
     const grid = createGrid(w, h);
@@ -2400,6 +2458,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   generateBullet() {
+    if (this.textures.exists('bullet')) return;
     const w = 10;
     const h = 5;
     const grid = createGrid(w, h);
@@ -2423,6 +2482,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   generateSlash() {
+    if (this.textures.exists('slash')) return;
     const s = 40;
     const g = this.add.graphics();
     g.lineStyle(4, 0x9fffe8, 1);

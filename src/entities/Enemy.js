@@ -1,5 +1,14 @@
 import { playSfx } from '../audio/AudioManager.js';
 
+// fps do loop de hover/pulso por tipo (lote de sprites 2) — só usado quando as
+// texturas `<tipo>_0.._N` foram carregadas; sem elas o inimigo fica estático
+// como sempre (ver _setupHoverAnim).
+const HOVER_FRAME_RATES = {
+  enemy: 8, enemy_tank: 8, enemy_foundry: 8, enemy_electric: 8, enemy_jammer: 8,
+  enemy_shooter: 8, enemy_sentinel: 4, enemy_miniboss: 8, enemy_phasejumper: 8,
+  enemy_portalguardian: 8, enemy_sentry: 6, enemy_dweller: 6
+};
+
 const SPEED = 1.5;
 const RADIUS = 0.3;
 const AGGRO_RANGE = 3.4;
@@ -38,9 +47,10 @@ export default class Enemy {
     this.onDeath = opts.onDeath || null;
 
     const world = tileMap.gridToWorld(gx, gy);
-    this.sprite = scene.add.image(world.x, world.y, opts.texture || 'enemy');
+    this.sprite = scene.add.sprite(world.x, world.y, opts.texture || 'enemy');
     this.sprite.setOrigin(0.5, 0.5);
     this.sprite.setScale(this.baseScale);
+    this._setupHoverAnim(opts.texture || 'enemy');
 
     this.hpBarBg = scene.add.rectangle(world.x, world.y - 24, this.barWidth, 4, 0x1a0a10).setOrigin(0.5);
     this.hpBarFg = scene.add.rectangle(world.x - this.barWidth / 2, world.y - 24, this.barWidth, 4, 0xff4a5e).setOrigin(0, 0.5);
@@ -55,6 +65,24 @@ export default class Enemy {
       repeat: -1,
       ease: 'Sine.InOut'
     });
+  }
+
+  // Só liga o loop de hover/pulso se as texturas `<baseKey>_0`, `_1`... vieram
+  // do lote de sprites (ver BootScene ART_KEY_OVERRIDES) — sem elas, o
+  // inimigo fica com a imagem estática de sempre.
+  _setupHoverAnim(baseKey) {
+    if (!this.scene.textures.exists(`${baseKey}_0`)) return;
+    const animKey = `hover_${baseKey}`;
+    if (!this.scene.anims.exists(animKey)) {
+      const frames = [];
+      for (let i = 0; i < 8; i++) {
+        const key = `${baseKey}_${i}`;
+        if (!this.scene.textures.exists(key)) break;
+        frames.push({ key });
+      }
+      this.scene.anims.create({ key: animKey, frames, frameRate: HOVER_FRAME_RATES[baseKey] || 8, repeat: -1 });
+    }
+    this.sprite.play(animKey);
   }
 
   _pickPatrolPoint() {

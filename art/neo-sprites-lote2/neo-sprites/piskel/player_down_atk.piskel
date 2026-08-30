@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_down_atk",
+    "description": "Neo Drift player melee down",
+    "fps": 10,
+    "height": 28,
+    "width": 24,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAcCAYAAACeeLqCAAADcElEQVR4nO1aT2sTQRT/bUmWpd01QjW2FloQESk5hB6UiNf1A+jFa0A/gKd+Bi+Cd6GfoF+guUqLHkIOJaiEQgOptFowNi1LelgPm9nMzs7OzP5J08b9Qcju29nfvHlv9s2bPxoiUNRNl5VdDgdaVPkcyRAyKDH8xslZqHCzbAHIHZElAoYs6qZLDN8ohQvbfe+/WbZyJ2QE34jE+DzDs7D72TuBDXlZO/i68hfIy8T4dh/+Pwsi//3slV9p2oYQxVcfvgjIu50dN05Dbiq/xuv5pIezxHd2t33jUxUlbkRRN11WcRazzl9gBXR4Keqmu7S0On748h0C9wC6nbhqB8HysZh1fu3pH9clvZ81/pPnb5SU+Pr5U+xelPN7KDTLFuxR5pNnN1cPDRgPJLTx6ZRUhiSOy/k9zAGe4XnGV0lJrwq8mfksgOsVejbMpp4sup0d/1q1F9HGlGUR5tsP/nV7s6JURxz+Sesv4w9lQUXddNff7wMAnK1D2PU1zwm72+hVa6EKSFkAaG9WpPMCmh8ATj++FjbAFD5Nzz9p/WX8IQew6FVrsFt7nhNae3Ds+rjyX99kryth8e5jrvx/4J9TqcCx67D7CBg/RzZQcgBwPY3PDsw3caCWhiDHGYY+JcOYh+NcZKJAUn6SqX25rQXuyRJKWn5VyPiN+hqcrcPI94VZ0L37FWnlhqHj+MgbaOJmEWn4KQcE1rPodaxp679Cxk7B6jE3BPEKGsZ8qJxh6MJ3opCWXzRPaZT4m0nT0F8F0jHAcYaj/wuuPC1mmb9XrfnL+xsnZ9wxSjoG0L1ERR4XV8E/+Hvq35u3FjPnjyNnEemAy+FAOz7adwFgwVzmljkf/PTLKtXGYKW1h2bZUuZnZ+gykNhO8xMZjST6q9pnZXTdKAG2lyQEJmPCEKSiWBLl6RguW9AiS+PkHdr4vF07mW4L5rL/S6q/iJ9Fs2wJ9ZSGoEmjUQLsgx/+/fcHjwLPeQcFSFwluBwOtGbZcu2Rc+jeBgBGe8zvrAf5pw0lB9ANoHG+anHlcRHYDj0I18WGGzbdlOGU0nOxO/7istJfZB+6c/BS0dirfzTSfL6yIzBREB2NYdNTuiwPWW0+qdgn6gDDVHe/2ENgIkewxuQ1Jmp+wIvB12X3b+oKAOLTeASqp/JUv6xJnG1Kgn+BQK+fnzBejAAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

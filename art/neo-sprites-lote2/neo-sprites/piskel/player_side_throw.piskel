@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_side_throw",
+    "description": "Neo Drift player throw side",
+    "fps": 8,
+    "height": 28,
+    "width": 24,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":3,\"chunks\":[{\"layout\":[[0,1,2]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAcCAYAAADC8vmmAAACqUlEQVR4nO1ZMW8TMRT+gnInq1wpEqEUhnRhQCgD6kBExXr9AbCgbpVghym/gQWVnZktf4CuKBUMVQcUIcRCpJZQQEpoGh3pYIbUF8f2+XxnX4TSflJ0lu37vnfPz+/5LiUkwPMDKvadjgalpPnzCumBmWPWjo6lyXvLi+fSSTE8P6D1HqX1HqV/qPyr9yhVRdY8I44Gzw/o2tExdpb0N4T94iJJdL5LjbzcJXYzc07YR3zlwfp+rT8GAHS+vsskZGJ89fbGVL8LDVtuyUHAJEp44kqrGTtHFLJ9ANF4VxouuMtpW2tlpTpuPHoxaU8JmBucBBWvKw1b7qkIYmDRc//hUyMjPr5/k3uFbTQ8P6BJurbcDGVgvA/3lhfjJHY6GpT+92rFFvXD1WJPHWXWUHmw2+0k5p5KqwkAyrEs6HY7iWNJGnxauOKYW8Ql3WCl1cTO0oRMh1lEHNM4i3ip0haBxP3L2nz5V3k7ePYqbrcbNeNcxGukVRqVBrfFEt8GTLhZuQfUu6gsdnh+QO++/KQk+zs8lI3Xyqshavx+/UQ7P4tGVm5+brtRk5K+5CARB/ceINzfHUfR/i6icGsi/vMzAGB7cxUAsNEweQQ1rl2/o+x3oZHGrYM2BzFE4RbCPqacM0/Y3lyNF0BEagQx6Jzz/O237FZlBK9hWsXycItIdVAUjaRQJGQBUTS0t2wGGrbc2ip241YtVZwQHz8Ox4kuy2naVsOkirmwX5mDVBMJWZDmEeJr79HBVoOdhYrg5pGapKNodHYdKvtdIK+GyaLY2p/qIN7LJv15UKSGLbd2BdhevhzcVI6fDL4DcPNBqwgNF9zaCDIxyvaLYpEaLriNDornGUYHRdL+ouw/qaqrSB4UqWHDnfnNm0eR/zq41JiF/Re4gBr/APKX0/k+7IKvAAAAAElFTkSuQmCC\"}]}]"
+  }
+}
