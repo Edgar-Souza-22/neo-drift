@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_side_atk",
+    "description": "Neo Drift player attack side",
+    "fps": 8,
+    "height": 22,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":2,\"chunks\":[{\"layout\":[[0,1]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAWCAYAAAChWZ5EAAABiklEQVR4nMWWu07DMBSG/1RNGoHLUi6FIVkYEGJDYkCw8gIsiBn2vAYLKjszGy/QtYiBGSGEujQDFNFMvSgNQxhIUie2EztB4l9in5zv5Ojk+KJBIN0gIT3/DiaayLcKzxhj0No+SdndflcqEVU+NdENEmbBrNx+V5hEGb6edWi3rYIAua+VeN0goUZPDo4u8qNHenq4ZaqgygOANx+jJkUIlG20Mkr9guHQFTquPt4DAEaHp8nHvfkYK9qiECp8rEoV+AtpQLqUMl0cK6qApsKTy+tk3HNs1HWDhLtXz4ugN2e5AWjfOHkVnmTmzDIEgNbaDhf2vl5zg8vynXMb++tAq9HkJyCjnmOj1WiWYp27QTIu3YTHnUGxk4SYCvh+wJTaNJfg+zOpgKp8ahVsbO0VBjdNA5/vv00X74ZV+BodKJs1azOSMc1U4Zke8P0ges649iKp8kwCdJYy9qo8c6IBwDLZ5DpPJx8AxJeSMnyqAjLXrjyfMvy/H0bcndB8eeM6Ty25nU+F/wGaWMwpSMkUnQAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_down_atk",
+    "description": "Neo Drift player attack down",
+    "fps": 8,
+    "height": 22,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":2,\"chunks\":[{\"layout\":[[0,1]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAWCAYAAAChWZ5EAAABfElEQVR4nM2WvU7DMBSFT6rGjcBhiYDCEBYGhJgYmGDlGfoAsPMaLAh2nqQrTAxMCCHUhQ4gQJmSVk46hIEmteP82I5QuUuSm/sdn9zYli1UhE1oyj/Pksiqqm3DS8kM9HdPhfx4NFQyossLDzahaREsxng0rDShy9uEpt1iQb/vNwiIAxbNqPI2oWkQh4sO2ISmR8dntXAWD/e3AIAgDrFmWfnXmPAdJeIPQ+jA4VeoBD1uuADkDpjwS+tAEIfwei5y99kLlVnMC8ySyNLh6fkVAODuYgdez0XXJjTdv3xaOLsZ1ArwtZl5HZ7OBz+5fgMASMsQALz1vVI4+H7J3WcCJjzPGs2BusF1Y+nLUPoFjCV5q7JwnBUwNlUS1OWFVbC5fdAo7jgEn++/k47f0035Di9UdC3nSH7PM214aQ4wlsyv09J8U+jykgHepUq+LS+dBwBglW6VFk+iDwDVhxITXuiAyrGrrsaE/3/7AAA4z6+lxRPfVRLV4X8AzTradVLRPFIAAAAASUVORK5CYII=\"}]}]"
+  }
+}

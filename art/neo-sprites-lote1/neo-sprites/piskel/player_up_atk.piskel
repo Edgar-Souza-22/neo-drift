@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_up_atk",
+    "description": "Neo Drift player attack up",
+    "fps": 8,
+    "height": 22,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":2,\"chunks\":[{\"layout\":[[0,1]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAWCAYAAAChWZ5EAAABhUlEQVR4nM2Wu0oDQRSGP0NmXHQCQhBXi6SxELFOFVufwQfQ3tewEX0dW19BRCSNKeKKLAi5sInFWCSzzN4vAc1pdubwf/+cnRsDGSGk0q6ntetpLaTSWbp1+a00EKBzfBHJDwePAPwsJglmHT7SEVJpG5x8vwOg9roRo6wiqvJCKt2Mm7huJ2wPVgZ2bjiIDhgvpiwvpNL+fEzDNuv1r9J+LBK9/hVCKm0M6vKm38gT/0VElsDzhqmirHxZXR7/bzPgz8e0t1vLAsyamKOSF0ZjDKry6vqO09vnsN8UUmk74T9chm0hBQDz2SjM2VozeBVeAU83Xc7vlyckcQwB2vsnqdX7X68QM6jD22ytPZA3eNXYrGMIEASLcKpMOM4OQTArZViVD+9kgIOjs0Jzx5F8jpabzr7T6/IN2yhedTInw7bNrMMn9kAQLFbfWWq+KKryiQLsKsvk1+UT7wGAXXWYKp5OPoDsR0kdPjIDRa+dIk0dfvPuAQDn5S1VPO20SplW4X8BscvwFnpFYfkAAAAASUVORK5CYII=\"}]}]"
+  }
+}
