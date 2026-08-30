@@ -35,7 +35,7 @@ const TILE_KEYS = [
 
 const ITEM_KEYS = ['item_sword', 'item_pistol', 'item_armor', 'item_medkit', 'item_keycard'];
 
-const FX_KEYS = ['bullet', 'slash'];
+const FX_KEYS = ['bullet', 'slash', 'floor_logo', 'floor_logo_0', 'floor_logo_1', 'boss_aura'];
 
 // tipo -> nº de frames do loop de hover/pulso do inimigo. O arquivo
 // `<tipo>.png` é o frame estático usado quando o sprite é criado; os
@@ -59,6 +59,14 @@ for (const dir of ['down', 'up', 'side']) {
   for (let i = 0; i < 3; i++) ART_KEY_OVERRIDES[`player_${dir}_throw${i}`] = `player_${dir}_throw${i}`;
 }
 
+// Chefe da Fase 01 (Guardião Núcleo): o lote 3 trouxe dois designs — `boss`
+// (redesign do mesmo guardião) e `boss_alt` (mecha de segurança da fábrica).
+// Pedido explícito do usuário: usar a versão `boss_alt` — por isso a chave do
+// jogo `boss`/`boss_0..3` aponta pro arquivo `boss_alt`/`boss_alt_0..3`, não
+// pro `boss` homônimo do lote.
+ART_KEY_OVERRIDES.boss = 'boss_alt';
+for (let i = 0; i < 4; i++) ART_KEY_OVERRIDES[`boss_${i}`] = `boss_alt_${i}`;
+
 export default class BootScene extends Phaser.Scene {
   constructor() {
     super('BootScene');
@@ -72,7 +80,7 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     // O caminho precisa ser um literal aqui — o plugin de glob do Vite lê a
     // string estaticamente, não aceita vir de uma const/variável.
-    const modules = import.meta.glob('../../art/neo-sprites-lote2/neo-sprites/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const modules = import.meta.glob('../../art/neo-sprites-lote3-logo-boss/png/*.png', { eager: true, query: '?url', import: 'default' });
     const urlByFileKey = {};
     for (const [path, url] of Object.entries(modules)) {
       const fileKey = path.split('/').pop().replace(/\.png$/, '');
@@ -360,6 +368,7 @@ export default class BootScene extends Phaser.Scene {
   // ruído de desgaste, no mesmo acabamento já usado em chefes/pisos/props —
   // antes era um anel de cor sólida chapada, destoando do resto do jogo.
   generateCompanyLogo() {
+    if (this.textures.exists('floor_logo')) return;
     const s = 96;
     const cx = s / 2;
     const cy = s / 2;
@@ -485,6 +494,7 @@ export default class BootScene extends Phaser.Scene {
   // com uma cor própria via tint. Nenhum inimigo comum usa isso — é o que
   // faz um chefe se destacar à primeira vista, além do tamanho/silhueta.
   generateBossAura() {
+    if (this.textures.exists('boss_aura')) return;
     const s = 72;
     const grid = createGrid(s, s);
     fillCircle(grid, s / 2, s / 2, 34, 0xffffff);
@@ -1095,6 +1105,7 @@ export default class BootScene extends Phaser.Scene {
   // direito com um canhão bem maior que o esquerdo, núcleo exposto por uma
   // brecha na armadura, placas deslocadas em vez de um padrão simétrico.
   generateBoss() {
+    if (this.textures.exists('boss')) return;
     const grid = createGrid(44, 42);
 
     fillCircle(grid, 14, 36, 9, 0x1c0509);

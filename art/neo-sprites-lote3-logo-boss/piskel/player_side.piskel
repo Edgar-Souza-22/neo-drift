@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_side",
+    "description": "Neo Drift player walk side",
+    "fps": 6,
+    "height": 22,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAWCAYAAABwvpo0AAABvUlEQVR4nOWYO07DQBCGf0extQoOjUEECtMghKLUKVDqXIAGUecAdDkDHVyCjgvkAJwARQilwQUEgRtwIsspTAG2xvvwK0Jilb/J7ni+mdHEHltrQCHTsmO6X0WBofLVmReMCegeDTN2bzYpVYhufGZjWnbMg7y82URZhI58k3fodNyCALmXteMbycK07Lg/GOVHB9AfjITnS2e+kee8Cco8AvO5p3Tcub8DAHycnil9dOQ3/g4wgOw7s8wUTZRMU535pmnZcffqITX6N+e5AajvdNyLeZtuvPAaBABn90QK+++PucF15KUNKNL1xSEAYDiuQ/8vvlYDLm+f62X+h7zQgDCMhFuFsRbCcFkquG58ZoruHfQKgzNm4e3lZ5DwU1hHvkEDUTHWEgIwZqVryujMCx9CYRj9/i6l9iLpxgszgHapjF3mF3z66d7edirz6+anorWAOYK/cB4AAFv2vjT4IngFoD6UkPEJQ1WFr5OfSlaL8jxgFQWGLEiZ4lU8X0BVvk5+VQNlfK3vgCKx6VO6DrvHf5GitGgtC7ctXJc2gEJUsgC8VlFg+G47/Rcd76sSv25+nvcJI7t7vgGA4KwpBIci0wAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

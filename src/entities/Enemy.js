@@ -6,7 +6,7 @@ import { playSfx } from '../audio/AudioManager.js';
 const HOVER_FRAME_RATES = {
   enemy: 8, enemy_tank: 8, enemy_foundry: 8, enemy_electric: 8, enemy_jammer: 8,
   enemy_shooter: 8, enemy_sentinel: 4, enemy_miniboss: 8, enemy_phasejumper: 8,
-  enemy_portalguardian: 8, enemy_sentry: 6, enemy_dweller: 6
+  enemy_portalguardian: 8, enemy_sentry: 6, enemy_dweller: 6, boss: 6
 };
 
 const SPEED = 1.5;

@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_dweller",
+    "description": "Neo Drift tunnel dweller sway",
+    "fps": 6,
+    "height": 20,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAUCAYAAAA9djs/AAAA6UlEQVR4nOWYzQrCMAzH27ENHCIeREF8cl/HR5EdCj2IDAU91MOItKnph4IQ8j8tpb+uhHy01YpQ1w/Ot5+Pm6bmcuZbCtxtlsG4scqVbIQbHxhdPzgMYhk7kZvgyEcRsF4tsgukxI1v4KPEe0rNoYXzizPfpCZLUJQCl+v9pwW58WQEnMZj0s7pPJqkndO//i++C4ivAdqviCVVVCm6FXHk9WG/DVoK7qO1RYUbLz4FxDsgSgFpEh8B4h1AtkFjp7cNbQPbWBz5Fk5Fn25YKeHTGFe+9Qfg1YQCSl9lQOBpmF/L1+jb/b8A+XUVphJIlyIAAAAASUVORK5CYII=\"}]}]"
+  }
+}
