@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_sentinel",
+    "description": "Neo Drift sentinel turret lens pulse",
+    "fps": 4,
+    "height": 14,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":2,\"chunks\":[{\"layout\":[[0,1]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAOCAYAAABO3B6yAAAA3UlEQVR4nGNgGOmAEZsgByv/f2ziP35/xKqeqvo5WPn/a6kE/L/R/R8Fa6kE/MdlMDb9/5/9R8G49GO4iIOV//+Ftg9YDTeoEiDoCw5W/v/fH2LXzymPqZ8Jn2Hq0fhkiQCShJXgdcDNpRQ64DmJDiA2jsmRw6WGEVlCRFiRgYGBgYGPR4FhXfp6FI1BMwMZPn15wMDAwMDw5u19jLhE13/1EKp+bTvs+rE6gBAg5ABS9DPCNHNxCsIVcHEJYNX47dsHBPv7e7ghlOjHmwjpAQbcAShpgBSN2NIAOfoBJjGJbTdL81wAAAAASUVORK5CYII=\"}]}]"
+  }
+}

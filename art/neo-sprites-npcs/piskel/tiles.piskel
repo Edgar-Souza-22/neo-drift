@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "tiles",
+    "description": "Neo Drift containment tiles",
+    "fps": 1,
+    "height": 32,
+    "width": 32,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":5,\"chunks\":[{\"layout\":[[0,1,2,3,4]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAgCAYAAACVf3P1AAADSklEQVR4nO2cMW/TQBTH/w2B2kZUUUhTCRQGQAIxlaFDvkAXvkCXbnwA1oq5Yq3EysYHYGJhYGVlYmsHKiHaBsuk4WIhSBlQROLG5/Pd5b0X4t8Wx8/nJH/d/e+956xsdXcuYMkwHSEMarbhAIA4PnWKd+V78pV1fHU1ZR0fzN9/HbAXQRi12AVUsdjUuW9gTBi1SMcbqt7U67NXHdLx158eT71uP7iPftI3jr/29gNebJwAAPZONvDzSdc4VqkUtfO/Yx29eTzznM3dQ+01Pr6+p33fNH5KgGHUuvTD+CZvjKHqsY5f8Q8q8QEZAVL8MEVjUM+EYx7urZaO+XH+Bddv3JrD3fBBKT5AswQrlSKKAu3FfFPNTLxQiw8AcrewtuJTys+urt9XpY7bxmRxvX8fn7+zf4Bm299K0Gy30Nk/0J7DIT5gDpsQX7Pm2lpkdDwIIqSpKhWjw/X+fXz+4+fPnK8xSXzaQ6y5Jpf4AAMBXqk3EAYjDAbmOzTbWFv/F0bmAgPMlvqb648uHft29sno+i6x1HCKDzAQ4O9fCQaDorOmZ6KysWOkecBGo4kkicljpTBv8W3uHuZ7wFno/E1WfK5wecBJkiTG56N35LESoBAfoNmEzIJyV2zj53x4wCx37m6zxHJCJT6AqBJimtKhygFKW+olQSk+gEiApjOnJGG4bBqkbjiKoBYfUHIJpoTTAwaB/ZLtA448IIf4AKA+TEdOS5/rspk363F6QJ8bqlnZgSKo84Bc4gOAehjUnNqxfC6bi+ABy5YofWcHfMMpPkBQOxYgywPmQV0f54QiSV15QEJ81ckpYOkHlAR3HnAepbhFmT3Z+gGz2BhoF6R5wGUsxYnpBwTod4PSPOC4nGZT0XCJ5UJUP2ARZf1MWTFL8YBFAtLlDG3FJ7Ef8P3L207x1v2AeS1VJn7GpZXLxQNmZ1uXWnAR87AoVT/gBGVbqlxifXpAXY+gyVK/LKU48f2AlEjzgMuOuH7AMrjmvKR4wDGLlMPzgbh+wLIFetecF3ceMMui5PB8wNYPqKvt+jLbujGk5QGL+N+eCQboa8NTMyDng+mUD6RzPfwuHY7GhJWt7s6FlG4YDqp/x+L9cymxzQgVy8Ef4Nc91Gou1wAAAAAASUVORK5CYII=\"}]}]"
+  }
+}

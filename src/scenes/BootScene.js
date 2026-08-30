@@ -6,16 +6,18 @@ import { loadGame } from '../state/GameState.js';
 import { generateSounds } from '../audio/SoundBank.js';
 import { initMute } from '../audio/AudioManager.js';
 
-// Lote de sprites desenhados à mão (Piskel) — lote2 é um superset do lote1
-// (parede/piso/porta de cada região, todo tipo de inimigo com loop de
-// hover/pulso, ataque corpo-a-corpo de 4 frames + arremesso de 3, bullet/
-// slash e os tiles de puzzle). Cada chave abaixo só troca a arte SE o
-// arquivo existir na pasta — sem ele, cai automaticamente pro gerador
-// procedural (guard `this.textures.exists()` em cada generateXxx). Ficam de
-// fora por incompatibilidade de arquitetura, não por falta de arte carregada:
-// npc_worker (vem composto num PNG só; NPC.js espera `_body`/`_head`
-// separados) e os chefes únicos boss_* (o lote não cobre chefe nenhum, só o
-// "elite" genérico enemy_miniboss).
+// Lote de sprites desenhados à mão (Piskel) — cada lote novo (lote1 → lote2 →
+// lote3-logo-boss → npcs) é um superset do anterior (parede/piso/porta de
+// cada região, todo tipo de inimigo com loop de hover/pulso, ataque corpo-a-
+// corpo de 4 frames + arremesso de 3, bullet/slash, tiles de puzzle, logo da
+// Ala Central, chefe da Fase 01 e agora os 5 NPCs em body/head separados).
+// Cada chave abaixo só troca a arte SE o arquivo existir na pasta — sem ele,
+// cai automaticamente pro gerador procedural (guard `this.textures.exists()`
+// em cada generateXxx). Só ficam 100% procedurais os chefes que o lote não
+// cobre (boss_foundry, boss_reactor, boss_core, boss_curator, boss_tank,
+// boss_router, boss_emissora, boss_ghosttrain) — o lote só tem arte pro chefe
+// da Fase 01 (`boss`, usando o design `boss_alt`) e pro "elite" genérico
+// (`enemy_miniboss`).
 const TILE_KEYS = [
   'wall', 'door', 'floor', 'floor_vent', 'floor_hazard', 'floor_electric',
   'floor_town', 'floor_town_panel', 'floor_town_light',
@@ -36,6 +38,8 @@ const TILE_KEYS = [
 const ITEM_KEYS = ['item_sword', 'item_pistol', 'item_armor', 'item_medkit', 'item_keycard'];
 
 const FX_KEYS = ['bullet', 'slash', 'floor_logo', 'floor_logo_0', 'floor_logo_1', 'boss_aura'];
+
+const NPC_TYPES = ['guard', 'engineer', 'worker', 'coordinator', 'herald'];
 
 // tipo -> nº de frames do loop de hover/pulso do inimigo. O arquivo
 // `<tipo>.png` é o frame estático usado quando o sprite é criado; os
@@ -67,6 +71,11 @@ for (const dir of ['down', 'up', 'side']) {
 ART_KEY_OVERRIDES.boss = 'boss_alt';
 for (let i = 0; i < 4; i++) ART_KEY_OVERRIDES[`boss_${i}`] = `boss_alt_${i}`;
 
+for (const type of NPC_TYPES) {
+  ART_KEY_OVERRIDES[`npc_${type}_body`] = `npc_${type}_body`;
+  ART_KEY_OVERRIDES[`npc_${type}_head`] = `npc_${type}_head`;
+}
+
 export default class BootScene extends Phaser.Scene {
   constructor() {
     super('BootScene');
@@ -80,7 +89,7 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     // O caminho precisa ser um literal aqui — o plugin de glob do Vite lê a
     // string estaticamente, não aceita vir de uma const/variável.
-    const modules = import.meta.glob('../../art/neo-sprites-lote3-logo-boss/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const modules = import.meta.glob('../../art/neo-sprites-npcs/png/*.png', { eager: true, query: '?url', import: 'default' });
     const urlByFileKey = {};
     for (const [path, url] of Object.entries(modules)) {
       const fileKey = path.split('/').pop().replace(/\.png$/, '');
@@ -2135,6 +2144,7 @@ export default class BootScene extends Phaser.Scene {
   // com sua metade preenchida) — NPC.js sobrepõe os dois sprites e balança
   // só o da cabeça verticalmente, corpo parado de verdade no chão.
   generateGuardNPC() {
+    if (this.textures.exists('npc_guard_body')) return;
     const s = [14, 20];
     const body = createGrid(...s);
     fillRect(body, 2, 9, 10, 9, 0x1c2233);
@@ -2161,6 +2171,7 @@ export default class BootScene extends Phaser.Scene {
   // Engenheira Vex: macacão utilitário, óculos de proteção erguidos na testa,
   // cinto de ferramentas — leitura clara de "técnica" a distância.
   generateEngineerNPC() {
+    if (this.textures.exists('npc_engineer_body')) return;
     const s = [14, 20];
     const body = createGrid(...s);
     fillRect(body, 2, 9, 10, 9, 0xb87333);
@@ -2186,6 +2197,7 @@ export default class BootScene extends Phaser.Scene {
   // Trabalhador de fábrica (usado pelos NPCs presos/resgatados): macacão
   // simples + capacete de segurança, tonalidade variada via tint em runtime.
   generateWorkerNPC() {
+    if (this.textures.exists('npc_worker_body')) return;
     const s = [14, 20];
     const body = createGrid(...s);
     fillRect(body, 2, 9, 10, 9, 0x2f4a3c);
@@ -2209,6 +2221,7 @@ export default class BootScene extends Phaser.Scene {
   // Coordenador Voss: sobretudo longo (silhueta mais larga/alta) e um
   // distintivo brilhante no peito — leitura de "autoridade" a distância.
   generateCoordinatorNPC() {
+    if (this.textures.exists('npc_coordinator_body')) return;
     const s = [14, 20];
     const body = createGrid(...s);
     fillRect(body, 1, 9, 12, 8, 0x3a1f4a);
@@ -2236,6 +2249,7 @@ export default class BootScene extends Phaser.Scene {
   // capuz/manto cobrindo o rosto, pra "se destacar" à primeira vista —
   // reforçado em runtime por um brilho pulsante sob os pés (ver TownScene).
   generateHeraldNPC() {
+    if (this.textures.exists('npc_herald_body')) return;
     const s = [16, 24];
     const body = createGrid(...s);
     fillRect(body, 1, 10, 14, 12, 0x241040);

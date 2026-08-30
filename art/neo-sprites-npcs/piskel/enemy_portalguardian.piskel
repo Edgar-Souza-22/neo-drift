@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_portalguardian",
+    "description": "Neo Drift portal guardian pulse",
+    "fps": 8,
+    "height": 30,
+    "width": 30,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAeCAYAAADnydqVAAAD00lEQVR4nO2bO27jMBCGfwVrIAYCRDCgFGskRcp1YeQG2+w9coQcJUfIPfYQhgu3LjZIJUBwqhhw4a3GpujhcPiwbAWeyooofvqHD5HDSYEAux7cbqX7681nEVLfhcszp/UKADCvymTuDy0UAEbDsViuAVoOSXVAKDcXj6wrrsmnxgWAab3C+8MkiSs2sNbBZFTu/t8CADCvym2M+FhuisNN53JOPRaX2GZ9ObnOG9eD2y0HbL4+RCg1Ltm8KtXCJaE+Llc2hGuOHGDfyKHc0Ebm/GwMkGQuO4JtqEukDQGAe29J3rgRFMIF9uKNb1jUDKJhc9zRcIwGUDNdfm4c394YbusP3Aii3kH3HqsnFrysZ7vfXENJorkRRCNfy6WyrnokNvNp2d3XcrmG0nLpmRi9XB1m+d2FbwS5gK4XAPiOwj3japgYbkgDSzNVil6zo3DsY3GpLpNZEDDVwa4X8DWyawSlcDUziMvJqXp9HexYXJefr6SHY6Hms5rvKNm8KpMal7hUj9ZSnRz7bE6uy8+7Rdb7w0RcvZm2+PPaup78fXGWXW8+iwbYjobjg8WA2ZvtbxDLfXlrc1+fu+EG6J1X5cEMQnYKvaxggO9VtlDbOOH2FGJOH2quJfSAywjPwu2pXnOgXrn2uwdQj1htmdFwjOvB7VbN9YjVlgnm9lSvGYeY1qv2Plj9TXibtq+f586ij9UTlvUMzdeHM1Kj5i5W7etJ2Q23R3ptK379/C0G1AGrp9piyQzR9tTFTVuahUWrp9pid7By/9OauqK5PddrHlaoDhsu1i8zF3edNLDde8ubuy6wF+7NnbwPvlj/rYjaMgiLDmmPaNqyniF4yyAsOqQ9Isf1Rc2Oodc+yO9Cb2uKHg3HaL4+sKxn8qJAWEXa5gqlRXGFVWQI195KeKNnmfTSt7FLvVfrzWehCSdqeqqmDG381VxFT9WUCT2r/S56xdCdq3dpQ3f2sv39YcJGduwQqZOrDN0t69nBcZrNNafLnHp93CA/Z9DLnnLkCIITWDpdcZ1i5eACfLiQ7Fh6z43LrqKpIBcZCYWe4tlpvTroWJLl1KvNq+qKqzqbBY53AJ470eAcDvyprnPgstkGrsN/6QVSUlhypArlSNmJ4QLhKUo5uMEpOyZYamCNaXsyxw5N9uO4vpSZnNzQDpWLC+j87M2Rsg+tT5FGGsMFwvKUT5EmHMqV2sTFFKcu+h2ycDBfrqtE8FNzQ2eMGK7dkWjLCch6nYcN5kOUQe/9V45EB9vsvnApjzmWH8oltoYXPH1K97/TP4GdI9cOzmjq+g/HDeehw3m4kQAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

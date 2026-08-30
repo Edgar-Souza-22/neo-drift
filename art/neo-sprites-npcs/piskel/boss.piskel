@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "boss",
+    "description": "Neo Drift Guardi\u00e3o N\u00facleo idle",
+    "fps": 6,
+    "height": 42,
+    "width": 44,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAAAqCAYAAAATStF7AAAFW0lEQVR4nO2cPWgcRxTH3+nOaH1CZiPtCVvOgZDsIj4wLqwYHFxahUyIi5BSZRr3QnCF5ICIOdcG49Kl7cLGncuYqJAVEAHZjQMCRRci2coio5OCsDbFZk6zq/nc2Y/Zvfk3i+Zm3vxu9G7uzZuZAzAyMjIyykYlVQNO2fJE6374fKDcn6oMb7JKm1fJgFO2PKtP3MTBkZfpIBveZJUFb0WlMdKZU6e5dXYP9wFA/BOa5D/C8BaHV9qBWR2u3R6ExvNP1LZTQ2fBhT6hfpZ32l4cg8zkXWhAY2GN2lY73qU5aFy/R22rG+9g+yN8Gh2mto2DV8qBnbLl/fjlhUDZ4/YfAOA7L/7EFXbqK9Uqs5/VTkcGiyom70Ij8MQVdmoteJfmAk9cYafWgXew/THwxBV2ahXeSCHEaqdzolPWzJu1iLyMmTdrLb6YgeZ3jwNlrJk3a5HGlzXzxqlIDhyGRfFM3MK/nlS+7vLGG3Ze3XmzHF/lRdzM6AQA0Kd5G46k7KGvIKuvBDOjE92/HfDhVeM2w1ss3q4Di6wGR/qr0vGTaJCOC1/Fnjl1OhCnlmZfA4DhRYqFF4urS1dmAUBzXmx8KwA+7NdDo0wjyztt6Y7j0NrSHMCrlwBT3/oFs6/15n37PcCTdwA/fOUX5IHXBQD7fbdMa96QPwRCiPU9l9hobMBOmouqxvV7xEwBgKa8l57lj5eQ2QDQlDfkD8IxsNVXgt3DfVjfUwOI/OZfvZSqnjnvk3dS1TPndS/w62DKnPd/f6ig7b/f3b8AgL+Lor7CtLk18D52D/eh3lyBgyM/JDO8PNncGid4J+fzxYuNb8kpW972z5NQb67AxuJVooFb9ze7b4hWR1S37m8KJa7DMRZaHeeS97efoD45Dxtv7pL7uPnwmJdSR5j35sPYxvf8NnmBNnxxostLqyOq4YsTSryl8AEM0idubMCmfiJv1/xgf/Gb4EZG89fjHbnn28edjw3YwsCklE7P8t75Isj74B+9eVMa38qHzwclB/xVJy1ox7V7uH8COgyLyupPt7p5wTBQVPUkb8h5UVm9uaInb4rjG1jEiQTUCJYEDrN3/GfrAbU9Pih4bINiGiSRhHrP8aLUHGOBqBVvCuNbQS8u77SpiWvSGU+RI3OyEt0FMrzRVETe7gxMqyxzwp71SYtbPckrmZpTUV7Gl7mvJwpbf7rFLRNJt0gNjkJ7Em9YWvE2V7h1tOJN0R+oGxlO2fKmhs4Gyn5x/6Ya4jkF6SuGFNA/+vN9pIPWheflOLF2vCmNbyxXikgd6yzDm6zS5I3kwPj0j463IW0sXo00WySpQvG+uQv1yXlme514z293YLPGzvOq8EqdbRPpiLVDlrYKycvY0UtbIrybtarybh1L8oczBSSy6NBJuePlzMC6iTcDq4gZzMve849DKr8VYHj5KhqvcAycdFwV9z0qwxtUUXmlFnG0g9qqSuqGcO54KQfLVZXUjWbSlfk4JHOj2YQQijK8yYrHy6Uh3Y+K4z4UzabqrVjD68vwYnLKlue1bnjTtXHvUnXIU92SRDana+PedG3c81o3YrGJ284d72orOd7VVuy811wvMd5rridsM9IMDADUA8YiSsJmkrYNb7K2VWwKdeiULW+kvwpjAzas77mw9W8nloGI26bh7T1e5mEeXodRD4WIvCZr2/Dy7RaRl+jApCkdPzmPXpP9ic6wXZJNJBnbhrd3eYmX+kb6xbf+RKd6Wbuitg1vNLuitnXnTeQshJFRWgp4c9RENS/ZrJIAZ9k2vGp2ebbzwHsiBr5snwv8je7/p6Vw/7wkueGVU9F4TQhhlGv9BxzS+l3QwMQBAAAAAElFTkSuQmCC\"}]}]"
+  }
+}

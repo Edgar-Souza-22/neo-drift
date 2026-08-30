@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_shooter",
+    "description": "Neo Drift shooter drone hover",
+    "fps": 8,
+    "height": 16,
+    "width": 18,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAQCAYAAAC1MDndAAAB60lEQVR4nOWXLW8CMRzGHxZeDCMILDgQQ0IQkKCYgY9AgpxgeoglqCUTm2YCNXMfYTNoECQTE5s4CXaCAAYQNwFt2tLr9V5gl+xJmnDX6y/P0/b65yL4h4rFkxZ7vduuI3bPRoMCnUN+/ZDxiVSG71jCsuNJJ8gLSMcY0TmCyRhH4w+i95ewRNYRWAUi2ix/tE1xBpjxgP9gun5ERrpQ5foX5sSWxUH9gJxMyXTKYOKuJRyRIbKOJigoUNiCXVWblDMzvznGfGzg9XPf1++2pSyiaL5cpxc6oHShioU52Rs/nAEqyYIRhkxOfoiyNW9+ANBMAPDwYnCTlKs06e+7xwEu3IBY5SpN5Bsd5BsdDKcr5Mt12sRVn48N2ohIXyKVQSyetEjTCUiYdn62m5UuRqnn+1t1mXcD0tV8bNDVB/gV+3oboFhr+fZTbKn99LttuuDs7gGA2fSdf8WCArGvhlc5BcvW2nTnsJMs8yMqkcpgYU7ozhXznPyQVh2KAKTBZIeiLJgXP6xCUebDVg2dWDLJGCf5oxiGYHYsALh++uDuj3olAJqfGrvtOkLKpRuQjEGC2ZV0nWCsn+GUr043lUstPyzLrlLaMaSHtBeQ9Lk/DKZijXol7W9DJTyIr/lYPGnJJsgry68ft/oFDwrVYcy8tHUAAAAASUVORK5CYII=\"}]}]"
+  }
+}

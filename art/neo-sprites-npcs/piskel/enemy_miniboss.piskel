@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_miniboss",
+    "description": "Neo Drift elite / vault guardian hover",
+    "fps": 8,
+    "height": 24,
+    "width": 26,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGgAAAAYCAYAAAAWPrhgAAABsklEQVR4nO2ZvUrEQBDHJ3Jl7s5of4XvINhYSTo7n8JasFCsBBuxPsFnECysPKxsBF/ARoUTS4m5pI/VBm8/dDb7OcFflz0m/5n/3CRhNwEkaZo1p2fTpbWTo32o6yLB3kNH6+e1Kw0f9ZjqDGwmYwNFQY2LJtmA/zPZimP1tg1yLeQbH/WkadZMJhvaGpiY+fy1qesiGfgSYtd9MU7nvleX59q5MLQecSZCAP0yjmdRlQAAMBqOrcYLDXIlpAMF41Rsbm130rmf3UrXlRNkW4iHunE8o+G4swYAwE6+C0+PD8K60CBXQiqoGifj4/2ts44K6QS5EOKhbhyW2fUBwMuxsJ4frqHi0R8JpkIyghp3dwNQiQ3O9y7sCkk80wH/FWcohMWbcRKNGFkJnYAAEeN8Ed1WT98weQUAaDTIVCg2rD8yHRHdBFExzhfxvYP+WSK6CaLKoiph8Vz62YtzIRQK6vUEmyDqxvGY5qGKl+7FuRAKBfV6gk0QdeMYbJJ5vopPVPxqtv7r722DXAv5JoZ6/jpAxJwuoybIhhCjL8b5IqrPbErGAbT5SnPCHL9j4r8BXfURUr8Nsd4AAAAASUVORK5CYII=\"}]}]"
+  }
+}
