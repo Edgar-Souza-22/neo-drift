@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_up_throw",
+    "description": "Neo Drift player throw up",
+    "fps": 8,
+    "height": 28,
+    "width": 24,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":3,\"chunks\":[{\"layout\":[[0,1,2]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAcCAYAAADC8vmmAAACeElEQVR4nO2ZP27bMBTGPxeWQKQyUiD/3A5uhg6BkSlDAhRZ1QOkS1YD6QEy9QxeWvQEPUF6gHjPUASZDKMovNRD6iQN4DSOwToDO9gMKIkUJZFupMIfIBh6JH98eiYfSakEjRzXYwCwdXkbKTtbrQAA7sfDko6jYm9d3qK1qK7j30z6ydrHTOW4HtsZMLYzYOw3i168jAcxC1vGk9mz9DFTyR5AdZkGSQw0v3jfNoPD2VZAooPhf1cMnOmDiEGp9hmr9lkgSDaDI/KTtpPO63Bu8G+AX6/fBuosnxwBAFqLZnmCO1t79SZg73WPAWTPb7b4kcK44AwHPwAA3rOXD/WXT46MgiM6LuP3usdGi4Apvxw23I+HpbPVCvOnq1Z57xDVag0A0J12wO8B4KvhCiOyZPxeNyvZDv+JzDgNEsp7h1oHtncPkDX3bO8e5J4vDVCc1junaZsUWpEpJqrf7wXu1zunk6T85WMkaWdRmK+zPwY/9QhSadYbucfaKEoDxJ3hS2GcvHcfUG+2UW+2Ez9Envi8joodmWKO67F6s/1wf/1pXwr+MzoHAHhaF5LzHdcJsP8FX6zbeb/JwitybA7iWlrZAABQvwG/9RnUb2BpZQPXV99Suh/PDysP/NQ5iPqNtE0KLWtJ+n+VdopROo4MRUIWQOnIigN55ysPqwCw9mJT2zkhLi7OJ4ku6ZGjSHzlUSNsI2QhUo8QN7aNSkXia3MQpePp70hqN1Xe+doAiVFOYk+rvPNjhy2fy0+959Lyu+FPAGYv7fPOjx1BSRwzeRdUBP58H6RRoqMG6XyX2u9qFStO5Jmfal8Rlq2PeUXnzzWXWn8BfUpMFmDuWxEAAAAASUVORK5CYII=\"}]}]"
+  }
+}

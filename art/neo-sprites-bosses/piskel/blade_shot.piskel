@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "blade_shot",
+    "description": "Neo Drift thrown blade",
+    "fps": 12,
+    "height": 16,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAQCAYAAACm53kpAAABfklEQVR4nMVXzWrDMAxWxuxdEnoY5EFy6RP0qfcOeZDAoF16WXvQDqk7o0i2ZCebwBBiffq3JTcgkPMt0n/327WR+HPkfIs1+BJ9AHmbV5sBOEzzinnsO9AI5WQO01yMt1LQB7DYrNbnfIvHM+LxjPiF6xX2uOrIySzFW8j5FmN9QadKHwVyzpuFCnL3CEIqeVl9NEtxtjihNQGI5W8VBCl56oqTyiZeNBAlQSjFWwMQO252XjJO4rMYyRlKeUyeg1y9JllxhiiYfqcckGRr8GGPC7zGdil5OfwLwNKWxr6DsELbcL7Fz++ZFXK6/LbFlHESnvIN0wwfh6X9Bn4OHx/LpHKl/tfwwfXK++3avL91zwHmESg8PXp6rr9SvGRkcD6Hj/s7AMDYd8kgaPQX0dZnteYOSl3g23lcQZoukrvFcwNOCv/vzmuHEynDdBbhbnquuvYauMzOa4cTaWCSplLLEflbzxNG5c5n7VuE4jUB2P15an2Z1b5GY7xG3w/m+QQxMD9gUQAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

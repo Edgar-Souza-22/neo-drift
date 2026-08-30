@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "tiles_puzzles",
+    "description": "Neo Drift puzzle tiles",
+    "fps": 1,
+    "height": 32,
+    "width": 32,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":9,\"chunks\":[{\"layout\":[[0,1,2,3,4,5,6,7,8]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAAgCAYAAACy9KU0AAAD00lEQVR4nO2dPWzTQBiG3wINUYbUzUDUAVGxMPRHIMHSHyQWFpSlK6rIVDF1RmJGYu4IS1HFysLGwNDSLiCB+jOwoCKGKgytyVBBESqDcZoE23f23eVyzvtIllJ/zn2Nm75977vv0qHhQukUhBBigQsAcGvmrpXk77fegPnt579285KV/J8/fGd+2P/528x/zkpmQgjBPwcUsvNxqydJp27MRJ53LX9ttAQAeH10bCX/ir8NAFj2prXk/7qX7nVk5cpEifkjcO39ryM/HRAhxBoUIEKINShAhMTQnJxDc3LOWJx01YBcIax9dJO2FkKSGfEqrcc//EPtcRG12ZPW49ebBe3xJFrC8eoZmgtLKO++0xonAZkc0PxoKfIwzYq/HSs+MnHiHi+fTBmNC1lYMhsfcFIJkEhoTApRGmGhCOWH+493jMbjaHcsUe5FNU4CpKdgaYRlfrSEjZRL00lkEZQVf5tTMkVE0ybVuAjRtEk1LkIkHKpxGX6fPxFflMDwH7V7gImK+Jok9pLfA1IClMXV6BKhOPGpo9rx9Soakc/Nqwg1/bPXW/cbKHvVhKsJyc71zUeZnvdp9qnwGudWweqo/ic+SedNsThWgVcswisWsTim+FciBU2/0SE+ovOE6GAdD4yMKxQglZqOaj1IRy3HRD0oSnB6KUJA4PjaD0JMchsvjIzrlAOScTimXVCS0JgWodDhRAlOeI4uSB/90gd0sVjIdLiAk31ApqhpWMGTGWM/5rwutyYa5/mdh1LjsA8IfdEH9OunWiG6n3HKAZHBg31A+YYOqA2ZXe2LY0XlMabGo8+LVuzqktMr0Thxu6H7EZt9QKGLievzUYmTAKcEaBUNYY3HdEF27eAwttazdqDW9yKi7FXR9IN70P06w/uiczmefUD2+4DyjlCANo6OM69mqfYBLXvTynURE31AUSJkWny66WXLAXGLq5cnAQBfvu1ayb9+7y0AoCxxrVMOCDhzODKNiCZZOzjM/IFkKoQOp3u1i42IxEWkBCiLC9K1FSPOBckITl67oIFAcLJ+IiLJN7qdj0xHczsyzidE2gGlESGd+8CAbFMx/lISVURFZNW4DMp7uVQR7OVSJdUy/MbRcaK4iOIqpBEUio8eRrxK6zARF1GbPWkdJuJJdPTxRDQTqsZJQKY+oFBoug/TLHvTieIiihP3YB9QvnGuCA3Q4QwS7APKN04KEOkN7ANiH5BpuBWDEGINChAhxBodUzDbe4Rcy78fPm/cTv5wV7uu+xb3Hzt7xaDnd+39rwM6IEKINYaGC6VT298EIWQw+Qvp8h4kg+CI9gAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy",
+    "description": "Neo Drift drone hover",
+    "fps": 8,
+    "height": 16,
+    "width": 18,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAQCAYAAAC1MDndAAAByUlEQVR4nM2YwUrDQBCGJ9LkEEIs3jxVEKS9BHwKLz6B0MfwIj16ELx50Aco+A6+g1DJpcVTe+pNagk9pId4cZbZyey2TbZNf1hok87XfybZnWw8sMgPooJ+X+eZZ/v9vlXXD8YnYawdT1dLI0/8gyqgbYyhDpGYxODxXOlqWWKVwFVBJlMAzSRmY/SitnZ+nC2MLA1aB7TJlKR9JmbicAZncc6JyZwEMsFthjCODlQSxqXp58qPH0QFDl6c4dsrDDtdGHa6JRZ6wuFRgxIInl4AAKA/mygYrTaKVr3OFXPl5/78Qn3++P3ROaQwlIWcm9Mzda4lgZT+zSCUmuImnufTnRLrRW0YZwtIwhhSABXryo8rtVyBji0xm/qzibqLuBcu4xrEgzeBDqGqfnDq0UW9P5tsnKYA7A5KV0tIwhjG2UJND26EguhctWmXK+bKz/N8KjIpizOkWI93kV3aKhVbj0rrkGQUOTzWhR/e8ht/UHRVaFeJSTqqrUbTidlY+eO1diwYjIwMsYut88zzg6j4fLjcGiQxsH3XTUz5+brV/Vy9730D7azNS2oyMZunYDDaevNsNenidYcfREX+facdq1qgJl6//AFHebXElU2y5wAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

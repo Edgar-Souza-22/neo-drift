@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "player_up",
+    "description": "Neo Drift player walk up",
+    "fps": 6,
+    "height": 22,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAWCAYAAABwvpo0AAABu0lEQVR4nO2YzUrDQBSFT4IJQ52KEMToIm5EpHTdVdc+gw/QvUufwaVv4TP4HFJEujELjUhANC0hXYwLm3SSuflrkTrUs8lker9zL9P5CQOUyLK5cAMh3EAIy+aiLE533qBAAPBOL3L9/uQeADBPIoXRmc+9WDYXMhh9PAMA+P5JzqisCB35naKJ63pZe7IwkPv8CZVaX95MG5bNxWA4qnYHMBiOQK0pXXmzKngblFsCQeCTQWX9TeP+Mr/1M8AElkdHelRUKY2R15HOvGHZXPRuHrKA8Pay0sC5usva4+s+AEBnXjkGAcA5OCfh8P2x0lxH/n8P2HQBm5ayBOI4UaYKYx3E8ayRoW68ASx3xMPjfq05YzbeXn42nfSbWmfelI1kMdZRDBizs7bM6Mwre0AcJ4vnjOyvk268sgfIo9Skn4qLPsPsne85rfl188uSawFzlHjlPgAAdvkRaT6NXgGUX0pQfMrIasOvkl8WVUvpfcA8iYy666eqGxmKLxbQll8lf9kAUjz5Jbiu2Pgpa8e9s99I0VhyLVOvq/xODoAMyaIMiponkRF63exfdPyvVvy6+Yt8KDHU7PkGsSe/goOSzvQAAAAASUVORK5CYII=\"}]}]"
+  }
+}

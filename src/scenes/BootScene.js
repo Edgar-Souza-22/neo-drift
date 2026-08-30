@@ -7,17 +7,13 @@ import { generateSounds } from '../audio/SoundBank.js';
 import { initMute } from '../audio/AudioManager.js';
 
 // Lote de sprites desenhados à mão (Piskel) — cada lote novo (lote1 → lote2 →
-// lote3-logo-boss → npcs) é um superset do anterior (parede/piso/porta de
-// cada região, todo tipo de inimigo com loop de hover/pulso, ataque corpo-a-
-// corpo de 4 frames + arremesso de 3, bullet/slash, tiles de puzzle, logo da
-// Ala Central, chefe da Fase 01 e agora os 5 NPCs em body/head separados).
-// Cada chave abaixo só troca a arte SE o arquivo existir na pasta — sem ele,
-// cai automaticamente pro gerador procedural (guard `this.textures.exists()`
-// em cada generateXxx). Só ficam 100% procedurais os chefes que o lote não
-// cobre (boss_foundry, boss_reactor, boss_core, boss_curator, boss_tank,
-// boss_router, boss_emissora, boss_ghosttrain) — o lote só tem arte pro chefe
-// da Fase 01 (`boss`, usando o design `boss_alt`) e pro "elite" genérico
-// (`enemy_miniboss`).
+// lote3-logo-boss → npcs → bosses) é um superset do anterior (parede/piso/
+// porta de cada região, todo tipo de inimigo com loop de hover/pulso, ataque
+// corpo-a-corpo de 4 frames + arremesso de 3, bullet/slash, tiles de puzzle,
+// logo da Ala Central, os 5 NPCs em body/head separados e agora todo chefe
+// único de cada fase). Cada chave abaixo só troca a arte SE o arquivo existir
+// na pasta — sem ele, cai automaticamente pro gerador procedural (guard
+// `this.textures.exists()` em cada generateXxx).
 const TILE_KEYS = [
   'wall', 'door', 'floor', 'floor_vent', 'floor_hazard', 'floor_electric',
   'floor_town', 'floor_town_panel', 'floor_town_light',
@@ -40,6 +36,13 @@ const ITEM_KEYS = ['item_sword', 'item_pistol', 'item_armor', 'item_medkit', 'it
 const FX_KEYS = ['bullet', 'slash', 'floor_logo', 'floor_logo_0', 'floor_logo_1', 'boss_aura'];
 
 const NPC_TYPES = ['guard', 'engineer', 'worker', 'coordinator', 'herald'];
+
+// Chefes únicos (um por fase, exceto o da Fase 01 que é o `boss`/`boss_alt`
+// já tratado à parte acima) — todos com o mesmo loop de 4 frames de idle.
+const NAMED_BOSS_TYPES = [
+  'boss_foundry', 'boss_reactor', 'boss_core', 'boss_curator',
+  'boss_tank', 'boss_router', 'boss_emissora', 'boss_ghosttrain'
+];
 
 // tipo -> nº de frames do loop de hover/pulso do inimigo. O arquivo
 // `<tipo>.png` é o frame estático usado quando o sprite é criado; os
@@ -76,6 +79,11 @@ for (const type of NPC_TYPES) {
   ART_KEY_OVERRIDES[`npc_${type}_head`] = `npc_${type}_head`;
 }
 
+for (const type of NAMED_BOSS_TYPES) {
+  ART_KEY_OVERRIDES[type] = type;
+  for (let i = 0; i < 4; i++) ART_KEY_OVERRIDES[`${type}_${i}`] = `${type}_${i}`;
+}
+
 export default class BootScene extends Phaser.Scene {
   constructor() {
     super('BootScene');
@@ -89,7 +97,7 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     // O caminho precisa ser um literal aqui — o plugin de glob do Vite lê a
     // string estaticamente, não aceita vir de uma const/variável.
-    const modules = import.meta.glob('../../art/neo-sprites-npcs/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const modules = import.meta.glob('../../art/neo-sprites-bosses/png/*.png', { eager: true, query: '?url', import: 'default' });
     const urlByFileKey = {};
     for (const [path, url] of Object.entries(modules)) {
       const fileKey = path.split('/').pop().replace(/\.png$/, '');
@@ -1185,6 +1193,7 @@ export default class BootScene extends Phaser.Scene {
   // assimétricos (tamanhos diferentes), rachaduras incandescentes
   // espalhadas em vez de uma costura reta.
   generateFoundryBoss() {
+    if (this.textures.exists('boss_foundry')) return;
     const grid = createGrid(46, 40);
 
     fillCircle(grid, 14, 34, 9, 0x100304);
@@ -1342,6 +1351,7 @@ export default class BootScene extends Phaser.Scene {
   // pequenas esferas-satélite soltas ao redor, soltando a sensação de
   // campo de energia mesmo parado (reforçado pela aura giratória em runtime).
   generateReactorBoss() {
+    if (this.textures.exists('boss_reactor')) return;
     const grid = createGrid(42, 44);
 
     fillCircle(grid, 21, 36, 13, 0x0a1420);
@@ -1425,6 +1435,7 @@ export default class BootScene extends Phaser.Scene {
   // em tamanhos/ângulos diferentes), sem nenhum painel/bloco retangular —
   // a versão anterior era um monitor quadrado, esta é só orbes e círculos.
   generateCoreBoss() {
+    if (this.textures.exists('boss_core')) return;
     const grid = createGrid(46, 46);
 
     fillCircle(grid, 23, 25, 17, 0x120e20);
@@ -1507,6 +1518,7 @@ export default class BootScene extends Phaser.Scene {
   // perfeitamente simétrico) ao redor de um núcleo, mais motas soltas
   // orbitando — sensação de relíquia flutuante, sem nenhum bloco reto.
   generateCuratorBoss() {
+    if (this.textures.exists('boss_curator')) return;
     const grid = createGrid(44, 44);
 
     // anel externo (grosso, horizontal).
@@ -1554,6 +1566,7 @@ export default class BootScene extends Phaser.Scene {
   // um lado, chaminé do outro, faróis de tamanhos diferentes) e uma faixa
   // de risco no casco puxando a mesma linguagem visual do piso de perigo.
   generateTankBoss() {
+    if (this.textures.exists('boss_tank')) return;
     const w = 56;
     const h = 44;
     const grid = createGrid(w, h);
@@ -1670,6 +1683,7 @@ export default class BootScene extends Phaser.Scene {
   // contrário dos orbes decorativos do Vigia/Titã, cada satélite atira de
   // verdade na luta (ver RouterBoss.js).
   generateRouterBoss() {
+    if (this.textures.exists('boss_router')) return;
     const w = 56;
     const h = 56;
     const cx = w / 2;
@@ -1899,6 +1913,7 @@ export default class BootScene extends Phaser.Scene {
   // íris central verde-sinal e duas antenas no topo (em vez dos satélites do
   // Roteador — aqui a "invocação" é a mecânica, não um disparo orbital).
   generateEmissoraBoss() {
+    if (this.textures.exists('boss_emissora')) return;
     const w = 56;
     const h = 56;
     const cx = w / 2;
@@ -1997,6 +2012,7 @@ export default class BootScene extends Phaser.Scene {
   // (não uma linha reta) pra ela ler como "esgarçando no nada", reforçando
   // que é um fantasma, não um trem sólido comum.
   generateGhostTrainBoss() {
+    if (this.textures.exists('boss_ghosttrain')) return;
     const w = 72;
     const h = 40;
     const coreBase = 0x38424e;
