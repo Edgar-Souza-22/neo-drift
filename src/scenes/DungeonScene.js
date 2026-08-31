@@ -6,7 +6,7 @@ import Enemy from '../entities/Enemy.js';
 import Boss from '../entities/Boss.js';
 import NPC from '../entities/NPC.js';
 import { DIRECTIONS } from '../utils/constants.js';
-import { GameState, equipWeapon, equipArmor, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
+import { GameState, equipWeapon, equipArmor, equipBoots, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
 import { CAPTIVES } from '../state/Captives.js';
 import { initHud } from '../utils/hud.js';
 import { playMusic, playSfx } from '../audio/AudioManager.js';
@@ -14,10 +14,16 @@ import { playMusic, playSfx } from '../audio/AudioManager.js';
 // Uma melhoria de cada tipo por fase — lâmina, pistola e armadura. A pistola
 // (a primeira arma de longo alcance do jogo) fica no cofre trancado, como
 // recompensa principal do setor.
+// Botas de Impulso: item de deslocamento, um por REGIÃO (não por fase — muda
+// demais a movimentação do jogo pra distribuir em toda fase), sempre na
+// primeira fase da região. Esta é a primeira região, por isso o bônus é o
+// mais discreto dos três (Torre e Estação Fantasma têm o de cada região
+// seguinte, sempre maior — ver GameState.equipBoots, nunca regride).
 const ITEMS = [
   { id: 'plasma_blade', markerKey: 'I', texture: 'item_sword', name: 'Lâmina de Plasma', kind: 'weapon', value: 35 },
   { id: 'reinforced_armor', markerKey: 'A', texture: 'item_armor', name: 'Blindagem Reforçada', kind: 'armor', value: 40 },
-  { id: 'pulse_pistol', markerKey: 'R', texture: 'item_pistol', name: 'Pistola de Pulso', kind: 'pistol', pistolDamage: 18, tint: 0x9fffe8 }
+  { id: 'pulse_pistol', markerKey: 'R', texture: 'item_pistol', name: 'Pistola de Pulso', kind: 'pistol', pistolDamage: 18, tint: 0x9fffe8 },
+  { id: 'dungeon_boots', markerKey: 'P', texture: 'item_boots', name: 'Botas de Impulso', kind: 'boots', speedMul: 1.15 }
 ];
 
 const AMMO_CHANCE_NORMAL = 0.1;
@@ -275,6 +281,14 @@ export default class DungeonScene extends Phaser.Scene {
           this.game.events.emit('item-pickup', firstTime
             ? `${item.name} equipada! Pressione F ou clique direito para atirar.`
             : `${item.name} equipada! Dano da pistola aumentado.`);
+          this._emitStats();
+          continue;
+        }
+
+        if (item.kind === 'boots') {
+          GameState.itemsTaken.add(item.id);
+          equipBoots(item.name, item.speedMul);
+          this.game.events.emit('item-pickup', `${item.name} equipadas! Velocidade de deslocamento aumentada.`);
           this._emitStats();
           continue;
         }

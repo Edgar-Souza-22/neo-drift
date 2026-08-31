@@ -7,7 +7,7 @@ import ShooterDrone from '../entities/ShooterDrone.js';
 import CuratorBoss from '../entities/CuratorBoss.js';
 import NPC from '../entities/NPC.js';
 import { DIRECTIONS } from '../utils/constants.js';
-import { GameState, equipWeapon, equipArmor, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
+import { GameState, equipWeapon, equipArmor, equipBoots, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
 import { TOWER_CAPTIVES } from '../state/TowerCaptives.js';
 import { initHud } from '../utils/hud.js';
 import { playMusic, playSfx } from '../audio/AudioManager.js';
@@ -15,10 +15,13 @@ import { playMusic, playSfx } from '../audio/AudioManager.js';
 // Uma melhoria de cada tipo por fase — todas encontradas normalmente pelo
 // mapa. O mecanismo de bloqueio desta fase são dois quebra-cabeças reais,
 // não um cofre nem alvos de combate.
+// Botas de Impulso: primeira fase do Distrito Neon (2ª região) — bônus maior
+// que o da região anterior (Setor de Contenção), ver nota em DungeonScene.js.
 const ITEMS = [
   { id: 'tower_pilebunker', markerKey: 'I', texture: 'item_pilebunker', name: 'Britadeira', kind: 'weapon', meleeKind: 'pilebunker', value: 140, tint: 0x8fc9ff },
   { id: 'tower_pistol_upgrade', markerKey: 'C', texture: 'item_pistol', name: 'Pistola de Precisão', kind: 'pistol', pistolDamage: 72, tint: 0x8fc9ff },
-  { id: 'tower_armor', markerKey: 'A', texture: 'item_armor', name: 'Blindagem do Curador', kind: 'armor', value: 100, tint: 0xffd27a }
+  { id: 'tower_armor', markerKey: 'A', texture: 'item_armor', name: 'Blindagem do Curador', kind: 'armor', value: 100, tint: 0xffd27a },
+  { id: 'tower_boots', markerKey: 'P', texture: 'item_boots', name: 'Botas de Salto Sísmico', kind: 'boots', speedMul: 1.25 }
 ];
 
 const HEAL_AMOUNT = 50;
@@ -438,6 +441,14 @@ export default class TowerScene extends Phaser.Scene {
           this.game.events.emit('item-pickup', firstTime
             ? `${item.name} equipada! Pressione F ou clique direito para atirar.`
             : `${item.name} equipada! Arma à distância trocada.`);
+          this._emitStats();
+          continue;
+        }
+
+        if (item.kind === 'boots') {
+          GameState.itemsTaken.add(item.id);
+          equipBoots(item.name, item.speedMul);
+          this.game.events.emit('item-pickup', `${item.name} equipadas! Velocidade de deslocamento aumentada.`);
           this._emitStats();
           continue;
         }

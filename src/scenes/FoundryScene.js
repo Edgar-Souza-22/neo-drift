@@ -6,7 +6,7 @@ import Enemy from '../entities/Enemy.js';
 import FoundryBoss from '../entities/FoundryBoss.js';
 import NPC from '../entities/NPC.js';
 import { DIRECTIONS } from '../utils/constants.js';
-import { GameState, equipWeapon, equipArmor, equipBoots, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
+import { GameState, equipWeapon, equipArmor, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
 import { FOUNDRY_CAPTIVES } from '../state/FoundryCaptives.js';
 import { initHud } from '../utils/hud.js';
 import { playMusic, playSfx } from '../audio/AudioManager.js';
@@ -17,8 +17,7 @@ import { playMusic, playSfx } from '../audio/AudioManager.js';
 const ITEMS = [
   { id: 'foundry_weapon', markerKey: 'I', texture: 'item_sword', name: 'Lâmina Vulcânica', kind: 'weapon', value: 65, tint: 0xff8a3d },
   { id: 'foundry_armor', markerKey: 'A', texture: 'item_armor', name: 'Blindagem Térmica', kind: 'armor', value: 55 },
-  { id: 'foundry_smg', markerKey: 'R', texture: 'item_smg', name: 'SMG Neural', kind: 'pistol', rangedKind: 'smg', pistolDamage: 26, tint: 0xffcf3d },
-  { id: 'foundry_boots', markerKey: 'P', texture: 'item_boots', name: 'Botas de Impulso', kind: 'boots', speedMul: 1.15 }
+  { id: 'foundry_smg', markerKey: 'R', texture: 'item_smg', name: 'SMG Neural', kind: 'pistol', rangedKind: 'smg', pistolDamage: 26, tint: 0xffcf3d }
 ];
 
 const HEAL_AMOUNT = 50;
@@ -303,14 +302,6 @@ export default class FoundryScene extends Phaser.Scene {
           this.game.events.emit('item-pickup', firstTime
             ? `${item.name} equipada! Pressione F ou clique direito para atirar.`
             : `${item.name} equipada! Arma à distância trocada.`);
-          this._emitStats();
-          continue;
-        }
-
-        if (item.kind === 'boots') {
-          GameState.itemsTaken.add(item.id);
-          equipBoots(item.name, item.speedMul);
-          this.game.events.emit('item-pickup', `${item.name} equipadas! Velocidade de deslocamento aumentada.`);
           this._emitStats();
           continue;
         }

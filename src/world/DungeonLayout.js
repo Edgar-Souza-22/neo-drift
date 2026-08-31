@@ -59,7 +59,7 @@ export function buildContainmentSector() {
     ],
     I: [{ gx: 12, gy: 2 }], // detenção — Lâmina de Plasma
     A: [{ gx: 11, gy: 9 }], // energia — Blindagem Reforçada
-    P: [{ gx: 17, gy: 4 }], // vigilância — sem item (marcador livre)
+    P: [{ gx: 17, gy: 4 }], // vigilância — Botas de Impulso
     B: [{ gx: 20, gy: 12 }], // núcleo — Guardião Núcleo
     L: [{ gx: 3, gy: 7 }], // porta trancada do cofre
     R: [{ gx: 4, gy: 12 }] // cofre — recompensa (Pistola de Pulso)

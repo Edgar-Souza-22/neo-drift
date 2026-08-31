@@ -83,6 +83,7 @@ export function buildTowerWing() {
     I: [{ gx: 17, gy: 3 }], // vigilância — arma
     C: [{ gx: 30, gy: 3 }], // depósito — upgrade de pistola
     A: [{ gx: 45, gy: 5 }], // controle — armadura
+    P: [{ gx: 7, gy: 7 }], // entrada — Botas de Impulso
     H: [{ gx: 4, gy: 7 }, { gx: 30, gy: 19 }, { gx: 9, gy: 29 }], // kits de reparo
     // Sala de Sequência — 4 placas, na ordem 1→2→3→4 (a ordem do array é a
     // ordem correta; ver TowerScene).

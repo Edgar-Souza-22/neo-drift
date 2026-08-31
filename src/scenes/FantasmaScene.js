@@ -7,17 +7,20 @@ import MiniBoss from '../entities/MiniBoss.js';
 import GhostTrainBoss from '../entities/GhostTrainBoss.js';
 import NPC from '../entities/NPC.js';
 import { DIRECTIONS } from '../utils/constants.js';
-import { GameState, equipWeapon, equipArmor, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
+import { GameState, equipWeapon, equipArmor, equipBoots, rescueNpc, addInventoryItem, upgradePistol, addAmmo, addStim, addEmpCharge } from '../state/GameState.js';
 import { FANTASMA_CAPTIVES } from '../state/FantasmaCaptives.js';
 import { initHud } from '../utils/hud.js';
 import { playMusic, playSfx } from '../audio/AudioManager.js';
 
 // Uma melhoria de cada tipo, como toda fase. A armadura fica dentro da Sala
 // de Sinalização — a recompensa pelo desvio obrigatório, não um cofre à parte.
+// Botas de Impulso: primeira fase do Submundo (3ª região) — maior bônus das
+// três até agora, ver nota em DungeonScene.js.
 const ITEMS = [
   { id: 'fantasma_weapon', markerKey: 'I', texture: 'item_sword', name: 'Lâmina Subterrânea', kind: 'weapon', value: 250, tint: 0xc9a06a },
   { id: 'fantasma_pistol', markerKey: 'C', texture: 'item_pistol', name: 'Pistola de Emergência', kind: 'pistol', pistolDamage: 98, ammoBonus: 6, tint: 0xc9a06a },
-  { id: 'fantasma_armor', markerKey: 'A', texture: 'item_armor', name: 'Blindagem de Túnel', kind: 'armor', value: 160, tint: 0xc9a06a }
+  { id: 'fantasma_armor', markerKey: 'A', texture: 'item_armor', name: 'Blindagem de Túnel', kind: 'armor', value: 160, tint: 0xc9a06a },
+  { id: 'fantasma_boots', markerKey: 'P', texture: 'item_boots', name: 'Botas de Eco Subterrâneo', kind: 'boots', speedMul: 1.35 }
 ];
 
 const HEAL_AMOUNT = 60;
@@ -349,6 +352,14 @@ export default class FantasmaScene extends Phaser.Scene {
           this.game.events.emit('item-pickup', firstTime
             ? `${item.name} equipada! Pressione F ou clique direito para atirar.`
             : `${item.name} equipada! Arma à distância trocada.`);
+          this._emitStats();
+          continue;
+        }
+
+        if (item.kind === 'boots') {
+          GameState.itemsTaken.add(item.id);
+          equipBoots(item.name, item.speedMul);
+          this.game.events.emit('item-pickup', `${item.name} equipadas! Velocidade de deslocamento aumentada.`);
           this._emitStats();
           continue;
         }

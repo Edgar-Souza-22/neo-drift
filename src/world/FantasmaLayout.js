@@ -84,6 +84,7 @@ export function buildFantasmaWing() {
     I: [{ gx: 32, gy: 24 }], // bagageiro — lâmina
     C: [{ gx: 17, gy: 14 }], // bilheteria — pistola
     A: [{ gx: 63, gy: 4 }], // sala de sinalização — armadura (recompensa do desvio obrigatório)
+    P: [{ gx: 7, gy: 10 }], // entrada — Botas de Impulso
     H: [{ gx: 5, gy: 15 }, { gx: 44, gy: 15 }, { gx: 90, gy: 10 }], // kits médicos
     B: [{ gx: 95, gy: 13 }], // câmara dos trilhos — confronto final (O Trem Fantasma)
     // Entrada selada do Portão dos Trilhos — mesma célula de grid[13][67].

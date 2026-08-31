@@ -80,7 +80,7 @@ export function buildFoundryWing() {
     I: [{ gx: 22, gy: 6 }], // minério — arma
     A: [{ gx: 5, gy: 14 }], // resfriamento — armadura
     H: [{ gx: 13, gy: 26 }, { gx: 30, gy: 15 }], // kits de reparo (recuperam HP)
-    P: [{ gx: 42, gy: 3 }], // primária — Botas de Impulso
+    P: [{ gx: 42, gy: 3 }], // primária — sem item (marcador livre)
     B: [{ gx: 33, gy: 27 }], // núcleo — chefe
     L: [{ gx: 33, gy: 15 }], // porta trancada do cofre
     R: [{ gx: 40, gy: 15 }] // cofre — recompensa (Pistola Sísmica)
