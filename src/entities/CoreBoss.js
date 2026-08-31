@@ -19,6 +19,7 @@ export default class CoreBoss extends Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 760,
+      isBoss: true,
       speed: opts.speed || 1.15,
       attackDamage: opts.attackDamage || 22,
       xpReward: opts.xpReward || 380,

@@ -34,6 +34,7 @@ export default class TankBoss extends Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 1300,
+      isBoss: true,
       speed: opts.speed || 0.65,
       attackDamage: opts.attackDamage || 26,
       xpReward: opts.xpReward || 600,

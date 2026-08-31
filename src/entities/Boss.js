@@ -15,6 +15,7 @@ export default class Boss extends Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 380,
+      isBoss: true,
       speed: opts.speed || 1.1,
       attackDamage: opts.attackDamage || 16,
       xpReward: opts.xpReward || 160,

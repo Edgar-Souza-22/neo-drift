@@ -20,6 +20,7 @@ export default class ReactorBoss extends Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 680,
+      isBoss: true,
       speed: opts.speed || 1.2,
       attackDamage: opts.attackDamage || 22,
       xpReward: opts.xpReward || 320,

@@ -29,6 +29,7 @@ export default class EmissoraBoss extends Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 1600,
+      isBoss: true,
       speed: opts.speed || 1.15,
       attackDamage: opts.attackDamage || 24,
       xpReward: opts.xpReward || 800,

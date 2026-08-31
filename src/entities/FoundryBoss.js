@@ -20,6 +20,7 @@ export default class FoundryBoss extends Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 600,
+      isBoss: true,
       speed: opts.speed || 1.15,
       attackDamage: opts.attackDamage || 20,
       xpReward: opts.xpReward || 280,

@@ -17,6 +17,8 @@ function createInitialState() {
     weaponKind: 'sword',
     armorName: null,
     armorBonus: 0,
+    bootsName: null,
+    speedMul: 1,
     hasPistol: false,
     pistolName: null,
     pistolDamage: 18,
@@ -55,7 +57,7 @@ export const GameState = createInitialState();
 // e inventory (array) são tratados à parte em saveGame/loadGame.
 const PLAIN_FIELDS = [
   'level', 'xp', 'xpToNext', 'maxHp', 'hp', 'attackDamage',
-  'weaponName', 'weaponKind', 'armorName', 'armorBonus',
+  'weaponName', 'weaponKind', 'armorName', 'armorBonus', 'bootsName', 'speedMul',
   'hasPistol', 'pistolName', 'pistolDamage', 'pistolAmmo', 'rangedKind',
   'stimCharges', 'empCharges',
   'dungeon1Cleared', 'foundryCleared', 'reactorCleared', 'coreCleared', 'towerCleared', 'arsenalCleared', 'nexusCleared', 'vigilanceCleared', 'fantasmaCleared', 'insulated'
@@ -140,6 +142,15 @@ export function equipArmor(name, maxHpBonus, insulated = false) {
   GameState.maxHp += maxHpBonus;
   GameState.hp += maxHpBonus;
   if (insulated) GameState.insulated = true;
+  saveGame();
+}
+
+// Calçado: multiplicador de velocidade de deslocamento (ver SPEED em
+// Player.js). Nunca regride — pegar de novo um calçado mais fraco não piora
+// o já equipado, mesma regra de equipWeapon/upgradePistol.
+export function equipBoots(name, speedMul) {
+  GameState.bootsName = name;
+  GameState.speedMul = Math.max(GameState.speedMul, speedMul);
   saveGame();
 }
 

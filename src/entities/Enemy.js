@@ -20,6 +20,22 @@ const ATTACK_DAMAGE = 10;
 const MAX_HP = 50;
 const XP_REWARD = 15;
 
+// Multiplicador de HP por fase de combate (índice = ordem de progressão,
+// +12% por fase além da primeira) — cada scene já ajusta hp/attackDamage/
+// xpReward por tipo de inimigo, mas esses valores não subiam de forma
+// consistente entre fases (ex.: o drone base tinha mais HP na Fase 02 do
+// que na 05). Aplicado só em inimigos comuns (chefes únicos passam
+// `isBoss: true` e já têm sua própria curva de HP manual, bem mais alta —
+// dobrar em cima disso ficaria absurdo).
+const PHASE_ORDER = [
+  'DungeonScene', 'FoundryScene', 'ReactorScene', 'CoreScene', 'TowerScene',
+  'ArsenalScene', 'NexusScene', 'VigilanceScene', 'FantasmaScene'
+];
+function phaseHpMultiplier(sceneKey) {
+  const idx = PHASE_ORDER.indexOf(sceneKey);
+  return idx < 0 ? 1 : 1 + idx * 0.12;
+}
+
 export default class Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     this.scene = scene;
@@ -28,7 +44,9 @@ export default class Enemy {
     this.gx = gx;
     this.gy = gy;
     this.spawn = { gx, gy };
-    this.hp = opts.hp || MAX_HP;
+    const baseHp = opts.hp || MAX_HP;
+    this.isBoss = !!opts.isBoss;
+    this.hp = this.isBoss ? baseHp : Math.round(baseHp * phaseHpMultiplier(scene.scene.key));
     this.maxHp = this.hp;
     this.speed = opts.speed || SPEED;
     this.attackDamage = opts.attackDamage || ATTACK_DAMAGE;

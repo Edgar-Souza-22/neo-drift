@@ -73,10 +73,11 @@ export default class Player {
       this.facing = { x: dirX, y: dirY };
     }
 
-    const nx = this.gx + dirX * SPEED * deltaSec;
+    const speed = SPEED * GameState.speedMul;
+    const nx = this.gx + dirX * speed * deltaSec;
     if (this.canOccupy(nx, this.gy)) this.gx = nx;
 
-    const ny = this.gy + dirY * SPEED * deltaSec;
+    const ny = this.gy + dirY * speed * deltaSec;
     if (this.canOccupy(this.gx, ny)) this.gy = ny;
 
     this.gx = Phaser.Math.Clamp(this.gx, 0, this.tileMap.cols - 1);

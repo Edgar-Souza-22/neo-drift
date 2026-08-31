@@ -21,6 +21,7 @@ export default class CuratorBoss extends Enemy {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 820,
+      isBoss: true,
       speed: opts.speed || 1.1,
       attackDamage: opts.attackDamage || 22,
       xpReward: opts.xpReward || 420,

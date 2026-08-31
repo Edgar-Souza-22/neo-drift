@@ -219,6 +219,7 @@ export default class BootScene extends Phaser.Scene {
     if (!this.textures.exists('item_keycard')) this.generateKeycardItem();
     if (!this.textures.exists('item_medkit')) this.generateMedkitItem();
     if (!this.textures.exists('item_pistol')) this.generatePistolItem();
+    this.generateBootsItem();
     this.generateAmmoItem();
     this.generatePilebunkerItem();
     this.generateSmgItem();
@@ -2369,6 +2370,33 @@ export default class BootScene extends Phaser.Scene {
     const g = this.add.graphics();
     renderGrid(g, grid, 0x05060c);
     g.generateTexture('item_pistol', s, s);
+    g.destroy();
+  }
+
+  // Botas de Impulso — item de deslocamento (aumenta a velocidade do
+  // jogador, ver GameState.speedMul). Cano + sola com o mesmo ciano de
+  // "propulsor" já usado nas botas do próprio personagem (_buildPlayerBase),
+  // com riscos de velocidade atrás do calcanhar pra deixar a função óbvia
+  // no ícone mesmo em 20x20.
+  generateBootsItem() {
+    const s = 20;
+    const grid = createGrid(s, s);
+    const bootDark = 0x2a2f45;
+    const bootLight = 0x3a4166;
+    const sole = 0x1c2038;
+    const glow = 0x18e8ff;
+    fillRect(grid, 6, 2, 6, 8, bootDark);
+    paintOver(grid, 6, 2, 6, 2, bootLight);
+    fillRect(grid, 5, 9, 11, 5, bootDark);
+    paintOver(grid, 5, 9, 11, 1, bootLight);
+    fillRect(grid, 4, 14, 13, 3, sole);
+    paintOver(grid, 4, 15, 13, 1, glow);
+    setPixel(grid, 2, 12, glow);
+    setPixel(grid, 1, 13, glow);
+    setPixel(grid, 3, 9, glow);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x05060c);
+    g.generateTexture('item_boots', s, s);
     g.destroy();
   }
 
