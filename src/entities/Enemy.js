@@ -29,7 +29,7 @@ const XP_REWARD = 15;
 // dobrar em cima disso ficaria absurdo).
 const PHASE_ORDER = [
   'DungeonScene', 'FoundryScene', 'ReactorScene', 'CoreScene', 'TowerScene',
-  'ArsenalScene', 'NexusScene', 'VigilanceScene', 'FantasmaScene'
+  'ArsenalScene', 'NexusScene', 'VigilanceScene', 'FantasmaScene', 'MercadoNegroScene'
 ];
 function phaseHpMultiplier(sceneKey) {
   const idx = PHASE_ORDER.indexOf(sceneKey);

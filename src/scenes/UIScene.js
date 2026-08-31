@@ -25,7 +25,8 @@ const PHASE_OUTCOMES = {
   ArsenalScene: { line: 'O Arsenal Blindado perde seu tanque de guarda — e o canhão que ele carregava.', region: 'ao Distrito Neon' },
   NexusScene: { line: 'Os portais do Nexo de Transporte param de ciclar sozinhos.', region: 'ao Distrito Neon' },
   VigilanceScene: { line: 'A rede de vigilância do Distrito Neon fica cega por um tempo — mas alguém lá em cima ainda não respondeu por isso.', region: 'ao Distrito Neon' },
-  FantasmaScene: { line: 'O Trem Fantasma para de cruzar a Estação — os trilhos finalmente ficam quietos.', region: 'ao Submundo' }
+  FantasmaScene: { line: 'O Trem Fantasma para de cruzar a Estação — os trilhos finalmente ficam quietos.', region: 'ao Submundo' },
+  MercadoNegroScene: { line: 'O Barão do Mercado cai — sem ele, ninguém mais cobra "aluguel" no Submundo.', region: 'ao Submundo' }
 };
 
 export default class UIScene extends Phaser.Scene {

@@ -12,6 +12,7 @@ import NexusScene from './scenes/NexusScene.js';
 import VigilanceScene from './scenes/VigilanceScene.js';
 import SubmundoScene from './scenes/SubmundoScene.js';
 import FantasmaScene from './scenes/FantasmaScene.js';
+import MercadoNegroScene from './scenes/MercadoNegroScene.js';
 import UIScene from './scenes/UIScene.js';
 
 const config = {
@@ -28,7 +29,7 @@ const config = {
       debug: false
     }
   },
-  scene: [BootScene, TownScene, DungeonScene, FoundryScene, ReactorScene, CoreScene, DistrictScene, TowerScene, ArsenalScene, NexusScene, VigilanceScene, SubmundoScene, FantasmaScene, UIScene]
+  scene: [BootScene, TownScene, DungeonScene, FoundryScene, ReactorScene, CoreScene, DistrictScene, TowerScene, ArsenalScene, NexusScene, VigilanceScene, SubmundoScene, FantasmaScene, MercadoNegroScene, UIScene]
 };
 
 window.__game = new Phaser.Game(config);

@@ -6,6 +6,7 @@ import NPC from '../entities/NPC.js';
 import { DIRECTIONS } from '../utils/constants.js';
 import { GameState } from '../state/GameState.js';
 import { FANTASMA_CAPTIVES } from '../state/FantasmaCaptives.js';
+import { MERCADO_NEGRO_CAPTIVES } from '../state/MercadoNegroCaptives.js';
 import { initHud } from '../utils/hud.js';
 import { playMusic, playSfx } from '../audio/AudioManager.js';
 
@@ -82,6 +83,20 @@ export default class SubmundoScene extends Phaser.Scene {
       }));
     });
 
+    const mercadoArrivalSpots = this.tileMap.allMarkers('N2');
+    MERCADO_NEGRO_CAPTIVES.forEach((captive, i) => {
+      if (!GameState.rescuedNpcs.has(captive.id)) return;
+      const spot = mercadoArrivalSpots[i];
+      if (!spot) return;
+      this.npcs.push(new NPC(this, this.tileMap, spot.gx, spot.gy, {
+        id: captive.id,
+        name: captive.name,
+        texture: 'npc_worker',
+        lines: captive.townLines,
+        tint: i === 1 ? 0xe8b93d : 0x8a6a4a
+      }));
+    });
+
     // Passagem de volta pro Distrito Neon — sempre disponível, sem gancho.
     // Mesmo buraco físico usado na descida, não um portal/porta.
     this.holePos = this.tileMap.marker('P');
@@ -101,6 +116,20 @@ export default class SubmundoScene extends Phaser.Scene {
     this.add.text(doorWorld.x, doorWorld.y - 22, 'ESTAÇÃO FANTASMA →', {
       fontFamily: 'Courier New', fontSize: '9px', color: '#c9a06a'
     }).setOrigin(0.5).setDepth(9001);
+
+    // Porta de entrada pro Mercado Negro dos Túneis (Fase 10) — só existe
+    // depois de limpar a Estação Fantasma.
+    this.mercadoDoorPos = null;
+    if (GameState.fantasmaCleared) {
+      this.mercadoDoorPos = this.tileMap.marker('E2');
+      const mercadoWorld = this.tileMap.gridToWorld(this.mercadoDoorPos.gx, this.mercadoDoorPos.gy);
+      this.add.image(mercadoWorld.x, mercadoWorld.y, 'light_pool').setDepth(-999).setBlendMode(Phaser.BlendModes.ADD).setTint(0xe8b93d);
+      this.mercadoDoorSprite = this.add.image(mercadoWorld.x, mercadoWorld.y, 'door').setDepth(9000).setTint(0xe8b93d);
+      this.tweens.add({ targets: this.mercadoDoorSprite, alpha: 0.45, duration: 650, yoyo: true, repeat: -1 });
+      this.add.text(mercadoWorld.x, mercadoWorld.y - 22, 'MERCADO NEGRO DOS TÚNEIS →', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#e8b93d'
+      }).setOrigin(0.5).setDepth(9001);
+    }
 
     this.transitioning = false;
 
@@ -201,6 +230,13 @@ export default class SubmundoScene extends Phaser.Scene {
     if (doorDist < 0.6 && !this.transitioning) {
       this._enterDoor();
     }
+
+    if (this.mercadoDoorPos) {
+      const mercadoDist = Math.hypot(this.player.gx - this.mercadoDoorPos.gx, this.player.gy - this.mercadoDoorPos.gy);
+      if (mercadoDist < 0.6 && !this.transitioning) {
+        this._enterMercadoDoor();
+      }
+    }
   }
 
   // Mesma passagem física (sem flash colorido) usada pra descer.
@@ -229,6 +265,20 @@ export default class SubmundoScene extends Phaser.Scene {
     this.cameras.main.once('camerafadeoutcomplete', () => {
       this.scene.stop('UIScene');
       this.scene.start('FantasmaScene');
+    });
+  }
+
+  _enterMercadoDoor() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door');
+
+    this.tweens.add({ targets: this.mercadoDoorSprite, scale: 1.35, duration: 200, yoyo: true, ease: 'Cubic.Out' });
+    this.cameras.main.flash(150, 232, 185, 61);
+    this.cameras.main.fadeOut(420, 8, 6, 4);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('MercadoNegroScene');
     });
   }
 }

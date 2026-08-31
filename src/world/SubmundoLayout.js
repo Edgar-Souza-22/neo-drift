@@ -44,7 +44,13 @@ export function buildSubmundoHub() {
     P: [{ gx: 5, gy: 7 }],
     // Porta de entrada pra Estação Fantasma (Fase 09) — sempre aberta.
     E: [{ gx: 18, gy: 6 }],
+    // Porta de entrada pro Mercado Negro dos Túneis (Fase 10) — só existe
+    // depois de limpar a Estação Fantasma, mesmo gancho usado no Distrito
+    // Neon entre uma fase e a próxima da região.
+    E2: [{ gx: 12, gy: 4 }],
     N: [{ gx: 8, gy: 8 }, { gx: 14, gy: 8 }],
+    // Pontos de chegada dos NPCs resgatados no Mercado Negro (Fase 10).
+    N2: [{ gx: 5, gy: 11 }, { gx: 18, gy: 11 }],
     X: [{ gx: 6, gy: 11 }, { gx: 17, gy: 11 }]
   };
 

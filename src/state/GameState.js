@@ -40,6 +40,8 @@ function createInitialState() {
     // Fica true ao vencer O Trem Fantasma (Fase 09) — primeira fase do
     // Submundo (Região 3).
     fantasmaCleared: false,
+    // Fica true ao vencer O Barão do Mercado (Fase 10) — 2ª fase do Submundo.
+    mercadoNegroCleared: false,
     // Fica true ao pegar a Blindagem Isolante (cofre da Fase 03) — a partir
     // daí, piso eletrificado para de causar dano, pro resto do jogo.
     insulated: false,
@@ -60,7 +62,7 @@ const PLAIN_FIELDS = [
   'weaponName', 'weaponKind', 'armorName', 'armorBonus', 'bootsName', 'speedMul',
   'hasPistol', 'pistolName', 'pistolDamage', 'pistolAmmo', 'rangedKind',
   'stimCharges', 'empCharges',
-  'dungeon1Cleared', 'foundryCleared', 'reactorCleared', 'coreCleared', 'towerCleared', 'arsenalCleared', 'nexusCleared', 'vigilanceCleared', 'fantasmaCleared', 'insulated'
+  'dungeon1Cleared', 'foundryCleared', 'reactorCleared', 'coreCleared', 'towerCleared', 'arsenalCleared', 'nexusCleared', 'vigilanceCleared', 'fantasmaCleared', 'mercadoNegroCleared', 'insulated'
 ];
 
 // Falha silenciosamente se localStorage não estiver disponível (modo

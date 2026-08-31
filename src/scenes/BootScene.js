@@ -221,6 +221,8 @@ export default class BootScene extends Phaser.Scene {
     this.generateEmissoraBoss();
     this.generateDwellerEnemy();
     this.generateGhostTrainBoss();
+    this.generateMarketMilitia();
+    this.generateMarketBaronBoss();
     this.generatePortal();
     this.generateKiosk();
     this.generateHoleProp();
@@ -2019,6 +2021,46 @@ export default class BootScene extends Phaser.Scene {
     g.destroy();
   }
 
+  // Miliciano do Mercado — inimigo novo da Fase 10. Primeiro inimigo comum
+  // do jogo com silhueta claramente HUMANA (não drone/robô): mercenário
+  // encapuzado, jaqueta de couro remendada, óculos âmbar brilhando por baixo
+  // do capuz e uma lâmina curta na mão — a estética "contrabandista armado"
+  // do Mercado Negro, bem diferente de qualquer casco/hull anterior.
+  generateMarketMilitia() {
+    if (this.textures.exists('enemy_militia')) return;
+    const w = 16;
+    const h = 20;
+    const grid = createGrid(w, h);
+    const hood = 0x2a2018;
+    const hoodLight = 0x3a2c1e;
+    const jacket = 0x3a2418;
+    const jacketLight = 0x4a3020;
+    const eyes = 0xe8b93d;
+    const blade = 0xd8d8dc;
+
+    fillCircle(grid, 8, 5, 4, hood);
+    paintOver(grid, 4, 2, 8, 3, hoodLight);
+    setPixel(grid, 6, 6, eyes);
+    setPixel(grid, 10, 6, eyes);
+
+    fillRect(grid, 3, 9, 10, 8, jacket);
+    paintOver(grid, 4, 10, 6, 3, jacketLight);
+    fillRect(grid, 1, 9, 3, 5, jacket);
+    fillRect(grid, 12, 9, 3, 5, jacket);
+
+    // Lâmina curta na mão direita — silhueta reconhecível mesmo pequena.
+    fillRect(grid, 13, 8, 1, 6, blade);
+    setPixel(grid, 13, 7, blade);
+
+    fillRect(grid, 4, 17, 3, 3, hood);
+    fillRect(grid, 9, 17, 3, 3, hood);
+
+    const g2 = this.add.graphics();
+    renderGrid(g2, grid, 0x0a0704);
+    g2.generateTexture('enemy_militia', w, h);
+    g2.destroy();
+  }
+
   // Confronto final da Fase 09 "O Trem Fantasma" — núcleo esférico
   // espectral (não um losango/octógono como os construtos anteriores),
   // pálido/translúcido na paleta, com dois faróis e marcas de janela
@@ -2092,6 +2134,71 @@ export default class BootScene extends Phaser.Scene {
     renderGrid(g, grid, 0x05060c);
     g.generateTexture('boss_ghosttrain', w, h);
     g.destroy();
+  }
+
+  // Chefe final da Fase 10 "Mercado Negro dos Túneis" — O Barão do Mercado:
+  // silhueta HUMANA pesada (casaco largo, não um casco/hull como os chefes
+  // mecânicos anteriores), capuz com viseira âmbar brilhando, um braço
+  // mecânico superdimensionado (lançador da Granada Suja) e detalhes
+  // dourados (correntes, fivelas) reforçando o tema "ganância/contrabando" —
+  // o único chefe com aparência de PESSOA, não máquina/criatura/veículo.
+  generateMarketBaronBoss() {
+    if (this.textures.exists('boss_marketbaron')) return;
+    const w = 46;
+    const h = 44;
+    const grid = createGrid(w, h);
+    const coatDark = 0x1c1410;
+    const coat = 0x2c2018;
+    const coatLight = 0x3c2c20;
+    const gold = 0xe8b93d;
+    const goldLight = 0xffe066;
+    const visor = 0xe8b93d;
+    const armDark = 0x14100c;
+    const arm = 0x2a201a;
+
+    // Casaco largo — mais triângulo/trapézio que os cascos redondos dos
+    // outros chefes, ombros marcadamente mais largos que a cintura.
+    for (let dy = 0; dy <= 26; dy++) {
+      const width = 10 + Math.round(dy * 0.35);
+      fillRect(grid, 23 - width, 14 + dy, width * 2, 1, coat);
+    }
+    paintOver(grid, 8, 14, 30, 4, coatLight);
+
+    const coatNoise = createNoise2D();
+    mottle(grid, coatNoise, { color: this._shade(coat, -14, -12, -10), threshold: 0.4, scale: 0.28, region: { x0: 6, y0: 14, w: 34, h: 26 } });
+    mottle(grid, coatNoise, { color: this._shade(coat, 10, 8, 6), threshold: 0.58, scale: 0.28, offsetX: 40, offsetY: 20, region: { x0: 6, y0: 14, w: 34, h: 26 } });
+
+    // Capuz + viseira âmbar.
+    fillCircle(grid, 23, 9, 8, coatDark);
+    fillCircle(grid, 23, 9, 6, coat);
+    fillRect(grid, 17, 8, 12, 3, visor);
+    setPixel(grid, 18, 8, goldLight);
+
+    // Correntes/fivelas douradas no peito — motivo "ganância".
+    for (const y of [20, 24, 28]) {
+      setPixel(grid, 20, y, gold);
+      setPixel(grid, 26, y, gold);
+    }
+    fillRect(grid, 20, 32, 6, 3, gold);
+
+    // Braço mecânico superdimensionado (lançador da Granada Suja) — bem
+    // maior que o braço esquerdo, assimétrico de propósito.
+    fillCircle(grid, 38, 24, 7, armDark);
+    fillCircle(grid, 38, 24, 5, arm);
+    fillCircle(grid, 38, 24, 2, gold);
+    fillRect(grid, 34, 30, 8, 6, armDark);
+
+    // Braço esquerdo, comum.
+    fillCircle(grid, 8, 22, 4, coatDark);
+
+    // Botas pesadas.
+    fillRect(grid, 12, 38, 8, 5, coatDark);
+    fillRect(grid, 26, 38, 8, 5, coatDark);
+
+    const g2 = this.add.graphics();
+    renderGrid(g2, grid, 0x0a0704);
+    g2.generateTexture('boss_marketbaron', w, h);
+    g2.destroy();
   }
 
   // Portal de teleporte — anéis concêntricos com pequenas marcas
