@@ -3,7 +3,7 @@ import TileMap from '../world/TileMap.js';
 import { buildMercadoNegroWing } from '../world/MercadoNegroLayout.js';
 import Player from '../entities/Player.js';
 import Enemy from '../entities/Enemy.js';
-import MiniBoss from '../entities/MiniBoss.js';
+import CapatazBoss from '../entities/CapatazBoss.js';
 import MarketBaronBoss from '../entities/MarketBaronBoss.js';
 import NPC from '../entities/NPC.js';
 import { DIRECTIONS } from '../utils/constants.js';
@@ -112,13 +112,14 @@ export default class MercadoNegroScene extends Phaser.Scene {
       }))
     ];
 
-    // Capataz do Mercado — sub-chefe atrás do Cofre de Acesso. Derrotá-lo é
-    // o que reabre a saída da própria sala (ver _checkSubChefeExitGate),
-    // igual ao Guardião da Sinalização na Fase 09.
+    // Capataz do Mercado — sub-chefe atrás do Cofre de Acesso, com visual e
+    // golpe de área próprios (CapatazBoss.js), não o "Guardião do Cofre"
+    // genérico reaproveitado pelas outras fases. Derrotá-lo é o que reabre a
+    // saída da própria sala (ver _updateGates/gate4), igual ao Guardião da
+    // Sinalização na Fase 09.
     const capatazSpawn = this.tileMap.marker('M');
-    this.subChefe = new MiniBoss(this, this.tileMap, capatazSpawn.gx, capatazSpawn.gy, {
-      hp: 350, attackDamage: 27, xpReward: 130, texture: 'enemy_miniboss',
-      name: 'CAPATAZ DO MERCADO', onDeath: onEnemyDeath
+    this.subChefe = new CapatazBoss(this, this.tileMap, capatazSpawn.gx, capatazSpawn.gy, {
+      onDeath: onEnemyDeath
     });
     this.enemies.push(this.subChefe);
 

@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import Enemy from './Enemy.js';
-import { TILE_SIZE } from '../utils/constants.js';
 import { playSfx } from '../audio/AudioManager.js';
 
 const ENRAGE_THRESHOLD = 0.35;
@@ -86,6 +85,9 @@ export default class MarketBaronBoss extends Enemy {
   // Marca a posição ATUAL do jogador (não segue mais depois disso) e cresce
   // por GRENADE_TELEGRAPH_MS antes de explodir — dá tempo real de sair de
   // cima da marca, mas o Barão continua se movendo/batendo normalmente.
+  // Aviso reaproveita o mesmo `light_pool` + tween de escala usado pelo
+  // Curador Supremo (não um Arc/`add.circle` com tween de raio — API que
+  // travava o jogo nessa luta).
   _tryThrowGrenade(player) {
     if (this.grenade) return;
     const now = this.scene.time.now;
@@ -98,39 +100,34 @@ export default class MarketBaronBoss extends Enemy {
     const targetGy = player.gy;
     const world = this.tileMap.gridToWorld(targetGx, targetGy);
 
-    const ring = this.scene.add.circle(world.x, world.y, 4, GRENADE_TINT, 0.5)
-      .setStrokeStyle(2, GRENADE_TINT, 0.9).setDepth(8999).setBlendMode(Phaser.BlendModes.ADD);
-    const radiusPx = GRENADE_RADIUS * TILE_SIZE;
+    const ring = this.scene.add.image(world.x, world.y, 'light_pool')
+      .setTint(GRENADE_TINT).setBlendMode(Phaser.BlendModes.ADD).setDepth(8999).setScale(0.15).setAlpha(0.55);
     this.scene.tweens.add({
-      targets: ring, radius: radiusPx, alpha: 0.85,
+      targets: ring, scale: GRENADE_RADIUS, alpha: 0.85,
       duration: GRENADE_TELEGRAPH_MS, ease: 'Cubic.In'
     });
 
-    this.grenade = { gx: targetGx, gy: targetGy, ring, hitPlayer: false };
+    this.grenade = { gx: targetGx, gy: targetGy, ring };
     playSfx(this.scene, 'sfx_enrage', { volume: 0.3 });
 
-    this.scene.time.delayedCall(GRENADE_TELEGRAPH_MS, () => this._detonateGrenade());
+    this.scene.time.delayedCall(GRENADE_TELEGRAPH_MS, () => this._detonateGrenade(player));
   }
 
-  _detonateGrenade() {
-    if (!this.alive || !this.grenade) return;
+  // Resolve o dano NUM SÓ INSTANTE (na detonação, não frame a frame durante
+  // o telégrafo) — mesmo padrão do Curador Supremo (_resolveBurst).
+  _detonateGrenade(player) {
+    if (!this.grenade) return;
     const { gx, gy } = this.grenade;
     const world = this.tileMap.gridToWorld(gx, gy);
     this.scene.cameras.main.flash(90, 232, 185, 61);
     this._spawnHitParticles(world.x, world.y, 8, 26, GRENADE_TINT);
     this._clearGrenade();
-  }
+    if (!this.alive) return;
 
-  _checkGrenadeHit(player) {
-    if (!this.grenade || this.grenade.hitPlayer || !player.alive) return;
-    const dist = Math.hypot(player.gx - this.grenade.gx, player.gy - this.grenade.gy);
-    if (dist <= GRENADE_RADIUS) {
-      // Só acerta no instante da detonação (aro já cresceu até o raio final),
-      // não durante todo o telégrafo — ring.radius reflete o tamanho atual.
-      const currentRadiusTiles = this.grenade.ring.radius / TILE_SIZE;
-      if (currentRadiusTiles >= GRENADE_RADIUS - 0.05) {
+    if (player.alive) {
+      const dist = Math.hypot(player.gx - gx, player.gy - gy);
+      if (dist <= GRENADE_RADIUS) {
         player.takeDamage(this.grenadeDamage);
-        this.grenade.hitPlayer = true;
         this.scene.cameras.main.shake(160, 0.007);
       }
     }
@@ -149,7 +146,6 @@ export default class MarketBaronBoss extends Enemy {
 
     super.update(deltaSec, player);
     this._tryThrowGrenade(player);
-    if (this.grenade) this._checkGrenadeHit(player);
 
     if (this.nameTag) this.nameTag.setPosition(this.sprite.x, this.sprite.y - 46);
     if (this.auraRing) {

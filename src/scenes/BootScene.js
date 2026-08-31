@@ -222,6 +222,7 @@ export default class BootScene extends Phaser.Scene {
     this.generateDwellerEnemy();
     this.generateGhostTrainBoss();
     this.generateMarketMilitia();
+    this.generateCapatazMiniBoss();
     this.generateMarketBaronBoss();
     this.generatePortal();
     this.generateKiosk();
@@ -2059,6 +2060,56 @@ export default class BootScene extends Phaser.Scene {
     renderGrid(g2, grid, 0x0a0704);
     g2.generateTexture('enemy_militia', w, h);
     g2.destroy();
+  }
+
+  // Capataz do Mercado — sub-chefe da Fase 10. Silhueta HUMANA própria (não
+  // o "enemy_miniboss" mecânico genérico reaproveitado por 4 outras fases):
+  // um leão-de-chácara maior/mais largo que o Miliciano comum, braços à
+  // mostra (sem casaco, ao contrário do Barão), máscara de solda com uma
+  // fresta âmbar horizontal (diferente da viseira retangular do Barão e dos
+  // olhos redondos do Miliciano) e uma corrente enrolada no punho — reforça
+  // a hierarquia visual "capanga do Barão", com menos dourado que o chefe.
+  generateCapatazMiniBoss() {
+    if (this.textures.exists('enemy_capataz')) return;
+    const w = 24;
+    const h = 28;
+    const grid = createGrid(w, h);
+    const vest = 0x2c2018;
+    const vestLight = 0x3c2c1e;
+    const skin = 0x7a5a42;
+    const skinLight = 0x8f6c50;
+    const mask = 0x14100c;
+    const visor = 0xe8b93d;
+    const chain = 0x8a8a90;
+    const stud = 0xc9a06a;
+
+    // Máscara de solda com fresta única.
+    fillCircle(grid, 12, 6, 6, mask);
+    fillRect(grid, 6, 5, 12, 2, visor);
+    setPixel(grid, 7, 5, 0xffe6a0);
+
+    // Torso largo, sem casaco — colete de couro com tachas.
+    fillRect(grid, 5, 12, 14, 12, vest);
+    paintOver(grid, 6, 13, 8, 3, vestLight);
+    for (const [x, y] of [[7, 15], [16, 15], [7, 20], [16, 20]]) setPixel(grid, x, y, stud);
+
+    // Braços à mostra, musculosos.
+    fillRect(grid, 0, 12, 5, 9, skin);
+    paintOver(grid, 0, 12, 2, 9, skinLight);
+    fillRect(grid, 19, 12, 5, 9, skin);
+    paintOver(grid, 19, 12, 2, 9, skinLight);
+
+    // Corrente enrolada no punho direito.
+    for (const [x, y] of [[20, 21], [21, 22], [20, 23], [21, 24]]) setPixel(grid, x, y, chain);
+
+    // Pernas/botas pesadas.
+    fillRect(grid, 6, 24, 5, 4, mask);
+    fillRect(grid, 13, 24, 5, 4, mask);
+
+    const g3 = this.add.graphics();
+    renderGrid(g3, grid, 0x0a0704);
+    g3.generateTexture('enemy_capataz', w, h);
+    g3.destroy();
   }
 
   // Confronto final da Fase 09 "O Trem Fantasma" — núcleo esférico
