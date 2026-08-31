@@ -249,7 +249,7 @@ export default class BootScene extends Phaser.Scene {
     this.generateHudSegment();
     this.generateHudPanel('hud_panel_stats', 260, 160, 7);
     this.generateHudPanel('hud_panel_dialogue', 900, 70, 10);
-    this.generateHudPanel('hud_panel_menu', 600, 480, 10);
+    this.generateHudPanel('hud_panel_menu', 600, 580, 10);
 
     this.scene.start('TownScene', { loaded });
   }

@@ -327,7 +327,7 @@ export default class UIScene extends Phaser.Scene {
     // quebrava em 2-3 linhas e o rodapé literalmente não cabia (texto mais
     // longo que o próprio painel). Mais largura = menos quebra de linha =
     // menos altura por linha = espaçamento vertical lê melhor também.
-    const top = cy - 220;
+    const top = cy - 270;
     const left = cx - 260;
 
     this.menuDim = this.add.rectangle(0, 0, w, h, 0x000000, 0.6).setOrigin(0, 0).setDepth(300).setVisible(false);
@@ -341,7 +341,7 @@ export default class UIScene extends Phaser.Scene {
 
     this.menuPageLabel = this._hudText(cx, top + 136, '', 16, '#9fffe8').setOrigin(0.5).setDepth(302).setVisible(false);
 
-    this.menuFooter = this._hudText(cx, cy + 218, '◄ ► trocar página · ESC fechar · progresso salvo automaticamente', 12, '#9fb0d0').setOrigin(0.5).setDepth(302).setVisible(false);
+    this.menuFooter = this._hudText(cx, cy + 268, '◄ ► trocar página · ESC fechar · progresso salvo automaticamente', 12, '#9fb0d0').setOrigin(0.5).setDepth(302).setVisible(false);
 
     this.menuCommonElements = [
       this.menuDim, this.menuPanel, this.menuTitle,
@@ -355,6 +355,7 @@ export default class UIScene extends Phaser.Scene {
     const weaponY = pageTop;
     const rangedY = weaponY + ROW_H;
     const armorY = rangedY + ROW_H;
+    const bootsY = armorY + ROW_H;
     const DESC_WRAP = 480;
 
     const buildEquipRow = (y, iconKey) => ({
@@ -367,8 +368,9 @@ export default class UIScene extends Phaser.Scene {
     this.menuWeaponRow = buildEquipRow(weaponY, 'item_sword');
     this.menuRangedRow = buildEquipRow(rangedY, 'item_pistol');
     this.menuArmorRow = buildEquipRow(armorY, 'item_armor');
+    this.menuBootsRow = buildEquipRow(bootsY, 'item_boots');
 
-    this.menuPage0Elements = [this.menuWeaponRow, this.menuRangedRow, this.menuArmorRow]
+    this.menuPage0Elements = [this.menuWeaponRow, this.menuRangedRow, this.menuArmorRow, this.menuBootsRow]
       .flatMap((r) => [r.icon, r.name, r.stat, r.desc]);
 
     // ---------- página 1: consumíveis (uso tático — tecla Q/E em jogo) ----------
@@ -509,6 +511,13 @@ export default class UIScene extends Phaser.Scene {
       : 'Sem bônus de HP');
     this.menuArmorRow.desc.setText(hasArmor ? 'Bônus passivo — não precisa ser trocado ou usado.' : '');
     this.menuArmorRow.icon.setVisible(hasArmor && onPage0);
+
+    const hasBoots = !!GameState.bootsName;
+    const bootsPct = Math.round((GameState.speedMul - 1) * 100);
+    this.menuBootsRow.name.setText(hasBoots ? `Calçado: ${GameState.bootsName}` : 'Calçado: nenhum');
+    this.menuBootsRow.stat.setText(hasBoots ? `+${bootsPct}% velocidade de deslocamento` : 'Sem bônus de velocidade');
+    this.menuBootsRow.desc.setText(hasBoots ? 'Bônus passivo — não precisa ser trocado ou usado.' : '');
+    this.menuBootsRow.icon.setVisible(hasBoots && onPage0);
 
     // ---------- página 1: consumíveis ----------
     this.menuStimRow.name.setText(`Estimulante (tecla ${CONSUMABLE_INFO.stim.key})`);
