@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "slash",
+    "description": "Neo Drift melee slash FX",
+    "fps": 10,
+    "height": 40,
+    "width": 40,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":3,\"chunks\":[{\"layout\":[[0,1,2]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAoCAYAAAA16j4lAAACGklEQVR4nO2YzW3CQBCFh0g2FyNuSQOpgAuFpIGcIkqKuOAGaCUVUABwIpgL5jA5wJjJsAb/rH+Q3iehLGQ9+3aex+tdIgAAADUIwoiDMGJXu1tlT4IkzSaxywRqDQte84LXzjbMzsGVQJtE+d6m2S5TgzDi6Y55uuObtsvsMgx8ic773yk9eBmjrJb5cZX99kFvuf2XtMnaX8N3ImpGs9Yl40y2CRER/byOsn6n9DDQ+dR99LVFdVaeiBahk2lpMmkuPaJFTB2ZfjFt6NMYnlz+itm+NQdhxJNtQrPxhr5/z2NbU+9dK20xeza+6nyksfQEylSIrY6mTA7CiK2xS2VkOLQ2X0mP56TFtPl3rS/Nok1XHlG1m8f1pPSaU7127Jmzj17H7Kfq2lFWUxBGvGfmBa9ZKLK2Sh9B5uZTu6yrvvJg12kvcWXCYqp+QXh0Xe3BH2gSXWWMdcXSRsscfZpcN4aNJ9pq3zw2kV1vMbQmueGqGuuKK0bbm9mXdl/4eMv2E6QBtMG6cn3FtpXcl3lbdAVXruS+m9vEE8VWcp/mb7m3l38pEuCUHgZNvgXXIb688frWJvFitRPoM7KLsCYXMpio/QOLPPSWaNlS8mWc+XHVyyNDKcDJNrnRWNjgvtLkk0US9yzog5Snpqvz4z5Wr6atswfQEb4PVEAPgbkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBF/gAnw1llBlQ4KAAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

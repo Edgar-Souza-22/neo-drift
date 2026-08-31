@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_foundry",
+    "description": "Neo Drift foundry drone hover",
+    "fps": 8,
+    "height": 16,
+    "width": 18,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAQCAYAAAC1MDndAAABu0lEQVR4nM2XvWrDMBSFj4qjwRgaKNmzJJSuHfMCpVlLX6bvkylroXvpGOhYMIUumUyhUNeDHHCHWK50IymWf+Ie8BA7+nzO1ZVsMzg04lGh/s5Fylz/71tt/cjxkzDQzifZzsoz3qAJqI4xqVMEMzHoeKok2x2wDsBNQTZTwDDBXIxpKLTrHxm3sjRoG9AxUyb1GczGoQzKohxrAhNoGgrNlE11g03CAAmiok4n+fpRlzUtzsvbE/D+AABYLDcaS3qSY5kvSA0olwqgL5c2M+b0s/0Bvp/3fi5vnH5myn2/EOqcx2vNi8wmOWNk1bVAB5GGKosjoWqRqIkYfsFsM+b0UzKA/eSpRaJju9JZV6BZKKrjQCSY19gepE40nXQqZ4F8QKeQ2jG0e1ySS0/drxbLzdFtAwDY1ZhX7R2XLQ/U2ztsM07XPPDXOaa9Q13zqtr4icnm7fM0VMXoS1xTEDU3dDD6ZBz8RbGrQncVzKR/9akxdDAXS9xdaOf4+tPKMCbIRcpGPCq2t+e1QSaGfHy3DVb5eb3X/cxXvX9Au6e4pYYM5vLE16j98WwtkC+ob+UiZXy+6sSPz7hf0b+103zgg9AAAAAASUVORK5CYII=\"}]}]"
+  }
+}

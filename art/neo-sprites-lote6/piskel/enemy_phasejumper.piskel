@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_phasejumper",
+    "description": "Neo Drift phase jumper fragment drift",
+    "fps": 8,
+    "height": 18,
+    "width": 18,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAASCAYAAAD4+JjWAAABg0lEQVR4nOWYsWrDMBCGJWNMMQRSMF28dOvQQJ+ha7aumfIgHfMgnbpm69q+QiAtdMvSoSWQQCCELMoQZOyrz6c7X52W/iCQT/anX7IkW7JGqDTJnM9v90sr5WixfophJfA0ydzl+aC4XqzmlXKOQch6+3yxGn78c6EsjBH5Ap/KQEq99+ciL2VAlpYfKQsyIqwgRJur20Z41yzIkLAgI8IKJNJg/DYWOk+x4YjNbWyuU5xQFtdPCBty0EUaKk0y1z+7MB93j5V4Ph2Z9e4reBEuOPdPVc5kKOOcwE8EA17QDBajBM1gMZJzIj9oBxV6uDmmtnpdH1NbdeyH7qB/rpi8YzzTqem6r8Pp2A86gvLpKChGKZ8Mg2IkR+gnTTLnk8QP+TmG4u5zuJ9VTT9w+2DM920RxYmbQNhDnIY1McDex5X/abT81Inzkuk1qMYMs2GOO+q0/EhYPu8Z7A76S9rul3axmrca0TEXpCVYZ7k+TT9t26F+OBW6BmlK67Cs7jzoAL4wdT/F4DVdAAAAAElFTkSuQmCC\"}]}]"
+  }
+}

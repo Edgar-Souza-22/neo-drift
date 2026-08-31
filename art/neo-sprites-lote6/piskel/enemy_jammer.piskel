@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_jammer",
+    "description": "Neo Drift jammer drone hover",
+    "fps": 8,
+    "height": 16,
+    "width": 18,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAQCAYAAAC1MDndAAABo0lEQVR4nNWWsUrDUBSG/0qaQaqCoFAQFFEcAp0UF5e8gEhXH8TRuQ/i6tAXcJY6CSIiiIMQcBCi4hCFdpCbntzcc0+T3KT6T8lpztf/P703ty1Y1PY74+TwBQDgX2/gO/ls2Z6XWAAqM5Lnj18/W0uFWcoDAOwu7wMAHt9v0s9NPE8CBfcnuXoZYyTYuEqwoBeW8tP2O+MVbzVXp7UYyHnLDagsiDOlrpsOJjFev56MTJ2VGVAV0CymVK9SncE4rS9uG+smLsBssTIgqr8QjK5eXZdnV5n7/iDM3NNezxWIC+ky2N1t1g/dtnrvQfc4rY+iYXqtMu2dAg8X09rR+SZMvZ4r0Cga1hosZXQBRNPa2o7ZjySVSRK7xYqCmgqmGE1pobFvajiYK4kr6L+KrmKq/iAU362013MFKrRNLOL8BL1QfJfRXnpo6C9+PYcu2ps5eejxLJ0+8c+b1QTlmIJRDmeuih8ulySdw26xWf7vUNmGpf/Stl5XfnR+DIhDMg05M6AqIE7zCsaxpGf0Grski4JMDFeDduGnrGoDA/MN5koTcd9YGMMGC54AAAAASUVORK5CYII=\"}]}]"
+  }
+}

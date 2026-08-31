@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_tank",
+    "description": "Neo Drift armored tank hover",
+    "fps": 8,
+    "height": 20,
+    "width": 22,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAUCAYAAAAJD/ojAAABxUlEQVR4nNWYQUrDQBSG/2pXZdIa3Kl0ISiRLjyFp/AEgghuBVeCiC4K3VToBXqHnMKFGBRcFHUnMW1wJ+OiJtSkSV6n85LpB1l0+uafvz/D9GUAAkLYstsbym5vKIWwJWUOFSFsFk0Ovyq6dV2LqyCELa+u+wCAy4sTGYZ+rUo/wNSTjtrot9QpxSrC3HD4FcKW7fZurtbg/g4AUFQ3Gr3KMPRrdS7hWdO5E2aoMgiqx0VhPSJWKYgk40kAAGharaXqUwHrEi4Lbr9b2zs0XS+YO565g5cVTtUZHkSSptUiawKA43Tw8f6WGk8FrEs4C1OD4GKtrIWaVguO0yHXO06nsmOHint2Dvd7PX7moRQwRdgk3EEf7t7B9NHp96ZXWKLWRRCEVXAHfeD2T/vhGfT9XsDxKXC4r0st5qjx83/AT9coBUwRVoIziJen6YcG9PklUOmrcpIqg0gyngQYewH5f8PzHgEQ+2AdwmXB7XfZjiNzB+tuZUwPIsmiGyarfm4fzGnE1CC4KO0MNj2IiOgNcpYv/zN3zoa9mfldHLBuYW7K9pt10VR0W1i4g1WFI1YlCC4qa9NMCwKIPaXWz7smLZrzC394HDj861UGAAAAAElFTkSuQmCC\"}]}]"
+  }
+}

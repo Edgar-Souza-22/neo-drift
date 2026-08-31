@@ -7,13 +7,17 @@ import { generateSounds } from '../audio/SoundBank.js';
 import { initMute } from '../audio/AudioManager.js';
 
 // Lote de sprites desenhados à mão (Piskel) — cada lote novo (lote1 → lote2 →
-// lote3-logo-boss → npcs → bosses) é um superset do anterior (parede/piso/
-// porta de cada região, todo tipo de inimigo com loop de hover/pulso, ataque
-// corpo-a-corpo de 4 frames + arremesso de 3, bullet/slash, tiles de puzzle,
-// logo da Ala Central, os 5 NPCs em body/head separados e agora todo chefe
-// único de cada fase). Cada chave abaixo só troca a arte SE o arquivo existir
-// na pasta — sem ele, cai automaticamente pro gerador procedural (guard
-// `this.textures.exists()` em cada generateXxx).
+// lote3-logo-boss → npcs → bosses → lote6) é um superset do anterior (parede/
+// piso/porta de cada região, todo tipo de inimigo com loop de hover/pulso,
+// ataque corpo-a-corpo de 4 frames + arremesso de 3, bullet/slash, tiles de
+// puzzle, logo da Ala Central, os 5 NPCs em body/head separados, todo chefe
+// único de cada fase, e agora os itens/props/FX que ainda eram procedurais:
+// as 7 armas/consumíveis restantes, os 6 props de cenário, portal, bolt,
+// particle e a mira do Tanque de Cerco). Cada chave abaixo só troca a arte SE
+// o arquivo existir na pasta — sem ele, cai automaticamente pro gerador
+// procedural (guard `this.textures.exists()` em cada generateXxx). Só ficam
+// 100% procedurais a vinheta/poça de luz (gradiente de canvas, não dá pra
+// virar sprite) e o HUD (chrome de interface, fora do escopo desses lotes).
 const TILE_KEYS = [
   'wall', 'door', 'floor', 'floor_vent', 'floor_hazard', 'floor_electric',
   'floor_town', 'floor_town_panel', 'floor_town_light',
@@ -33,7 +37,18 @@ const TILE_KEYS = [
 
 const ITEM_KEYS = ['item_sword', 'item_pistol', 'item_armor', 'item_medkit', 'item_keycard'];
 
-const FX_KEYS = ['bullet', 'slash', 'floor_logo', 'floor_logo_0', 'floor_logo_1', 'boss_aura'];
+const FX_KEYS = [
+  'bullet', 'slash', 'floor_logo', 'floor_logo_0', 'floor_logo_1', 'boss_aura',
+  // lote6: portal/bolt só entram no frame estático (drop-in) por enquanto —
+  // ligar o spin/pulso de verdade exigiria trocar add.image por add.sprite
+  // em 8 pontos espalhados por 6 arquivos (cenas + Boss.js/RouterBoss.js/
+  // ShooterDrone.js), fora do escopo desta troca de arte.
+  'portal', 'bolt', 'particle', 'target_reticle'
+];
+
+const ITEM_KEYS_2 = ['item_ammo', 'item_pilebunker', 'item_smg', 'item_shotgun', 'item_railgun', 'item_stim', 'item_emp'];
+
+const PROP_KEYS = ['prop_crate', 'prop_barrel', 'prop_pipe', 'prop_console', 'prop_kiosk', 'prop_hole'];
 
 const NPC_TYPES = ['guard', 'engineer', 'worker', 'coordinator', 'herald'];
 
@@ -54,7 +69,7 @@ const ENEMY_ANIM_TYPES = {
 };
 
 const ART_KEY_OVERRIDES = {};
-for (const key of [...TILE_KEYS, ...ITEM_KEYS, ...FX_KEYS]) ART_KEY_OVERRIDES[key] = key;
+for (const key of [...TILE_KEYS, ...ITEM_KEYS, ...ITEM_KEYS_2, ...PROP_KEYS, ...FX_KEYS]) ART_KEY_OVERRIDES[key] = key;
 for (const [type, frames] of Object.entries(ENEMY_ANIM_TYPES)) {
   ART_KEY_OVERRIDES[type] = type;
   for (let i = 0; i < frames; i++) ART_KEY_OVERRIDES[`${type}_${i}`] = `${type}_${i}`;
@@ -97,7 +112,7 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     // O caminho precisa ser um literal aqui — o plugin de glob do Vite lê a
     // string estaticamente, não aceita vir de uma const/variável.
-    const modules = import.meta.glob('../../art/neo-sprites-bosses/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const modules = import.meta.glob('../../art/neo-sprites-lote6/png/*.png', { eager: true, query: '?url', import: 'default' });
     const urlByFileKey = {};
     for (const [path, url] of Object.entries(modules)) {
       const fileKey = path.split('/').pop().replace(/\.png$/, '');
@@ -533,6 +548,7 @@ export default class BootScene extends Phaser.Scene {
   // canhão do Tanque de Cerco (ver TankBoss.js) pra deixar claro o ponto
   // exato de impacto em vez de só uma poça de luz pulsando.
   generateTargetReticle() {
+    if (this.textures.exists('target_reticle')) return;
     const s = 48;
     const c = s / 2;
     const grid = createGrid(s, s);
@@ -551,6 +567,7 @@ export default class BootScene extends Phaser.Scene {
 
   // Caixote — decoração de cenário (crate de carga/suprimentos).
   generateCrate() {
+    if (this.textures.exists('prop_crate')) return;
     const grid = createGrid(18, 18);
     fillRect(grid, 1, 1, 16, 16, 0x4a3a2a);
 
@@ -572,6 +589,7 @@ export default class BootScene extends Phaser.Scene {
 
   // Barril — decoração de cenário (contêiner cilíndrico).
   generateBarrel() {
+    if (this.textures.exists('prop_barrel')) return;
     const grid = createGrid(14, 18);
     fillRect(grid, 2, 1, 10, 16, 0x3a4a4a);
     paintOver(grid, 3, 1, 8, 16, 0x4f6363);
@@ -592,6 +610,7 @@ export default class BootScene extends Phaser.Scene {
 
   // Tubulação com válvula — decoração de cenário (encostada em paredes).
   generatePipe() {
+    if (this.textures.exists('prop_pipe')) return;
     const grid = createGrid(14, 30);
     fillRect(grid, 4, 0, 6, 30, 0x2a2f45);
     paintOver(grid, 4, 0, 2, 30, 0x3a4166);
@@ -1474,6 +1493,7 @@ export default class BootScene extends Phaser.Scene {
   // Torre de firewall — console/servidor hackeável, uma das 3 espalhadas
   // pela Fase 04. O tint muda em runtime quando hackeada.
   generateFirewallConsole() {
+    if (this.textures.exists('prop_console')) return;
     const grid = createGrid(16, 26);
     fillRect(grid, 1, 1, 14, 24, 0x140f24);
     fillRect(grid, 3, 3, 10, 18, 0x241a40);
@@ -2078,6 +2098,7 @@ export default class BootScene extends Phaser.Scene {
   // assimétricas (pra a rotação em runtime ficar visível de verdade, não
   // um anel perfeitamente simétrico que "giraria" sem parecer girar).
   generatePortal() {
+    if (this.textures.exists('portal')) return;
     const s = 44;
     const grid = createGrid(s, s);
     const ring1 = 0xff5fd0;
@@ -2105,6 +2126,7 @@ export default class BootScene extends Phaser.Scene {
 
   // Quiosque/banca — decoração de cenário do Distrito Neon.
   generateKiosk() {
+    if (this.textures.exists('prop_kiosk')) return;
     const grid = createGrid(20, 22);
     fillRect(grid, 1, 8, 18, 13, 0x1e222c);
     paintOver(grid, 1, 8, 18, 2, 0x2a2f3c);
@@ -2123,6 +2145,7 @@ export default class BootScene extends Phaser.Scene {
   // redor de um vazio escuro, bem diferente da linguagem "tech" de portais/
   // portas do resto do jogo.
   generateHoleProp() {
+    if (this.textures.exists('prop_hole')) return;
     const s = 40;
     const cx = s / 2;
     const cy = s / 2;
@@ -2401,6 +2424,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   generateAmmoItem() {
+    if (this.textures.exists('item_ammo')) return;
     const s = 20;
     const grid = createGrid(s, s);
     for (const ox of [5, 11]) {
@@ -2417,6 +2441,7 @@ export default class BootScene extends Phaser.Scene {
   // Britadeira/Pile-bunker — pistão pesado com cabeça de martelo, silhueta
   // bem mais "grossa"/quadrada que a espada, comunicando peso/lentidão.
   generatePilebunkerItem() {
+    if (this.textures.exists('item_pilebunker')) return;
     const s = 20;
     const grid = createGrid(s, s);
     const metal = 0x5a1015;
@@ -2437,6 +2462,7 @@ export default class BootScene extends Phaser.Scene {
   // SMG Neural — corpo compacto com pente/carregador comprido pra baixo,
   // silhueta diferente da item_pistol (sem carregador saliente).
   generateSmgItem() {
+    if (this.textures.exists('item_smg')) return;
     const s = 20;
     const grid = createGrid(s, s);
     fillRect(grid, 2, 7, 12, 3, 0x2a3a4a);
@@ -2454,6 +2480,7 @@ export default class BootScene extends Phaser.Scene {
   // Shotgun de Choque — corpo largo com cano duplo bem visível, silhueta
   // mais "grande" que qualquer outra arma à distância do jogo.
   generateShotgunItem() {
+    if (this.textures.exists('item_shotgun')) return;
     const s = 20;
     const grid = createGrid(s, s);
     fillRect(grid, 1, 8, 13, 4, 0x4a3a2a);
@@ -2473,6 +2500,7 @@ export default class BootScene extends Phaser.Scene {
   // arma à distância do jogo (lê como "atravessa tudo"), com um núcleo de
   // energia branco-azulado visível ao longo do cano.
   generateRailgunItem() {
+    if (this.textures.exists('item_railgun')) return;
     const s = 20;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 8, 18, 4, 0x2a3a4a);
@@ -2490,6 +2518,7 @@ export default class BootScene extends Phaser.Scene {
   // Estimulante — seringa com líquido visível, ícone único de consumível
   // (nenhum outro item do jogo tem essa silhueta).
   generateStimItem() {
+    if (this.textures.exists('item_stim')) return;
     const s = 20;
     const grid = createGrid(s, s);
     fillRect(grid, 8, 3, 4, 10, 0xdfe8f0);
@@ -2507,6 +2536,7 @@ export default class BootScene extends Phaser.Scene {
   // Granada EMP — orbe com anéis de pulso ao redor, cor violeta reservada
   // (mesma família do CoreBoss) pra sinalizar "efeito anti-robô".
   generateEmpItem() {
+    if (this.textures.exists('item_emp')) return;
     const s = 20;
     const grid = createGrid(s, s);
     fillCircle(grid, 10, 11, 6, 0x1a1330);
@@ -2540,6 +2570,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   generateBolt() {
+    if (this.textures.exists('bolt')) return;
     const s = 12;
     const g = this.add.graphics();
     g.fillStyle(0xff5a1f, 1);
@@ -2563,6 +2594,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   generateParticle() {
+    if (this.textures.exists('particle')) return;
     const g = this.add.graphics();
     g.fillStyle(0xffffff, 1);
     g.fillCircle(3, 3, 3);

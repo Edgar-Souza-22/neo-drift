@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_sentry",
+    "description": "Neo Drift sentry camera pulse",
+    "fps": 6,
+    "height": 18,
+    "width": 18,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAASCAYAAAD4+JjWAAABbUlEQVR4nGNkwAFYObj+YxP//eMbIy49w9EcrIKsHFz/5VT0sFrw6M4loh03HMzBMBCfITBwR06NgYGBgYFt3xqcjiLKnGkTIOa4OVFmDg3dw4LPkOfPrqMYICmlideC4WgOPLSRDUE3AB3ADHx05xJGjA03c1jQDUEGxm8novDPCuej8OVU9Bge3bn0H2YYLnMK3m5E4U8Q9ifLnIFwDxO6ZlgoG7+dyLCYwQOrAwnFBLKagrcbGVoZ7LE6kBRzBso9LLiqPQYGBoZYhh0ELWZgwF11wkA1w0GqmDMQ7mERl1IjSjEuQKn+wW4ORhYbBagAI4BgJTl6AYgsRkz1ClODXgAii5FizkC5h1FGyQCeX9m5OBgYGIivDn9++4FVfjiZw4heoBHboEJummMDw8UceHsBuXCDhTgugBzCL5/dYkBudww3c7AW0riSKiG54WgOC1ZREi3GB4a6OaPVPAGA0lklxwBsncPhZA4Aec18gtyl1KIAAAAASUVORK5CYII=\"}]}]"
+  }
+}

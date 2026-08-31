@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "boss_core",
+    "description": "Neo Drift Vigia Central idle (lenses blink in sequence)",
+    "fps": 6,
+    "height": 46,
+    "width": 46,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALgAAAAuCAYAAACbDNOZAAAFR0lEQVR4nO2dv28TMRTHX6oEFVQ1EYIuLNClS5eysXbuPwATO2uHSJ0jdeiKWNn4Bzrf2o1bunRpWbpAVZEKQUWGMAQnzjv/eO/su/h67ytFSq7n8+fe2T77PdvtQAmt9/pT/ff9ZNzhpn+6+Wrp2O3dFfs6XAn3Qm3hXuNkqGeqf/CNUNIDAIwO8vlx7nW4iskNsGBvGjcAwPVN3khuAL69WQUcZ3p9E/aQ3+wCZMPcf2KgTMYaHZR/yNkwhze70fCsivWQlbJhDtkwhxfP9qLw2VQVN8Byo0gRuYBj6GyYw8XJ4u9l4c/OuSl4MnFnwxyOTmcPuWncAGGVc+cwHqNJLm4AgE/vfgbZWz03qsh9GR1cAe8cAlycAOwfzzKl9I9stZuanisT99n57O3RNG6AGbt6yMLtF7sPrktvwam6n4w7t3dXheN1DHqUynQvUuAG4LO3nbtUAVctH/5OlYIfdAYw6AxqM7Zwt4872G2jxM18vdefbvdnN305zis1uHC3l5vVguuvDVWrAOK/7tZ7/an+Cb2ecLv1kLm7toQYWP9+e3c1HfTpAwYutMG5P6XkIdx8PXTuLk4EMHOd4YT4BqqQy3/qMrpwl1MbuLu+RCohgL1mx3it2SKFur/alL9wx+FWLj01GGwKt8/exi4Kjha5nOsbvX4gsjv/0UFOdu7jqKhr5J4S96rtnQ3zeQAog5zs8Vg1N8XeawD2+SH4QlXPX+DKFlRQUsdS5m6qvZvCXcoPfj8Zdy7HOXz/fRmU+fffl0bXj14TuaHZnUN7ODplbpeq5t4/3oOLk+WodAylYG9jF8Wn9V5/GuuV8/86UzXqVi0EBo4xChduOzcu2E3h9tm7VAE3aevJNvlcW43G8EocY3OnD6TCzZVw07jnP1z9K32SDEBxwMCBtsH/mozncJyJ8q5+uD6ZKmXuptq7CdzGFjyk//jtzjyP9OUmfbZN2dYjpP+4Su6m2rsJ3AUfJ4DRgT//bquVNmAs/QZctZMj4bar7dxLLbhKpCJS+LjN9UOFVudyailFwm1X27nJtdc0It56sm2E/jr6sfT79dHzwjkKPlarYpNwz5Qi98e3y9wfvsTnjuZFASgaGh83GT4FCXe9wgUbHzcV9LIiBXo4tZIqlRaPrDd6/WhRMOFeqK3cQUvWdOmtiYom4oiircVZpYS7Xumt9/vPi4/tnFB5C7itVlJFWcVdRasi3HalyI0LuUlluKO14CJRiqqkgOvh8jIr71cl4a5Xn9+bv8cUyT1EHTz4+nx4VF+160q40+T29bGxFyWEO6gFD3HExw4+1JW3cNebdyi3BHo0CXe4Ugv0GOeiKOkXcI2SuX5O6jwD6iw34RZuG49xuqwSnl8bA54C7ZvMg5mEW7ht3PMaQNmJiOLr5EyDNIGbgG1Mwi3cPu4CNF6GXwaeIletpE6oF+643L4FI65tJlbJ7bL3khcFL8OvW5xV26bjtnRV6yFw+3YlwMfV1IA6/oEBFsferA3wVZ9HvSKUuKumqx7J6xJuHrdrVwKKUrP30nTZo9M94ysToFiL//65dcLUKeGuV/vHe5BBsYsCkB53l7IM39SZf/T4aQG+jMq2gsJdTj5uW6ifss1EivZeA3Dvpq9rdJBX2lfUOUwLWvFgjcp9fZPP/2FWFaqKu057mxZs40Fmitw+e3dRooLD3DUd8ddkHLTnnK9WUlZtCzddPm7KrgQpcrvs7W3yfb7PEPkiZZTAg03CXVQbuUl9Gkr0qgpxNqSxpRduXr7674fATc449OZXJeGuV03lFolEIlFq+gcPWFOdKjyXAwAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

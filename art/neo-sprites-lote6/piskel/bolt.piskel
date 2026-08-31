@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "bolt",
+    "description": "Neo Drift Guardi\u00e3o N\u00facleo homing bolt",
+    "fps": 8,
+    "height": 12,
+    "width": 12,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":2,\"chunks\":[{\"layout\":[[0,1]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAMCAYAAAB4MH11AAAAnUlEQVR4nGNkQAOsbDz/kfm/f31hRFdDinoWdIW/QoRRDGBbw/Afm0Zi1TPCFKMrRAdsa97CNZGingWvKmJAWTYqv2sqCpcRq2tgmtAUs615y8DAgBQs6IajWcK25i0DE14X4TIAHeiX4pTCtIAccLEbpyWYFiAHC1oQEbQEC6A8FeGIZOqlIgK+hGce3BkHknKIz2io6jGKAWoXFQBvB2By+eXvxgAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

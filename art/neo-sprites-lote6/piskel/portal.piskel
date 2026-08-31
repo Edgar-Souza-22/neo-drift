@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "portal",
+    "description": "Neo Drift nexo teleport spin",
+    "fps": 8,
+    "height": 44,
+    "width": 44,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAAAsCAYAAADFEzJmAAAFMUlEQVR4nO2dvXLbMAzHYV+tLPbYDH0J32XOI3Tsks2P5i1Lu+URMufOL9AxQzI6i5XBHWSoFEWAIEVKUMz/nS+OJZM/ISQBfmYBCbSq1mfJfZ/1xyJFfkMVwruq1uepub+yfYfmFZ2ACVk/PIu+Uz3et+/HNnYsb306QnWzmQ0v6lp4g7+EoFJISgif29DRvPtt83N3AIAZ8FqaBa9h41he8c2pDGsrl6GTGBZ1KcQASnkBehUOpZ4XFdlQLCU3rar1uX54lsH++sH/bmq/hfp0hPrhWRw3SZSNF5o/WOHVw+st5QjLAv5+7cQzFJh5v6sGVo/3g1uKZLynY/Pm6b3hdUgVr21fh9TxEl4DJeFlL5KwQkhKHXiU4UJijZyV10jHVOGFSXnJC1xNc4HevR1ZyJfbTe+ztpVzxG2hRh6Fl0m/8HY1Fq/zQx8sjo/6ICm93G7aNFIYufBeL2/vAyoRu5bFwqLsGlj/+Rvl7gqvW9fC2/mFgx1ayyj5ah9n5MJbeL+xqRlBtQTWFdcA8LXz7u0IL7eb7pAJ05NmVXid1wbzYofbGJHRwtuWZJ+roDI1Ibma7IPHdKStROEdidcaLapuNqp42YkMX4yEzT2+qPvMe6haiffFDsUU3vy8Pk3BuwTge5mUq0BYNnUCygV993YkZ1/smZnZ8u63vRZNNS9AdxqdaX2n4u22wIaBOdfGwa6q9dl8hUK3eXumHG2p5zUL7n6rn9fU7hBdeHPzfltV63M7oYDabwEe3c9CwbaLO6y0qpsmILe/c4GmOwKSToZnKlIdr0CFN4y3aYGZAiARVoJeRYDmAeoT7Q6kQrfhnYsXaBJe08aB9i727Qt5/4cQwliHgvVmKITuuA0A3tXtDgBP796efOGN5L1c18zbjYF3hyh3HCtfLxQA/K6OuV54vz6vaD0wJWltQ6VwHUNUePNqCt5BBbioaGr1C3Dg8FV2CWI0VSq8ecXGwADJhleSaUCMNokKb16ljIE/648FjlhINMX2dFOFN6+m4A0qwNz0XoxyLMczVXg9vI6p7RBpsK8zBsaBbO+QBshrnbS2dVYhSQysiffCw0oLrzlawNlYCy9RHpa9FT8RMQ9Cu8Dx82BX4Vg7gCuYVPJaPLPhRV3sPRdetC+/oN0hXHDsmsu+AJ5dn9vK7Y5RhZfQ7tA7Gac+HWGxCCtXo9rXMclGxsD1n78A4HYbXOxjrvUMhe24i6d3Flwdb+Bwkwpea+aVc/0qeB1aYia9hcMX1xGzXpOTeP3r79fWwPbCb3W8+y3Az+/tNfW8Rv4mL16fCy+AZxTCd8QPQnNrPRESX5ybGLoSahJeaWdIC+/c7OvhTbJvCxWzic/8Xspds6PxOvaMqeZ15D1nXvGuZO+CYwEYBftZN9uoXfkGaQpeqzOkntfKd+68eg42CWwdUIXXrWvh7cXAzgAeml4oJipat+mBRZD2mE6rlyk9+ugr8mKec+Gd0r7kA3ABdDl8rp9+Ml7cVGsNaanlBYWH+6F8vcDBx2kSacbO0syelzhEJFTXZF/vgzihiXNcgyGtdLIdwGwfqm38TwZVvIJ/bUBJhX0BSA+Si1f0MGzNC+2BEz3KFMZFOXmZwsFqbF7bnqEjBlPZFyDOxgN5xQ/U7vOnCgZlcM8fAFuW1OtYe7yUcbXyUtLM67JxZt7ghxIb2qNchrXV4Y0dr4WJeAdoMt5IG8fyRj+cOdAsNbYZx429c6Dw5lWH93QUFeAUvMliIsl9YxuVUuHNI1wbIh09ScH7D157eW6cqwoJAAAAAElFTkSuQmCC\"}]}]"
+  }
+}

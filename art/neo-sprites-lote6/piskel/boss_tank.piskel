@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "boss_tank",
+    "description": "Neo Drift tanque idle (tread click + muzzle charge)",
+    "fps": 6,
+    "height": 44,
+    "width": 56,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOAAAAAsCAYAAAB8B7QuAAAEtElEQVR4nO2dvU8cRxiHf44wXvbYEwIShOwCAUWK5EQRWfI5UVJFFI5kdzR0lmVRu3EdRfkzIsUpKFJEsguXdhy5II6EjJOKoCsSAU58Oh0fh7DEukB7t7u3O7MfM7tz599TcXvvzr4Pw87Mzgx3ACGEEEIIIYQQEoPtWG7ZOeiEfoPNUPvZjuX+4K65wyppO5brNu4MtR/rzywupAm2HcudnJkAADT3Wzg+OEl1vunQb7AZRL8Pyk6AkPeZER2Fxg0BkrRI4XNNbMXol/xc+olRegN6ydWXa5HvP3/80gXik7Ydy52bcgLHGoBrSiXSj36q/ZQNQW3HcuvLtVg54Fy8vlyLbIHCcn8+uQUAmJtyjJjZUu639jEA+hWFqX5KJmFsx3JvrH6e6sKPHvwWaGmiWhePxpuDQoYy9EsO/Xrk8cvdA2aRAxDb0pgG/aKhnxqEz4CyBLLKedSXa91xd16icpW1SvSjn4gi/GIFbcdyv/pmqe/4y40GAKB2dQ4AMD4xnimh5n9tAMDoxWAn3Hj+d+D1XH0BTx5uSsurjk32HWt3msIHavrRL46i/FLJhTl9exb73qun/wRef/Lllci4yQ+r0usk4def/wIA7G7c6B6rfPpjZAUOtN+9he6xyre/D5/f/r/dY5Xq2PD5hf4+tawDhuW8Y1GSfzx9peiqxe0poF8PnX5H7Q4uxA/SMmOKHyB4Bmy12tIi7Yq4e/9+/yYA4P7ML9KyioZ+cj+vtZ69+khJTjL8vZ+MYak/bkUjxjA7c7nsFApHyxDUw8SeQSXD7ldUz1cWJtSflh4waiwd95A7iNCvGCrVMS3lmuIHxOyEsR3LXfpiPlEBsnG2jOOjw0Rxm892hO+nmcamny+WfkJ0+2kdgqpGvDDbTL2Qaxr0SxNvHln8ct+Ax0eHmVuZpK1LorI0VRb9xOcqy+M99VPSA2aR/On2JQCXAABLq73dBZsPegvN/uNlQr9+6KfGT9kkTJrWQmXLUhT0yxZrCqb6KX0G9BKPa23Siu1urwMAZhdX8iWmCPrRz48KPy2TMCpakJlr33V/3t1eR+Xy17nLVAX95NAvGdIbcOdFK1FBu9vrKVuCqRSx+qDfOfQLU4xf5BoLAHjrLEkFdeB18ddX7nbXWfLOltGvOOgnJ9AD+v+l3wRmF1cw/9kEAKCXVyvzh+DQr1joJydyFnTiIytvbspRmRP9iod+0cQ+A3pd+/TiKADg/+3TUl63W8eZxGSEyy3LM/x7VgXrbzDqj/+OREiJ8AYkpER4AxJSIrwBCSkR6UJ86/XJeWDCD4fSHa+akepZIA9Zm6Q7XjWsv2Lj0yIszbu4n14i+uNHqmfC8/MSVXZUTrriW69PhOfnhfWnN15F/cXegOFp1fA6x/TiKNqdJna29rCztdcX730watL4cPlhUd348+1OMW/tod1pot1p9sX7800SHy4//IeqGtbfYNRfYMU+7U4D7wswkp6XNl5URpZz6Rd9LfplixeVkTQ+di8o4N9e038RILjvTZR01nj/N914qNpL6C8/7vr0yxdPPznSL78IJyG6w1XHe79sXR9XQD+98fSTo/wreXXHq4Z+xcarZtD93gGl6dvZivcMewAAAABJRU5ErkJggg==\"}]}]"
+  }
+}
