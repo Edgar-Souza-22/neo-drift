@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_bloated",
+    "description": "Neo Drift bloated idle",
+    "fps": 6,
+    "height": 22,
+    "width": 22,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAWCAYAAABEx1soAAACxUlEQVR4nNWYv4vaYBzGHw855ChHsFCkUyjmyFQc5IZMGdpwcNBB3fpP3N4ly+3+HYc6dHRycpAWSodDLkVejqOIUMlwSBDBDsn7+sYk5qeYPBDI+03yvJ/3Mb6+ryVE0PlFecu316tNKcpzYZ6du2tXrdedZObNt0/JG9rxMYKgnmS6dNVFuZqZN69T8paTGHfurtHrTrZp3wxRrqZ53KM88p5FNeaPrPT2XmDnn+8bmfnmiffgG0xFzL8Qhfesk3/fzLhsvqI+o4fHTPyo8sQb+AbzPxQUdvTw6ILd/zGJqvVqU+p1JwAAMl1C/FgDmS5TzZV55fW9eH5R3jbVOmuLjap7XrN2pz9Gf2KFQgfJ/CvcRcv2o4OK45lXXk+RhxVFgdXJ3NwNoGbXCTFjQXuC4Px5v6SeeeR1FYJgDykqdBzvY3ieijfSKiKt4gZB72mq9cTzZhplycsC3jcdDafsSGp+TBWF9wxwYG/q9gReQSAkXw8bCNUxgigS7xnd/fgtyNuGAlETAjtgNWegzRu3+TGCKBqv7xysajIAoC+NIaLG2m1Dwffer8AO+EEfCmJg6GgbSuIgisTrDtiyD0JMqJrMQKn60hhfOo0doCagbSjsubCFt3hVAwC0JB0/b2fMf2DokYMoGm/Z2aW4F9POA/vAVKomYzScggxN4HYWxMdEfs+9tac5yNOcDeDycreCbxsKvkJDS9LtArdRKBpv4DoY2E3cfl8LVZNDF9qeXZADygdBvWmNtunbE+RdFN6DAfOdAPYn1ZfGLrNDwEG+aYMoEq9rDl6vNiW6t+ZFAYNgsfDDDBYhpgtqYOisH74epiLw+u/kfADEq1pi2LAgWpKeLogc8/r+H7x4tYBX+/zdh4rfLRDWb5yTcGDmO7M8fr6g1D+id555Q/9wX8wsPD+/eOqflEYkSD8/IEIQCZU33v8p/wHPOY/9tQAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

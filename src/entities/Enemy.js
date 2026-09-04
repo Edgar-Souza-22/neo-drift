@@ -8,7 +8,11 @@ const HOVER_FRAME_RATES = {
   enemy_shooter: 8, enemy_sentinel: 4, enemy_miniboss: 8, enemy_phasejumper: 8,
   enemy_portalguardian: 8, enemy_sentry: 6, enemy_dweller: 6, boss: 6,
   boss_foundry: 6, boss_reactor: 6, boss_core: 6, boss_curator: 6,
-  boss_tank: 6, boss_router: 6, boss_emissora: 6, boss_ghosttrain: 6
+  boss_tank: 6, boss_router: 6, boss_emissora: 6, boss_ghosttrain: 6,
+  enemy_smuggler: 6, enemy_enforcer: 6, enemy_capataz: 6, boss_fence: 6,
+  enemy_infected: 6, enemy_bloated: 6, enemy_enfermeiro: 6, boss_matriarch: 6,
+  enemy_firewall: 6, enemy_siphon: 6, enemy_sysadmin: 6, boss_administrador: 6,
+  enemy_cargo: 6, enemy_stacker: 6, enemy_estivador: 6, boss_empilhador: 6
 };
 
 const SPEED = 1.5;
@@ -29,7 +33,8 @@ const XP_REWARD = 15;
 // dobrar em cima disso ficaria absurdo).
 const PHASE_ORDER = [
   'DungeonScene', 'FoundryScene', 'ReactorScene', 'CoreScene', 'TowerScene',
-  'ArsenalScene', 'NexusScene', 'VigilanceScene', 'FantasmaScene', 'MercadoNegroScene'
+  'ArsenalScene', 'NexusScene', 'VigilanceScene', 'FantasmaScene', 'MercadoNegroScene',
+  'ColoniaScene', 'ServidorScene', 'TerminalScene'
 ];
 function phaseHpMultiplier(sceneKey) {
   const idx = PHASE_ORDER.indexOf(sceneKey);

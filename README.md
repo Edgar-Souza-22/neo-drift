@@ -22,7 +22,7 @@ Abre automaticamente em `http://localhost:5173`.
 
 ## Loop de jogo
 
-1. Você começa na **Ala Central** da fábrica — um salão bem maior, com pilares estruturais, piso variado (painéis, luminárias embutidas) e o **logo da Neo Industries** carimbado no chão — com NPCs que dão contexto da missão.
+1. Na tela inicial, **Novo Jogo** mostra a história e deixa você na **Ala Central** da fábrica; **Continuar** retoma o progresso salvo no hub da região atual (Ala Central / Distrito Neon / Submundo / Estaleiro), com HP cheio. O salão é bem maior, com pilares estruturais, piso variado (painéis, luminárias embutidas) e o **logo da Neo Industries** carimbado no chão — com NPCs que dão contexto da missão.
 2. Ande até o portal "SETOR DE CONTENÇÃO" para entrar no setor de combate (Fase 01) — a entrada toca uma transição (flash + fade pra preto).
 3. O setor tem 6 salas conectadas por corredores — **Vestíbulo**, **Câmara de Detenção**, **Sala de Energia**, **Corredor de Vigilância**, **Núcleo de Contenção** e o **Cofre Selado** — cada uma com nome exibido ao entrar.
 4. Elimine os 8 drones (incluindo 2 unidades blindadas mais resistentes), converse com os 2 NPCs presos, pegue a **Lâmina de Plasma** (upgrade de dano) e a **Blindagem Reforçada** (upgrade de HP máximo) — 1 melhoria de cada tipo nessa fase. Drones normais têm 1/10 de chance de derrubar munição ao morrer, blindados 1/5, e o chefe sempre derruba pelo menos 1 carga (1/3 de chance de derrubar 3).
@@ -48,15 +48,15 @@ Abre automaticamente em `http://localhost:5173`.
     - **Sala de Circuito**: um puzzle "apaga-liga" de 5 células em cruz — ativar uma célula também alterna as vizinhas; objetivo é acender todas as 5.
 23. Introduz o **Drone Atirador** — o primeiro inimigo comum (não-chefe) do jogo com ataque à distância: dispara um projétil lento na direção do jogador, além do ataque por contato normal. Pegue a **Lâmina Prismática**, a **Pistola de Precisão** e a **Blindagem do Curador** — todas encontradas normalmente pelo mapa.
 24. Derrote o **Curador Supremo** — chefe que **teleporta** periodicamente pra perto do jogador (some, reaparece, telegrafa por um instante) e libera uma explosão corpo a corpo em área — o quinto padrão de chefe do jogo, e o único que muda de posição de repente em vez de atacar de um lugar fixo. Ao vencer, mesma porta/transição de volta ao Distrito Neon (não à Ala Central).
-25. Se morrer, é game over — pressione F5 pra continuar do último progresso salvo (ver seção de save/load abaixo).
+25. Se morrer, é game over — pressione F5 pra voltar à tela inicial e usar **Continuar** a partir do último progresso salvo (ver seção de save/load abaixo).
 
 ## Save/load
 
 O progresso é salvo automaticamente no `localStorage` do navegador — não existe um botão de "salvar": toda vez que você ganha XP, sobe de nível, equipa arma/armadura/pistola, resgata um NPC ou pega um item-chave, o jogo grava o estado. Não precisa fazer nada de especial, incluindo depois de um game over — o último progresso salvo (nível, equipamento, fases limpas) sempre fica gravado.
 
-- **Ao abrir/recarregar a página**: se existir um save, ele é carregado automaticamente e você sempre retoma na **Ala Central**, com **HP cheio** — nunca no meio de uma masmorra ou com HP baixo de uma luta anterior.
+- **Ao abrir/recarregar a página**: a tela inicial oferece **Novo Jogo** e **Continuar**. Continuar só fica disponível se existir um save — carrega o progresso e retoma no **hub da região atual** (Ala Central, Distrito Neon, Submundo ou Estaleiro Automatizado, conforme a última região desbloqueada — ver `regionHubScene` em `GameState.js`), com **HP cheio**, nunca no meio de uma masmorra. O subtítulo do botão mostra o nível e a região. Novo Jogo apaga o save (pede confirmação se já houver progresso), mostra a introdução e começa na Ala Central.
 - **O que é salvo**: nível, XP, HP máximo, arma/armadura/pistola equipadas (com as estatísticas), munição, fases limpas, NPCs resgatados e itens-chave coletados. O que **não** é salvo (não faz sentido persistir): posição exata dentro de uma fase, inimigos já derrotados numa run em andamento, estado de portas trancadas de uma visita ativa — tudo isso é reconstruído do zero sempre que você entra numa fase, a partir das flags de "fase limpa"/"item já coletado".
-- **Para reiniciar o progresso do zero**: abra o console do navegador (F12) e rode:
+- **Para reiniciar o progresso do zero**: use **Novo Jogo** na tela inicial (confirma antes de apagar o save). Também dá pra abrir o console do navegador (F12) e rodar:
   ```js
   const mod = await import('/src/state/GameState.js');
   mod.resetGame();
@@ -68,13 +68,13 @@ O progresso é salvo automaticamente no `localStorage` do navegador — não exi
 Efeitos sonoros e trilhas são **sintetizados em código** (osciladores + ruído filtrado, sem nenhum arquivo `.mp3`/`.wav`), no mesmo espírito "tudo gerado" da pixel art — gerados uma vez no boot e tocados via o sistema de áudio do Phaser.
 
 - **Efeitos**: ataque corpo a corpo/pistola, acerto/morte de inimigo (variações pra inimigo comum, semi-boss e chefe), dano no jogador, coleta de item, level up, abrir porta, abrir/fechar menu, diálogo, fúria de chefe, vitória de fase, game over.
-- **Música**: uma trilha em loop por área — **Ala Central** (calma), **Setor de Contenção**, **Ala de Fundição**, **Ala do Reator**, **Núcleo de Comando** (intervalos dissonantes, sugerindo sinal corrompido), **Distrito Neon** (lento, clima "lounge" noturno, ondas suaves) e **Torre de Segurança** (andamento "limpo"/regular, tema de cofre) — trocada automaticamente ao entrar em cada cena, sem interrupção perceptível.
+- **Música**: uma trilha em loop por área — **Ala Central** (calma), **Setor de Contenção**, **Ala de Fundição**, **Ala do Reator**, **Núcleo de Comando** (intervalos dissonantes, sugerindo sinal corrompido), **Distrito Neon** (lento, clima "lounge" noturno, ondas suaves), **Torre de Segurança** (andamento "limpo"/regular, tema de cofre), **Colônia de Contaminados** (viscoso), **Servidor Oculto** (clock digital de rack), **Estaleiro Automatizado** (hidráulica de guindaste) e **Terminal de Contêineres** (pátio, apito de guindaste) — trocada automaticamente ao entrar em cada cena, sem interrupção perceptível.
 - **Mudo (M)**: preferência salva separadamente do progresso do jogo (chave própria no `localStorage`), então persiste entre sessões independente de ter ou não uma partida salva.
 - Por política dos navegadores, o áudio só é liberado após a primeira interação (tecla/clique) — isso é comportamento padrão do browser, não um bug.
 
 ## Progressão de equipamento
 
-Cada fase entrega exatamente **1 melhoria de cada tipo**: 1 lâmina (dano de ataque corpo a corpo), 1 upgrade de pistola (dano à distância) e 1 armadura (HP máximo). Nas três primeiras fases a pistola é a recompensa do cofre/vault trancado; a Fase 04 não tem cofre único (ver mecanismo das 3 torres acima), então os três itens são encontrados normalmente pelo mapa. O menu de status (ESC) mostra a estatística real de cada peça equipada, não só o nome:
+Cada fase entrega exatamente **1 melhoria de cada tipo**: 1 lâmina (dano de ataque corpo a corpo), 1 upgrade de pistola (dano à distância) e 1 armadura (HP máximo). Nas três primeiras fases a pistola é a recompensa do cofre/vault trancado; a Fase 04 não tem cofre único (ver mecanismo das 3 torres acima), então os três itens são encontrados normalmente pelo mapa. Além disso, a **primeira fase de cada região** entrega as **Botas de Impulso** (multiplicador de velocidade de deslocamento, nunca regride): Fase 01 `×1.15`, Fase 05 `×1.25`, Fase 09 `×1.35`, Fase 13 `×1.45`. O menu de status (ESC) mostra a estatística real de cada peça equipada, não só o nome:
 
 | Fase | Lâmina | Pistola | Armadura |
 |------|--------|---------|----------|
@@ -83,6 +83,14 @@ Cada fase entrega exatamente **1 melhoria de cada tipo**: 1 lâmina (dano de ata
 | 03 — Ala do Reator | Lâmina Voltaica (dano 90) | Pistola de Indução (dano 42) | Blindagem Isolante (+70 HP máx.) — recompensa do cofre, também dá imunidade ao piso eletrificado |
 | 04 — Núcleo de Comando | Lâmina de Silício (dano 120) | Pistola Neural (dano 58) | Blindagem Adaptativa (+85 HP máx.) |
 | 05 — Torre de Segurança | Lâmina Prismática (dano 150) | Pistola de Precisão (dano 72) | Blindagem do Curador (+100 HP máx.) |
+| 06 — Arsenal Blindado | Lâmina de Titânio (dano 160) | Railgun de Sobrecarga (dano 60) | Blindagem de Combate (+110 HP máx.) |
+| 07 — Nexo de Transporte | Lâmina Sincronizada (dano 190) | Carregador de Fase (dano 78) | Blindagem de Sincronia (+130 HP máx.) |
+| 08 — Central de Vigilância | Lâmina de Interferência (dano 220) | Pistola de Rastreio (dano 88) | Blindagem de Contravigilância (+145 HP máx.) |
+| 09 — Estação Fantasma | Lâmina Subterrânea (dano 250) | Pistola de Emergência (dano 98) | Blindagem de Túnel (+160 HP máx.) |
+| 10 — Mercado Negro dos Túneis | Lâmina do Mercado Negro (dano 270) | Pistola do Contrabandista (dano 105) | Colete do Mercado (+175 HP máx.) |
+| 11 — Colônia de Contaminados | Lâmina Séptica (dano 290) | Pistola de Extração (dano 112) | Traje de Quarentena (+190 HP máx.) — também dá imunidade ao piso tóxico |
+| 12 — Servidor Oculto | Lâmina de Criptografia (dano 310) | Pistola de Pacote (dano 119) | Blindagem Faraday (+205 HP máx.) |
+| 13 — Terminal de Contêineres | Lâmina de Estiva (dano 330) | Pistola Hidráulica (dano 126) | Colete de Estiva (+220 HP máx.) |
 
 ## Estrutura
 
@@ -90,14 +98,18 @@ Cada fase entrega exatamente **1 melhoria de cada tipo**: 1 lâmina (dano de ata
 src/
   main.js                 # bootstrap do Phaser
   state/
-    GameState.js           # progresso do jogador (nível, XP com custo estritamente crescente, HP, arma, armadura, pistola, flag de imunidade a piso eletrificado, resgates, itens coletados) — persiste entre cenas, e salva/carrega automaticamente do localStorage (save/load)
+    GameState.js           # progresso do jogador (nível, XP com custo estritamente crescente, HP, arma, armadura, pistola, flags de imunidade a piso eletrificado e tóxico, resgates, itens coletados) — persiste entre cenas, e salva/carrega automaticamente do localStorage (save/load)
     Captives.js             # NPCs presos no Setor de Contenção (diálogo preso vs. resgatado)
     FoundryCaptives.js      # NPCs presos na Ala de Fundição (diálogo preso vs. resgatado)
     ReactorCaptives.js      # NPCs presos na Ala do Reator (diálogo preso vs. resgatado)
     CoreCaptives.js         # NPCs presos no Núcleo de Comando (diálogo preso vs. resgatado)
     TowerCaptives.js        # NPCs presos na Torre de Segurança — resgatados aparecem no Distrito Neon, não na Ala Central
+    ServidorCaptives.js     # NPCs presos no Servidor Oculto — resgatados aparecem no Submundo
+    TerminalCaptives.js     # NPCs presos no Terminal de Contêineres — resgatados aparecem no Estaleiro
   scenes/
-    BootScene.js             # gera toda a pixel art via pixelGrid (tiles, personagens, itens, HUD)
+    BootScene.js             # gera toda a pixel art via pixelGrid (tiles, personagens, itens, HUD) e abre a tela inicial
+    TitleScene.js              # tela inicial: Novo Jogo / Continuar
+    IntroScene.js              # introdução narrativa (Novo Jogo) — história + ponto de partida na Ala Central
     pixelGrid.js              # utilitário de desenho pixel a pixel com contorno automático de 1px
     TownScene.js               # Ala Central: NPCs fixos + resgatados (das 4 fases da fábrica), diálogo, portas pros 4 setores + portal pro Distrito Neon, logo no chão
     DungeonScene.js              # Fase 01: salas, inimigos, itens, cartão/porta trancada, chefe, vitória/derrota
@@ -106,9 +118,17 @@ src/
     CoreScene.js                    # Fase 04: 3 torres de firewall hackeáveis em vez de cofre único, chefe que invoca adds
     DistrictScene.js                 # Distrito Neon: segundo hub (cidade), menor que a Ala Central — portal de volta + porta pra Fase 05
     TowerScene.js                     # Fase 05: 2 quebra-cabeças reais (sequência + apaga-liga) em vez de combate/cofre, chefe teleportador
+    ServidorScene.js                  # Fase 12: anel concêntrico, cabeamento + barramento, varredura de pico, O Administrador
+    EstaleiroScene.js                  # Estaleiro Automatizado: hub da Região 4 (cais), poço de carga de volta ao Submundo
+    TerminalScene.js                   # Fase 13: pátio-grade, drones de carga nas rotas, Ponte (brechas), O Empilhador
     UIScene.js                    # HUD (barras segmentadas de HP/XP), diálogo, rótulo de zona, overlays
+  data/
+    introStory.js               # beats da introdução (Novo Jogo)
+  ui/
+    MenuButton.js               # botão de menu (moldura em mira, hover/teclado)
+    titleAtmosphere.js          # fundo, logo, poeira e fade das telas iniciais
   world/
-    TileMap.js                  # grid top-down, colisão (portas trancadas via setWalkable, piso eletrificado via isElectrified)
+    TileMap.js                  # grid top-down, colisão (portas trancadas via setWalkable, piso perigoso via getHazard / isElectrified / isToxic)
     DungeonLayout.js             # construção programática do Setor de Contenção (salas + corredores + zonas)
     FoundryLayout.js             # construção programática da Ala de Fundição (10 salas + corredores + zonas)
     ReactorLayout.js             # construção programática da Ala do Reator (10 salas + corredores + zonas + piso eletrificado)
@@ -116,6 +136,9 @@ src/
     TowerLayout.js               # construção programática da Torre de Segurança (10 salas + corredores + 2 quebra-cabeças)
     TownLayout.js                # construção programática da Ala Central (salão + pilares)
     DistrictLayout.js            # construção programática do Distrito Neon (hub menor da cidade)
+    ServidorLayout.js            # construção programática do Servidor Oculto (anel + raios, cabos e racks)
+    EstaleiroLayout.js           # construção programática do Estaleiro Automatizado (cais + berços)
+    TerminalLayout.js            # construção programática do Terminal de Contêineres (pátio-grade + avenidas)
   entities/
     Player.js, Enemy.js, NPC.js
     Boss.js          # Guardião Núcleo (Fase 01): bolts homing à distância + fase de fúria
@@ -126,6 +149,14 @@ src/
     ElectricDrone.js # Sentinela Elétrica (inimigo novo, Fase 03): pulso de choque em área além do ataque por contato
     JammerDrone.js   # Drone Inibidor (inimigo novo, Fase 04): pulso EMP que trava a pistola do jogador por alguns segundos (status, não dano)
     ShooterDrone.js  # Drone Atirador (inimigo novo, Fase 05): primeiro inimigo comum com ataque à distância (projétil reto e lento)
+    FirewallDrone.js # Drone de Firewall (Fase 12): planta uma barreira temporária no caminho
+    SiphonEnemy.js   # Sonda Sifão (Fase 12): pulso que drena 1 carga da pistola
+    SysadminBoss.js  # O Sysadmin (Fase 12): sub-confronto da Câmara, barreiras em cruz
+    AdministradorBoss.js # O Administrador (Fase 12): parte a arena com um firewall de tiles
+    CargoDrone.js    # Drone de Carga (Fase 13): circula rota fixa, não persegue
+    StackerEnemy.js  # Empilhadeira (Fase 13): investe só no eixo da avenida/rua
+    EstivadorBoss.js # O Estivador (Fase 13): sub-confronto, libera o Armazém
+    EmpilhadorBoss.js # O Empilhador (Fase 13): marca o chão e derruba um contêiner (queda rápida) que vira parede; de perto, golpe de garra que arremessa o jogador
     MiniBoss.js      # semi-boss genérico (HP alto, nome/barra própria) — guarda o cofre da Fase 03, reutilizável em fases futuras
   utils/
     constants.js                 # tamanho de tile e vetores de direção
@@ -142,7 +173,7 @@ Todo texto voltado ao jogador — diálogo, nome de fase, descrição de roadmap
 ## Convenções técnicas
 
 1. **Ordem de `_checkItemPickups()` no `update()` de uma fase.** Sempre roda ANTES do corte `if (this.levelEnded) { ...; return; }`, nunca depois. Motivo: o próprio golpe que termina a fase (o confronto final) já derruba loot (munição/estimulante/EMP) nesse exato frame — se a coleta só é checada depois do corte, esse item fica pra sempre impossível de pegar, porque o `update()` já retorna cedo demais em todo frame seguinte (bug real, presente nas 9 fases até a Fase 09 até ser corrigido de uma vez). Qualquer fase nova precisa manter essa ordem.
-2. **Tela de "fase completa" (`PHASE_OUTCOMES` em `src/scenes/UIScene.js`).** Cada fase nova precisa de uma entrada própria — uma frase única contando um pedaço do que mudou ali (nunca reaproveitar o texto de outra fase) e a região certa de retorno (`à Ala Central`, `ao Distrito Neon`, `ao Submundo`, ou a região correspondente quando novas regiões forem construídas). Nunca hardcodar "Ala Central" — a partir da Fase 05 isso já fica errado.
+2. **Tela de "fase completa" (`PHASE_OUTCOMES` em `src/scenes/UIScene.js`).** Cada fase nova precisa de uma entrada própria — uma frase única contando um pedaço do que mudou ali (nunca reaproveitar o texto de outra fase) e a região certa de retorno (`à Ala Central`, `ao Distrito Neon`, `ao Submundo`, `ao Estaleiro Automatizado`, ou a região correspondente quando novas regiões forem construídas). Nunca hardcodar "Ala Central" — a partir da Fase 05 isso já fica errado.
 
 ## Próximos passos sugeridos
 
@@ -150,7 +181,7 @@ Todo texto voltado ao jogador — diálogo, nome de fase, descrição de roadmap
 2. ~~Expandir equipamento: mais slots (acessórios), itens consumíveis, magias.~~ ✅ Feito — variedade de armas corpo a corpo (espada/pile-bunker) e à distância (pistola/SMG/shotgun/railgun) com comportamentos próprios, consumíveis (estimulante, granada EMP), e menu paginado (Equipamento/Consumíveis/Itens-chave) explicando cada item. (O chicote/Monolâmina foi removido depois — o cone de acerto baseado na última direção de movimento ficava imprevisível, sem dar pra saber se o golpe ia conectar.)
 3. ~~Portais/atalhos entre setores não-adjacentes dentro de um mesmo local (hoje a conexão é só por corredores lineares).~~ ✅ Feito — Fase 07 "Nexo de Transporte": portais fixos (pares bidirecionais ligando setores distantes do mapa) e um portal instável (cicla sozinho entre 3 destinos, puzzle de timing sem punição por errar), Saltador de Fase (inimigo novo que pisca pra dentro/fora de alcance), o Guardião do Nexo (teleporte + invocação de reforços, derruba a chave da arena final) e O Roteador (ancora e teleporta entre pontos fixos da arena, satélites atiram de verdade).
 4. ~~Distrito Neon está com 3 fases (05-07) — uma a menos que o padrão de 4 por região que as próximas regiões vão seguir. Adicionar a 4ª antes de avançar.~~ ✅ Feito — Fase 08 "Central de Vigilância", o verdadeiro fechamento do arco do distrito: Sentinela de Varredura (inimigo novo, estacionária, feixe giratório de detecção — o perigo é de posição/tempo, não perseguição), Sala de Sinal (puzzle novo: a ordem certa é revelada por uma demonstração de luzes no início, não por números fixos, e o sorteio muda a cada visita), Operador de Segurança (derruba o cartão que abre a Sala de Override, sabotagem opcional que desativa a invocação de reforços) e A Emissora (combina marca+feixe telegrafado com invocação de Sentinelas — revela que a vigilância do distrito respondia a algo além do Coordenador Voss). Vencer abre caminho pro Submundo.
-5. ~~Mais 3 regiões depois do Distrito Neon, 4 fases cada, fechando com uma base espacial.~~ 🔶 Em andamento — Região 3 "Submundo" começou: gancho de saída (Contrabandista + buraco físico, não teleporte, aparecem na alcova da Central de Vigilância depois de vigilanceCleared), hub próprio e a Fase 09 "Estação Fantasma" ✅ Feito — **traçado linear** (sala após sala, como uma linha de metrô) em vez da grade em 3 bandas reaproveitada pelas fases do Distrito Neon, com só 3 desvios curtos saindo da linha principal: um livre (Bagageiro), um livre com o Console de Desvio (sabotagem opcional, sem cadeado) e um **obrigatório** (Sala de Sinalização) — derrotar o Guardião da Sinalização lá dentro é o que abre o Portão dos Trilhos, sem puzzle nem cartão dessa vez. Morador dos Túneis (inimigo novo, feral/rápido) e O Trem Fantasma (investida travada nos eixos + fase "fantasma" periódica em que fica intangível e reaparece alinhado num novo trilho) fecham a fase. Fases 10-12 seguem no roadmap abaixo.
+5. ~~Mais 3 regiões depois do Distrito Neon, 4 fases cada, fechando com uma base espacial.~~ 🔶 Em andamento — Região 3 "Submundo" ✅ (gancho + hub + Fases 09-12). Região 4 "Estaleiro Automatizado": hub ✅ + Fase 13 "Terminal de Contêineres" ✅. Próxima: Fase 14 "Refinaria Offshore".
 6. Persistir o estado de portas trancadas / cartões entre visitas ao mesmo setor (hoje reseta a cada entrada).
 7. Superboss opcional / New Game+ pra jogadores que exploram tudo.
 8. Minimapa — os mapas já passam de 1000 tiles de piso, vale a pena antes de mais fases aumentarem ainda mais o tamanho.
@@ -166,14 +197,15 @@ Sob o asfalto do Distrito Neon: metrô abandonado, mercado paralelo, contaminaç
 
 - ~~**09 — Estação Fantasma**: metrô desativado, sinalização quebrada, primeiro contato com o Submundo.~~ ✅ Feito (ver item 5 acima).
 - ~~**10 — Mercado Negro dos Túneis**: contrabandistas controlam a rota.~~ ✅ Feito. Topologia em loop + duas alas convergentes (não a grade em 3 bandas nem o traçado linear já usados): a ala esquerda dá a volta por uma sala de armas e uma armadilha antes de convergir no mesmo Cofre de Acesso alcançável pelo caminho curto — resolver a Sala de Sequência ali é o que libera a Câmara do Capataz (sub-chefe, reaproveita `MiniBoss`); a ala direita é linear (armadura → Sala de Distribuição/puzzle de Circuito → armadilha → pistola) sem combate de guarda. As duas convergem no Beco de Saída, onde a Sala de Sinal (Simon-Says) libera o Salão do Barão. Primeiro chefe do jogo com silhueta HUMANA (não robô/veículo/criatura): O Barão do Mercado, com um braço mecânico superdimensionado que arremessa uma "Granada Suja" — aro de aviso que marca a posição ATUAL do jogador (não rastreia) e continua perseguindo/batendo durante o telégrafo, nunca parado como os chefes de rajada. Novo inimigo comum Miliciano do Mercado (primeira silhueta humana entre os inimigos comuns). Arquivos: `MercadoNegroLayout.js`, `MercadoNegroScene.js`, `MarketBaronBoss.js`, `MercadoNegroCaptives.js`; `GameState.mercadoNegroCleared` gates o que vier depois.
-- **11 — Colônia de Contaminados**: piso tóxico (dano gradual, não instantâneo) e população mutada pela exposição.
-- **12 — Servidor Oculto**: um data-center clandestino esconde a rota até as docas — a confrontação final revela quem realmente controla o contrabando.
+- ~~**11 — Colônia de Contaminados**: piso tóxico (dano gradual, não instantâneo) e população mutada pela exposição.~~ ✅ Feito. Topologia em hive (átrio + três alas), distinta das fases 09 e 10: ala oeste com piso tóxico + Corredor de Drenagem (armadilha) + Sala de Filtros (puzzle novo: 4 tambores com 3 estados, vizinhos giram juntos) que libera a Câmara do Hospedeiro; ala leste mais limpa até o Traje de Quarentena (imunidade ao lodo) + Sala de Isolamento (puzzle de pares, não sequência nem circuito); ala sul com o Ninho da Matriarca só abrindo depois dos dois puzzles. O Enfermeiro (sub-chefe) controla a saída da própria câmara. A Matriarca é a primeira criatura biológica de confronto do jogo: persegue enquanto marca a posição atual do jogador e deixa um charco que continua cobrando tique. Novo inimigo comum Contaminado (deixa charco ao morrer) e elite Portador (tosse de esporos). Arquivos: `ColoniaLayout.js`, `ColoniaScene.js`, `MatriarchBoss.js`, `EnfermeiroBoss.js`, `ColoniaCaptives.js`; `GameState.coloniaCleared` e `GameState.toxinImmune` (o Traje cancela o piso tóxico pelo resto do jogo, inclusive poças).
+- ~~**12 — Servidor Oculto**: um data-center clandestino esconde a rota até as docas — a confrontação final revela quem realmente controla o contrabando.~~ ✅ Feito. Topologia em anel concêntrico + raios (não hive, não loop, não linear): o Cabeamento (puzzle de rotacionar segmentos até o sinal ir do IN ao OUT) abre o Anel Oeste; o Barramento (plugues coloridos — pise para trocar vizinhos até bater com o alvo de cima) abre o Anel Leste; o Núcleo só abre com os dois. Corredores Frio/Quente varrem uma linha de pico (não é piso estático). Drone de Firewall planta barreiras temporárias; Sonda Sifão drena carga da pistola. O Sysadmin guarda um atalho; O Administrador parte a arena com um firewall de tiles (na fúria, a perpendicular também). Arquivos: `ServidorLayout.js`, `ServidorScene.js`, `AdministradorBoss.js`, `SysadminBoss.js`, `FirewallDrone.js`, `SiphonEnemy.js`, `ServidorCaptives.js`; `GameState.servidorCleared` libera o poço de carga pro Estaleiro Automatizado.
 
 ### Região 4 — Estaleiro Automatizado (Fases 13-16)
 
 Portos robotizados nos limites da cidade — guindastes, contêineres, montagem naval.
 
-- **13 — Terminal de Contêineres**: pátio automatizado, drones de carga circulando as rotas.
+- ~~**Hub — Cais do Estaleiro**: cais longo leste-oeste com berços ao norte (não a praça em cruz do Distrito nem a caverna do Submundo). Gancho de entrada distinto: depois de O Administrador, a **Estivadora Ryn** aparece no Submundo ao lado de um **poço de carga** que sobe (hidráulica + zoom pra fora), o contrário do buraco que desce do Distrito e do portal que gira da fábrica. Dois NPCs locais (Contramestra Vale, Operador de Guindaste); o berço do Terminal abre a incursão. Arquivos: `EstaleiroLayout.js`, `EstaleiroScene.js`; `GameState.servidorCleared` libera o poço.~~ ✅ Feito.
+- ~~**13 — Terminal de Contêineres**: pátio automatizado, drones de carga circulando as rotas. Topologia em grade de pilhas (avenidas + ruas), distinta do anel do Servidor: pátio central murado, com as áreas trancadas FORA dele. A Sala da Ponte (anexo sudoeste, sempre aberta) tem uma PONTE LEVADIÇA de 3 pranchas sobre um fosso — pisar nos pedais deita cada prancha; com a ponte baixada o jogador ATRAVESSA até a Câmara do Estivador (ilha a oeste), que guarda as Botas Magnéticas de Estiva (Botas de Impulso da Região 4). O Estivador derrotado libera o Armazém (L2: armadura + pistola); ponte baixada + Estivador fora do pátio abrem a Doca de Carga (L3: lâmina + O Empilhador). O anexo fica no canto inferior-esquerdo de propósito — o HUD é preso no topo da tela, então a ponte nunca renderiza coberta. **Guindaste solto:** enquanto a chave do guindaste não é puxada, contêineres despencam sozinhos pelo pátio (telégrafo + queda + parede temporária, `_updateCraneHazard`). A **Cabine de Comando** (anexo nordeste, sempre aberta) tem o puzzle das **travas de segurança** (3 travas; cada pedal levanta a sua e puxa a seguinte junto) — soltas, abrem a **Sala do Guindaste** (portão LG), onde **6 guardas fortes** (StackerEnemy reforçado) defendem a **chave**; puxá-la desliga o guindaste e para as quedas. Os 6 guardas contam na limpeza, então derrubar o guindaste é obrigatório. Drone de Carga não persegue — só circula a rota. Empilhadeira investe só no eixo da avenida. O Empilhador marca a posição atual do jogador e derruba um contêiner — telégrafo curto, queda rápida — que fere quem ficou e vira parede por uns segundos; de perto, um golpe de garra em leque arremessa o jogador pra trás (empurrão + atordoamento curto, ver `Player.pushBack`). Na fúria, cai um segundo contêiner e o empurrão vem mais seguido. Arquivos: `TerminalLayout.js`, `TerminalScene.js`, `EmpilhadorBoss.js`, `EstivadorBoss.js`, `CargoDrone.js`, `StackerEnemy.js`, `TerminalCaptives.js`; `GameState.terminalCleared` gates o que vier depois.~~ ✅ Feito.
 - **14 — Refinaria Offshore**: plataforma sobre a água, risco de queda além do combate.
 - **15 — Estaleiro Naval**: linha de montagem de mechs em construção, braços robóticos como armadilha ambiental.
 - **16 — Torre de Controle Logístico**: quem comanda o estaleiro vira os próprios guindastes contra o jogador na confrontação final.

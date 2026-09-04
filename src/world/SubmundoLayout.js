@@ -1,12 +1,10 @@
 // Construção programática do Submundo (hub da Região 3) — mesmo espírito do
-// DistrictLayout.js: um hub pequeno, não uma fase de combate. Uma caverna
-// só por enquanto (a passagem de volta pro Distrito Neon + a porta pra
-// Fase 09 "Estação Fantasma"); preparado pra crescer com mais saídas quando
-// as Fases 10-12 forem construídas, do mesmo jeito que o Distrito Neon
-// cresceu a cada fase nova.
+// DistrictLayout.js: um hub pequeno, não uma fase de combate. Caverna com
+// passagem de volta pro Distrito Neon, saídas pras fases 09-12, e (depois
+// do Servidor Oculto) o poço de carga que sobe pro Estaleiro Automatizado.
 
-const WIDTH = 24;
-const HEIGHT = 14;
+const WIDTH = 28;
+const HEIGHT = 16;
 
 function carveRect(grid, x1, y1, x2, y2) {
   for (let y = y1; y <= y2; y++) {
@@ -27,31 +25,43 @@ function wallRect(grid, x1, y1, x2, y2) {
 export function buildSubmundoHub() {
   const grid = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill('#'));
 
-  // Caverna principal — irregular (não um retângulo perfeito), com dois
-  // nichos menores nas bordas pra não ler como uma sala de fábrica.
-  carveRect(grid, 2, 3, 21, 10);
-  carveRect(grid, 4, 10, 8, 12);
-  carveRect(grid, 15, 10, 19, 12);
+  // Caverna principal — irregular, com nichos pras saídas das fases.
+  carveRect(grid, 2, 3, 25, 12);
+  carveRect(grid, 4, 12, 8, 14);
+  carveRect(grid, 15, 12, 19, 14);
+  carveRect(grid, 21, 10, 26, 14);
+  carveRect(grid, 20, 1, 26, 3);
+  // Alcova do poço de carga pro Estaleiro Automatizado — nicho na parede sul
+  // da caverna (não no canto superior, onde o HUD cobre). Só ganha o poço +
+  // a Estivadora Ryn depois de limpar o Servidor Oculto (ver SubmundoScene).
+  // O poço sobe, não cai: o contrário do buraco que trouxe o jogador do
+  // Distrito Neon.
+  carveRect(grid, 10, 12, 14, 14);
 
-  // Entulho — só bloqueia passagem, não a rota principal.
   wallRect(grid, 10, 6, 10, 6);
   wallRect(grid, 13, 8, 13, 8);
 
   const markers = {
-    // Ponto onde o jogador cai vindo do buraco do Distrito Neon.
     S: [{ gx: 5, gy: 5 }],
-    // Passagem de volta pro Distrito Neon — sempre disponível, sem gancho.
     P: [{ gx: 5, gy: 7 }],
-    // Porta de entrada pra Estação Fantasma (Fase 09) — sempre aberta.
     E: [{ gx: 18, gy: 6 }],
-    // Porta de entrada pro Mercado Negro dos Túneis (Fase 10) — só existe
-    // depois de limpar a Estação Fantasma, mesmo gancho usado no Distrito
-    // Neon entre uma fase e a próxima da região.
     E2: [{ gx: 12, gy: 4 }],
+    // Porta da Colônia de Contaminados (Fase 11) — só existe depois de
+    // limpar o Mercado Negro, mesmo gancho das fases anteriores da região.
+    E3: [{ gx: 24, gy: 8 }],
+    // Porta do Servidor Oculto (Fase 12) — só existe depois de limpar a
+    // Colônia de Contaminados.
+    E4: [{ gx: 23, gy: 2 }],
+    // Estivadora Ryn + poço de carga pro Estaleiro — na alcova da parede sul
+    // (x10-14 / y12-14), longe do canto coberto pelo HUD. Só existem depois
+    // de limpar o Servidor Oculto (ver SubmundoScene).
+    RY: [{ gx: 10, gy: 13 }],
+    L: [{ gx: 13, gy: 13 }],
     N: [{ gx: 8, gy: 8 }, { gx: 14, gy: 8 }],
-    // Pontos de chegada dos NPCs resgatados no Mercado Negro (Fase 10).
-    N2: [{ gx: 5, gy: 11 }, { gx: 18, gy: 11 }],
-    X: [{ gx: 6, gy: 11 }, { gx: 17, gy: 11 }]
+    N2: [{ gx: 5, gy: 13 }, { gx: 18, gy: 13 }],
+    N3: [{ gx: 22, gy: 13 }, { gx: 25, gy: 13 }],
+    N4: [{ gx: 11, gy: 10 }, { gx: 15, gy: 10 }],
+    X: [{ gx: 6, gy: 13 }, { gx: 17, gy: 13 }]
   };
 
   const zones = [

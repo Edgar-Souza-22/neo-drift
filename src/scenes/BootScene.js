@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { TILE_SIZE } from '../utils/constants.js';
 import { createGrid, fillRect, fillCircle, clearCircle, paintOver, setPixel, renderGrid, mottle } from './pixelGrid.js';
 import { createNoise2D } from 'simplex-noise';
-import { loadGame } from '../state/GameState.js';
 import { generateSounds } from '../audio/SoundBank.js';
 import { initMute } from '../audio/AudioManager.js';
 
@@ -13,11 +12,15 @@ import { initMute } from '../audio/AudioManager.js';
 // puzzle, logo da Ala Central, os 5 NPCs em body/head separados, todo chefe
 // único de cada fase, e agora os itens/props/FX que ainda eram procedurais:
 // as 7 armas/consumíveis restantes, os 6 props de cenário, portal, bolt,
-// particle e a mira do Tanque de Cerco). Cada chave abaixo só troca a arte SE
-// o arquivo existir na pasta — sem ele, cai automaticamente pro gerador
-// procedural (guard `this.textures.exists()` em cada generateXxx). Só ficam
-// 100% procedurais a vinheta/poça de luz (gradiente de canvas, não dá pra
-// virar sprite) e o HUD (chrome de interface, fora do escopo desses lotes).
+// particle e a mira do Tanque de Cerco). O pacote `art/mercado-negro/` entra
+// por cima do lote6 só com as chaves da Fase 10 (piso/parede/porta, smuggler/
+// enforcer, Barão/`boss_fence`, vendor, barraca/lanterna). `art/neo-sprites-colonia/`
+// faz o mesmo na Fase 11 (piso/parede/porta, contaminado/portador, Enfermeiro/
+// Matriarca, cápsula, tambores de filtro). Cada chave abaixo só troca a arte
+// SE o arquivo existir na pasta — sem ele, cai automaticamente pro gerador
+// procedural (guard `this.textures.exists()` em cada generateXxx).
+// Só ficam 100% procedurais a vinheta/poça de luz (gradiente de canvas, não
+// dá pra virar sprite) e o HUD (chrome de interface, fora do escopo desses lotes).
 const TILE_KEYS = [
   'wall', 'door', 'floor', 'floor_vent', 'floor_hazard', 'floor_electric',
   'floor_town', 'floor_town_panel', 'floor_town_light',
@@ -31,8 +34,15 @@ const TILE_KEYS = [
   'floor_vigilancia', 'floor_vigilancia_vent', 'wall_vigilancia', 'door_vigilancia',
   'floor_submundo', 'floor_submundo_vent', 'wall_submundo',
   'floor_fantasma', 'floor_fantasma_vent', 'wall_fantasma',
+  'floor_mercado', 'floor_mercado_stall', 'floor_mercado_vent', 'wall_mercado', 'door_mercado',
+  'floor_colonia', 'floor_colonia_vent', 'floor_colonia_stain', 'floor_toxic', 'wall_colonia', 'door_colonia',
+  'floor_servidor', 'floor_servidor_vent', 'floor_servidor_rack', 'wall_servidor', 'door_servidor',
+  'floor_estaleiro', 'floor_estaleiro_stripe', 'wall_estaleiro', 'door_estaleiro',
   'tile_sequence_off', 'tile_sequence_on', 'tile_circuit_off', 'tile_circuit_on',
-  'trap_off', 'trap_warn', 'trap_on', 'tile_signal_off', 'tile_signal_on'
+  'trap_off', 'trap_warn', 'trap_on', 'tile_signal_off', 'tile_signal_on',
+  'tile_filter_0', 'tile_filter_1', 'tile_filter_2',
+  'tile_bus_plug_0', 'tile_bus_plug_1', 'tile_bus_plug_2', 'tile_bus_plug_3', 'tile_bus_plug_4',
+  'tile_bus_socket_0', 'tile_bus_socket_1', 'tile_bus_socket_2', 'tile_bus_socket_3', 'tile_bus_socket_4'
 ];
 
 const ITEM_KEYS = ['item_sword', 'item_pistol', 'item_armor', 'item_medkit', 'item_keycard'];
@@ -48,15 +58,15 @@ const FX_KEYS = [
 
 const ITEM_KEYS_2 = ['item_ammo', 'item_pilebunker', 'item_smg', 'item_shotgun', 'item_railgun', 'item_stim', 'item_emp'];
 
-const PROP_KEYS = ['prop_crate', 'prop_barrel', 'prop_pipe', 'prop_console', 'prop_kiosk', 'prop_hole'];
+const PROP_KEYS = ['prop_crate', 'prop_barrel', 'prop_pipe', 'prop_console', 'prop_kiosk', 'prop_hole', 'prop_stall', 'prop_lantern', 'prop_capsule', 'prop_rack', 'prop_firewall', 'prop_lift', 'prop_container'];
 
-const NPC_TYPES = ['guard', 'engineer', 'worker', 'coordinator', 'herald'];
+const NPC_TYPES = ['guard', 'engineer', 'worker', 'coordinator', 'herald', 'vendor'];
 
 // Chefes únicos (um por fase, exceto o da Fase 01 que é o `boss`/`boss_alt`
 // já tratado à parte acima) — todos com o mesmo loop de 4 frames de idle.
 const NAMED_BOSS_TYPES = [
   'boss_foundry', 'boss_reactor', 'boss_core', 'boss_curator',
-  'boss_tank', 'boss_router', 'boss_emissora', 'boss_ghosttrain'
+  'boss_tank', 'boss_router', 'boss_emissora', 'boss_ghosttrain', 'boss_fence', 'boss_matriarch', 'boss_administrador', 'boss_empilhador'
 ];
 
 // tipo -> nº de frames do loop de hover/pulso do inimigo. O arquivo
@@ -65,7 +75,11 @@ const NAMED_BOSS_TYPES = [
 const ENEMY_ANIM_TYPES = {
   enemy: 4, enemy_tank: 4, enemy_foundry: 4, enemy_electric: 4, enemy_jammer: 4,
   enemy_shooter: 4, enemy_miniboss: 4, enemy_phasejumper: 4, enemy_portalguardian: 4,
-  enemy_sentry: 4, enemy_dweller: 4, enemy_sentinel: 2
+  enemy_sentry: 4, enemy_dweller: 4, enemy_sentinel: 2,
+  enemy_smuggler: 4, enemy_enforcer: 4,
+  enemy_infected: 4, enemy_bloated: 4, enemy_enfermeiro: 4,
+  enemy_firewall: 4, enemy_siphon: 4, enemy_sysadmin: 4,
+  enemy_cargo: 4, enemy_stacker: 4, enemy_estivador: 4
 };
 
 const ART_KEY_OVERRIDES = {};
@@ -88,6 +102,12 @@ for (const dir of ['down', 'up', 'side']) {
 // pro `boss` homônimo do lote.
 ART_KEY_OVERRIDES.boss = 'boss_alt';
 for (let i = 0; i < 4; i++) ART_KEY_OVERRIDES[`boss_${i}`] = `boss_alt_${i}`;
+
+// Capataz do Mercado: o pacote não tem sprite próprio — reusa o enforcer
+// (mesmo 20×20 + loop de 4 frames). generateCapatazMiniBoss só roda se o
+// PNG não existir.
+ART_KEY_OVERRIDES.enemy_capataz = 'enemy_enforcer';
+for (let i = 0; i < 4; i++) ART_KEY_OVERRIDES[`enemy_capataz_${i}`] = `enemy_enforcer_${i}`;
 
 for (const type of NPC_TYPES) {
   ART_KEY_OVERRIDES[`npc_${type}_body`] = `npc_${type}_body`;
@@ -112,11 +132,15 @@ export default class BootScene extends Phaser.Scene {
   preload() {
     // O caminho precisa ser um literal aqui — o plugin de glob do Vite lê a
     // string estaticamente, não aceita vir de uma const/variável.
-    const modules = import.meta.glob('../../art/neo-sprites-lote6/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const lote6 = import.meta.glob('../../art/neo-sprites-lote6/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const mercado = import.meta.glob('../../art/mercado-negro/png/*.png', { eager: true, query: '?url', import: 'default' });
+    const colonia = import.meta.glob('../../art/neo-sprites-colonia/png/*.png', { eager: true, query: '?url', import: 'default' });
     const urlByFileKey = {};
-    for (const [path, url] of Object.entries(modules)) {
-      const fileKey = path.split('/').pop().replace(/\.png$/, '');
-      urlByFileKey[fileKey] = url;
+    for (const modules of [lote6, mercado, colonia]) {
+      for (const [path, url] of Object.entries(modules)) {
+        const fileKey = path.split('/').pop().replace(/\.png$/, '');
+        urlByFileKey[fileKey] = url;
+      }
     }
     for (const [gameKey, fileKey] of Object.entries(ART_KEY_OVERRIDES)) {
       const url = urlByFileKey[fileKey];
@@ -125,9 +149,8 @@ export default class BootScene extends Phaser.Scene {
   }
 
   create() {
-    // Carrega o save (se existir) antes de tudo — TownScene decide se
-    // mostra o toast de "progresso carregado" com base no retorno.
-    const loaded = loadGame();
+    // O save só entra em memória se o jogador escolher Continuar na tela
+    // inicial — o boot não aplica progresso sozinho.
     initMute(this);
     generateSounds(this);
 
@@ -158,6 +181,18 @@ export default class BootScene extends Phaser.Scene {
     this.generateFloorVent('floor_submundo_vent', 0x161412, 0x201c18);
     this.generateFloor('floor_fantasma', 0x1a1a1c, 0x26262a);
     this.generateFloorVent('floor_fantasma_vent', 0x1a1a1c, 0x26262a);
+    this.generateFloor('floor_mercado', 0x1a1410, 0x2a2218);
+    this.generateFloorVent('floor_mercado_vent', 0x1a1410, 0x2a2218);
+    this.generateFloor('floor_mercado_stall', 0x221810, 0x3a2a18);
+    this.generateFloor('floor_colonia', 0x141810, 0x1e2618);
+    this.generateFloorVent('floor_colonia_vent', 0x141810, 0x1e2618);
+    this.generateFloor('floor_colonia_stain', 0x1a2214, 0x2a3a1c);
+    this.generateFloor('floor_servidor', 0x0c1418, 0x162028);
+    this.generateFloorVent('floor_servidor_vent', 0x0c1418, 0x162028);
+    this.generateFloorServidorRack('floor_servidor_rack');
+    this.generateFloor('floor_estaleiro', 0x1a2228, 0x243038);
+    this.generateFloorEstaleiroStripe('floor_estaleiro_stripe');
+    this.generateToxicFloor('floor_toxic');
     this.generateCompanyLogo();
     this.generateVignette();
     this.generateLightPool();
@@ -187,6 +222,12 @@ export default class BootScene extends Phaser.Scene {
     // no mesmo espírito de diferenciação já aplicado ao Distrito Neon.
     this.generateWallSubmundo('wall_submundo');
     this.generateWallFantasma('wall_fantasma');
+    this.generateWall('wall_mercado', { body: 0x2a2018, frame: 0x14100c, accent: 0xe8b93d, plate: 0x4a3020, outline: 0x0a0704 });
+    this.generateWall('wall_colonia', { body: 0x1e2618, frame: 0x0e140c, accent: 0x6dff4a, plate: 0x3a4a28, outline: 0x060a04 });
+    this.generateWallServidor('wall_servidor');
+    // Estaleiro Automatizado (Região 4): chapa corrugada de contêiner com
+    // faixa de risco — porto robotizado, nem rocha nem painel de rack.
+    this.generateWallEstaleiro('wall_estaleiro');
     if (!this.textures.exists('door')) this.generateDoor('door');
     // Portas de entrada do Distrito Neon — uma pra cada destino, em vez do
     // mesmo 'door' genérico só retintado (o que o pedia pra ser diferenciado).
@@ -194,6 +235,10 @@ export default class BootScene extends Phaser.Scene {
     this.generateDoorArsenal('door_arsenal');
     this.generateDoorNexus('door_nexus');
     this.generateDoorVigilance('door_vigilancia');
+    if (!this.textures.exists('door_mercado')) this.generateDoor('door_mercado');
+    if (!this.textures.exists('door_colonia')) this.generateDoor('door_colonia');
+    this.generateDoorServidor('door_servidor');
+    this.generateDoorEstaleiro('door_estaleiro');
     this.generatePlayerFrames();
     if (!this.textures.exists('enemy')) this.generateEnemy();
     this.generateTankEnemy();
@@ -222,16 +267,40 @@ export default class BootScene extends Phaser.Scene {
     this.generateDwellerEnemy();
     this.generateGhostTrainBoss();
     this.generateMarketMilitia();
+    this.generateMarketEnforcer();
     this.generateCapatazMiniBoss();
     this.generateMarketBaronBoss();
+    this.generateInfectedEnemy();
+    this.generateBloatedEnemy();
+    this.generateEnfermeiroMiniBoss();
+    this.generateMatriarchBoss();
+    this.generateFilterTile();
+    this.generateCapsuleProp();
+    this.generateFirewallEnemy();
+    this.generateSiphonEnemy();
+    this.generateSysadminMiniBoss();
+    this.generateAdministradorBoss();
+    this.generateCableTiles();
+    this.generateRackProp();
+    this.generateBusTiles();
+    this.generateFirewallProp();
+    this.generateLiftProp();
+    this.generateContainerProp();
+    this.generateCargoDrone();
+    this.generateStackerEnemy();
+    this.generateEstivadorMiniBoss();
+    this.generateEmpilhadorBoss();
     this.generatePortal();
     this.generateKiosk();
+    this.generateStall();
+    this.generateLantern();
     this.generateHoleProp();
     this.generateGuardNPC();
     this.generateEngineerNPC();
     this.generateWorkerNPC();
     this.generateCoordinatorNPC();
     this.generateHeraldNPC();
+    this.generateVendorNPC();
     if (!this.textures.exists('item_sword')) this.generateItem();
     if (!this.textures.exists('item_armor')) this.generateArmorItem();
     if (!this.textures.exists('item_keycard')) this.generateKeycardItem();
@@ -254,7 +323,7 @@ export default class BootScene extends Phaser.Scene {
     this.generateHudPanel('hud_panel_dialogue', 900, 70, 10);
     this.generateHudPanel('hud_panel_menu', 600, 580, 10);
 
-    this.scene.start('TownScene', { loaded });
+    this.scene.start('TitleScene');
   }
 
   // Painel de HUD com moldura fina e cantos "de mira" (bracket), no mesmo
@@ -353,6 +422,33 @@ export default class BootScene extends Phaser.Scene {
     }
     paintOver(grid, 2, 2, s - 4, 1, edge);
     paintOver(grid, 2, s - 3, s - 4, 1, edge);
+    const g = this.add.graphics();
+    renderGrid(g, grid);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Variante de piso do Estaleiro: placa de cais com faixa de risco amarela
+  // numa borda (não o xadrez diagonal do `floor_hazard` das masmorras).
+  generateFloorEstaleiroStripe(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const base = 0x1a2228;
+    const edge = 0x243038;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, base);
+    const stripeNoise = createNoise2D();
+    mottle(grid, stripeNoise, { color: this._shade(base, -8, -8, -6), threshold: 0.4, scale: 0.4 });
+    mottle(grid, stripeNoise, { color: this._shade(base, 8, 8, 10), threshold: 0.55, scale: 0.4, offsetX: 30, offsetY: 30 });
+    paintOver(grid, 0, 0, s, 1, this._shade(base, 18, 18, 22));
+    paintOver(grid, 0, 0, 1, s, this._shade(base, 18, 18, 22));
+    paintOver(grid, s / 2 - 1, 0, 1, s, edge);
+    paintOver(grid, 0, s / 2 - 1, s, 1, edge);
+    for (let x = 0; x < s; x++) {
+      const on = Math.floor(x / 4) % 2 === 0;
+      setPixel(grid, x, s - 4, on ? 0xe8a030 : 0x0c1014);
+      setPixel(grid, x, s - 3, on ? 0xe8a030 : 0x0c1014);
+    }
     const g = this.add.graphics();
     renderGrid(g, grid);
     g.generateTexture(key, s, s);
@@ -864,6 +960,7 @@ export default class BootScene extends Phaser.Scene {
 
   // Porta dupla deslizante com fresta central luminosa e rebites nas folhas.
   generateDoor(key) {
+    if (this.textures.exists(key)) return;
     const s = TILE_SIZE;
     const grid = createGrid(s, s);
     fillRect(grid, 0, 0, s, s, 0x0a1c22);
@@ -2022,13 +2119,13 @@ export default class BootScene extends Phaser.Scene {
     g.destroy();
   }
 
-  // Miliciano do Mercado — inimigo novo da Fase 10. Primeiro inimigo comum
-  // do jogo com silhueta claramente HUMANA (não drone/robô): mercenário
+  // Contrabandista do Mercado — inimigo comum da Fase 10. Primeiro inimigo
+  // comum do jogo com silhueta claramente HUMANA (não drone/robô): mercenário
   // encapuzado, jaqueta de couro remendada, óculos âmbar brilhando por baixo
   // do capuz e uma lâmina curta na mão — a estética "contrabandista armado"
   // do Mercado Negro, bem diferente de qualquer casco/hull anterior.
   generateMarketMilitia() {
-    if (this.textures.exists('enemy_militia')) return;
+    if (this.textures.exists('enemy_smuggler')) return;
     const w = 16;
     const h = 20;
     const grid = createGrid(w, h);
@@ -2058,8 +2155,44 @@ export default class BootScene extends Phaser.Scene {
 
     const g2 = this.add.graphics();
     renderGrid(g2, grid, 0x0a0704);
-    g2.generateTexture('enemy_militia', w, h);
+    g2.generateTexture('enemy_smuggler', w, h);
     g2.destroy();
+  }
+
+  // Enforcer do Mercado — miliciano mais largo (20×20) que o contrabandista,
+  // viseira em barra e caixa no braço. Fallback se o pacote não trouxer
+  // `enemy_enforcer`. Substitui o reaproveitamento de `enemy_tank` na Fase 10.
+  generateMarketEnforcer() {
+    if (this.textures.exists('enemy_enforcer')) return;
+    const w = 20;
+    const h = 20;
+    const grid = createGrid(w, h);
+    const hood = 0x2a2018;
+    const jacket = 0x3a2418;
+    const jacketLight = 0x4a3020;
+    const visor = 0xff5fd0;
+    const crate = 0xc9a06a;
+    const staff = 0x8a8a90;
+
+    fillCircle(grid, 10, 5, 5, hood);
+    fillRect(grid, 6, 5, 8, 2, visor);
+    setPixel(grid, 7, 5, 0xffb3ea);
+
+    fillRect(grid, 4, 10, 12, 7, jacket);
+    paintOver(grid, 5, 11, 6, 3, jacketLight);
+
+    fillRect(grid, 0, 11, 4, 5, crate);
+    setPixel(grid, 2, 13, 0x8a6a4a);
+    fillRect(grid, 16, 4, 3, 12, staff);
+    setPixel(grid, 17, 4, 0xe8b93d);
+
+    fillRect(grid, 5, 17, 4, 3, hood);
+    fillRect(grid, 11, 17, 4, 3, hood);
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x0a0704);
+    g.generateTexture('enemy_enforcer', w, h);
+    g.destroy();
   }
 
   // Capataz do Mercado — sub-chefe da Fase 10. Silhueta HUMANA própria (não
@@ -2194,7 +2327,7 @@ export default class BootScene extends Phaser.Scene {
   // dourados (correntes, fivelas) reforçando o tema "ganância/contrabando" —
   // o único chefe com aparência de PESSOA, não máquina/criatura/veículo.
   generateMarketBaronBoss() {
-    if (this.textures.exists('boss_marketbaron')) return;
+    if (this.textures.exists('boss_fence')) return;
     const w = 46;
     const h = 44;
     const grid = createGrid(w, h);
@@ -2248,7 +2381,7 @@ export default class BootScene extends Phaser.Scene {
 
     const g2 = this.add.graphics();
     renderGrid(g2, grid, 0x0a0704);
-    g2.generateTexture('boss_marketbaron', w, h);
+    g2.generateTexture('boss_fence', w, h);
     g2.destroy();
   }
 
@@ -2295,6 +2428,39 @@ export default class BootScene extends Phaser.Scene {
     const g = this.add.graphics();
     renderGrid(g, grid, 0x0a0b10);
     g.generateTexture('prop_kiosk', 20, 22);
+    g.destroy();
+  }
+
+  // Barraca do Mercado Negro — toldo + balcão. Fallback 28×24 se o pacote
+  // não trouxer `prop_stall`.
+  generateStall() {
+    if (this.textures.exists('prop_stall')) return;
+    const grid = createGrid(28, 24);
+    fillRect(grid, 0, 0, 28, 4, 0xff5fd0);
+    paintOver(grid, 0, 0, 28, 1, 0xffb3ea);
+    fillRect(grid, 1, 4, 26, 2, 0x3a4a2c);
+    fillRect(grid, 2, 14, 24, 10, 0x3a2418);
+    fillRect(grid, 2, 14, 24, 2, 0xc9a06a);
+    fillRect(grid, 12, 6, 4, 4, 0xe8b93d);
+    fillRect(grid, 20, 8, 4, 6, 0xff5fd0);
+    fillRect(grid, 4, 10, 5, 4, 0x2a2018);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x0a0704);
+    g.generateTexture('prop_stall', 28, 24);
+    g.destroy();
+  }
+
+  // Lanterna de teto/poste do Mercado Negro. Fallback 12×16 se o pacote
+  // não trouxer `prop_lantern`.
+  generateLantern() {
+    if (this.textures.exists('prop_lantern')) return;
+    const grid = createGrid(12, 16);
+    fillRect(grid, 5, 0, 2, 8, 0x2a2018);
+    fillCircle(grid, 6, 11, 4, 0xe8b93d);
+    fillCircle(grid, 6, 11, 2, 0xffe066);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x0a0704);
+    g.generateTexture('prop_lantern', 12, 16);
     g.destroy();
   }
 
@@ -2469,6 +2635,34 @@ export default class BootScene extends Phaser.Scene {
     const gHead = this.add.graphics();
     renderGrid(gHead, head, 0x05020a);
     gHead.generateTexture('npc_herald_head', ...s);
+    gHead.destroy();
+  }
+
+  // Vendedor do Mercado Negro — capa marrom + viseira magenta (body/head
+  // separados, mesmo canvas 14×20). Fallback se o pacote não trouxer
+  // `npc_vendor_body` / `npc_vendor_head`.
+  generateVendorNPC() {
+    if (this.textures.exists('npc_vendor_body')) return;
+    const s = [14, 20];
+    const body = createGrid(...s);
+    fillRect(body, 2, 9, 10, 9, 0x2c2018);
+    paintOver(body, 4, 11, 6, 2, 0x3a4a2c);
+    setPixel(body, 6, 12, 0xe8b93d);
+    setPixel(body, 7, 12, 0xe8b93d);
+    fillRect(body, 2, 16, 4, 4, 0x1c1410);
+    fillRect(body, 8, 16, 4, 4, 0x1c1410);
+    const gBody = this.add.graphics();
+    renderGrid(gBody, body, 0x0a0704);
+    gBody.generateTexture('npc_vendor_body', ...s);
+    gBody.destroy();
+
+    const head = createGrid(...s);
+    fillCircle(head, 7, 6, 4, 0xd8c9a0);
+    fillRect(head, 3, 4, 8, 3, 0xff5fd0);
+    setPixel(head, 4, 4, 0xffb3ea);
+    const gHead = this.add.graphics();
+    renderGrid(gHead, head, 0x0a0704);
+    gHead.generateTexture('npc_vendor_head', ...s);
     gHead.destroy();
   }
 
@@ -2757,6 +2951,750 @@ export default class BootScene extends Phaser.Scene {
     g.fillStyle(0xffffff, 1);
     g.fillCircle(3, 3, 3);
     g.generateTexture('particle', 6, 6);
+    g.destroy();
+  }
+
+  // Piso tóxico da Colônia — lodo verde com bolhas, pulso lento no TileMap.
+  generateToxicFloor(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x0c1608);
+    paintOver(grid, 0, 0, s, 2, 0x3a6a20);
+    paintOver(grid, 0, s - 2, s, 2, 0x3a6a20);
+    fillCircle(grid, 10, 12, 5, 0x1a3a10);
+    fillCircle(grid, 22, 20, 6, 0x244818);
+    fillCircle(grid, 14, 24, 4, 0x1a3a10);
+    setPixel(grid, 9, 10, 0x6dff4a);
+    setPixel(grid, 11, 14, 0x9fff6a);
+    setPixel(grid, 21, 18, 0x6dff4a);
+    setPixel(grid, 24, 22, 0xc8ff90);
+    setPixel(grid, 15, 23, 0x6dff4a);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x040804);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Tambor de filtro (puzzle mod-3) — 3 estados: fechado / meio / aberto.
+  generateFilterTile() {
+    if (this.textures.exists('tile_filter_0')) return;
+    const s = TILE_SIZE;
+    const frame = 0x2a3224;
+    const panelBg = 0x0c1008;
+    const colors = [0x8a2020, 0xc9a03a, 0x5ad040];
+    const cores = [0xff6a6a, 0xffe066, 0xc8ff90];
+    for (let state = 0; state < 3; state++) {
+      const grid = createGrid(s, s);
+      fillRect(grid, 1, 1, s - 2, s - 2, frame);
+      fillRect(grid, 3, 3, s - 6, s - 6, panelBg);
+      fillCircle(grid, s / 2, s / 2, 10, colors[state]);
+      fillCircle(grid, s / 2, s / 2, 5, cores[state]);
+      fillRect(grid, s / 2 - 1, 6, 2, 8, 0x0c1008);
+      const g = this.add.graphics();
+      renderGrid(g, grid, 0x05080a);
+      g.generateTexture(`tile_filter_${state}`, s, s);
+      g.destroy();
+    }
+  }
+
+  // Cápsula de quarentena — vidro com fluido verde, prop da Colônia.
+  generateCapsuleProp() {
+    if (this.textures.exists('prop_capsule')) return;
+    const grid = createGrid(14, 22);
+    fillRect(grid, 3, 1, 8, 18, 0x1a2a18);
+    paintOver(grid, 4, 2, 6, 16, 0x2a4a22);
+    fillRect(grid, 5, 4, 4, 12, 0x3a6a28);
+    setPixel(grid, 6, 6, 0x6dff4a);
+    setPixel(grid, 7, 8, 0x9fff6a);
+    setPixel(grid, 6, 11, 0x6dff4a);
+    fillRect(grid, 2, 1, 10, 2, 0x3a4038);
+    fillRect(grid, 2, 18, 10, 3, 0x3a4038);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x060a04);
+    g.generateTexture('prop_capsule', 14, 22);
+    g.destroy();
+  }
+
+  // Contaminado — humanoide encurvado, pele verde, trapos. Distinto do
+  // contrabandista (capuz âmbar) e do Morador dos Túneis (feral cinza).
+  generateInfectedEnemy() {
+    if (this.textures.exists('enemy_infected')) return;
+    const w = 16;
+    const h = 20;
+    const grid = createGrid(w, h);
+    const skin = 0x5a7a3a;
+    const skinDark = 0x3a5228;
+    const rag = 0x3a3428;
+    const glow = 0x6dff4a;
+
+    fillCircle(grid, 7, 5, 4, skinDark);
+    paintOver(grid, 5, 3, 5, 3, skin);
+    setPixel(grid, 6, 5, glow);
+    setPixel(grid, 9, 5, glow);
+
+    fillRect(grid, 4, 9, 8, 7, rag);
+    paintOver(grid, 5, 10, 5, 3, 0x4a4434);
+    fillRect(grid, 2, 10, 3, 4, skinDark);
+    fillRect(grid, 11, 11, 3, 4, skin);
+
+    fillRect(grid, 4, 16, 3, 4, skinDark);
+    fillRect(grid, 8, 16, 3, 4, rag);
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x060a04);
+    g.generateTexture('enemy_infected', w, h);
+    g.destroy();
+  }
+
+  // Portador — torso inchado, pústulas verdes, mais largo que o Contaminado.
+  generateBloatedEnemy() {
+    if (this.textures.exists('enemy_bloated')) return;
+    const w = 22;
+    const h = 22;
+    const grid = createGrid(w, h);
+    const skin = 0x4a6a32;
+    const skinDark = 0x2e441e;
+    const pus = 0x6dff4a;
+    const rag = 0x2a2418;
+
+    fillCircle(grid, 11, 5, 5, skinDark);
+    setPixel(grid, 9, 5, pus);
+    setPixel(grid, 13, 5, pus);
+
+    fillCircle(grid, 11, 13, 8, skin);
+    paintOver(grid, 6, 10, 10, 6, 0x5a7a3a);
+    setPixel(grid, 7, 12, pus);
+    setPixel(grid, 14, 14, pus);
+    setPixel(grid, 10, 16, 0x9fff6a);
+
+    fillRect(grid, 4, 18, 5, 4, rag);
+    fillRect(grid, 13, 18, 5, 4, rag);
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x060a04);
+    g.generateTexture('enemy_bloated', w, h);
+    g.destroy();
+  }
+
+  // O Enfermeiro — máscara de gás, avental rasgado, seringa-bastão.
+  generateEnfermeiroMiniBoss() {
+    if (this.textures.exists('enemy_enfermeiro')) return;
+    const w = 24;
+    const h = 28;
+    const grid = createGrid(w, h);
+    const coat = 0x3a4034;
+    const coatLight = 0x5a6050;
+    const mask = 0x1a2018;
+    const visor = 0x6dff4a;
+    const skin = 0x6a5a48;
+    const needle = 0xc8d0d8;
+
+    fillCircle(grid, 12, 6, 5, mask);
+    fillRect(grid, 8, 6, 8, 2, visor);
+    setPixel(grid, 9, 6, 0xc8ff90);
+    fillRect(grid, 11, 8, 2, 3, mask);
+
+    fillRect(grid, 6, 12, 12, 10, coat);
+    paintOver(grid, 7, 13, 8, 4, coatLight);
+    fillRect(grid, 10, 12, 4, 8, 0xd8dcc8);
+
+    fillRect(grid, 3, 13, 4, 5, skin);
+    fillRect(grid, 18, 4, 3, 14, needle);
+    setPixel(grid, 19, 4, visor);
+    fillRect(grid, 18, 17, 3, 2, 0x3a4034);
+
+    fillRect(grid, 7, 22, 4, 6, 0x2a2418);
+    fillRect(grid, 13, 22, 4, 6, 0x2a2418);
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x060a04);
+    g.generateTexture('enemy_enfermeiro', w, h);
+    g.destroy();
+  }
+
+  // A Matriarca — massa orgânica com sacos de ovo e núcleo verde pulsátil.
+  // Criatura, não humana/máquina/veículo.
+  generateMatriarchBoss() {
+    if (this.textures.exists('boss_matriarch')) return;
+    const w = 48;
+    const h = 46;
+    const grid = createGrid(w, h);
+    const flesh = 0x3a4a28;
+    const fleshLight = 0x5a6a38;
+    const dark = 0x1a2410;
+    const core = 0x6dff4a;
+    const coreHot = 0xc8ff90;
+
+    fillCircle(grid, 16, 38, 9, dark);
+    fillCircle(grid, 32, 38, 9, dark);
+    fillCircle(grid, 24, 22, 18, flesh);
+    fillCircle(grid, 24, 20, 14, fleshLight);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x2a3a1c, threshold: 0.38, scale: 0.28 });
+    mottle(grid, noise, { color: 0x6a7a40, threshold: 0.48, scale: 0.28, offsetX: 40, offsetY: 40 });
+
+    fillCircle(grid, 8, 16, 7, flesh);
+    fillCircle(grid, 40, 18, 8, flesh);
+    fillCircle(grid, 6, 18, 3, core);
+    fillCircle(grid, 42, 16, 3, core);
+
+    fillCircle(grid, 22, 20, 7, dark);
+    fillCircle(grid, 22, 20, 5, core);
+    fillCircle(grid, 22, 20, 2, coreHot);
+
+    setPixel(grid, 18, 12, core);
+    setPixel(grid, 28, 10, coreHot);
+    setPixel(grid, 14, 24, core);
+    setPixel(grid, 34, 26, coreHot);
+
+    fillRect(grid, 10, 34, 6, 8, dark);
+    fillRect(grid, 32, 34, 6, 8, dark);
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x040804);
+    g.generateTexture('boss_matriarch', w, h);
+    g.destroy();
+  }
+
+  // Piso do Servidor: raised floor com dois traços de cabo (não o xadrez
+  // tóxico nem o ciano elétrico do Reator).
+  generateFloorServidorRack(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x0c1418);
+    paintOver(grid, 0, 0, s, 2, 0x162028);
+    paintOver(grid, 0, s - 2, s, 2, 0x162028);
+    paintOver(grid, 8, 4, 1, s - 8, 0x1a3a38);
+    paintOver(grid, 22, 4, 1, s - 8, 0x1a3a38);
+    setPixel(grid, 8, 10, 0x2ef0c8);
+    setPixel(grid, 22, 18, 0x2ef0c8);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Parede de rack: metal quase preto com tiras LED verticais (teal 1px,
+  // não um flood ciano como a Ala do Reator).
+  generateWallServidor(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const base = 0x141c22;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x080c10);
+    fillRect(grid, 1, 1, s - 2, s - 2, base);
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: this._shade(base, -8, -6, -4), threshold: 0.55, scale: 0.4 });
+    for (const x of [6, 16, 26]) {
+      paintOver(grid, x, 3, 1, s - 6, 0x0a1214);
+      for (const y of [6, 12, 18, 24]) setPixel(grid, x, y, 0x2ef0c8);
+    }
+    setPixel(grid, 6, 6, 0xb8fff0);
+    setPixel(grid, 26, 18, 0xb8fff0);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Porta do data-center: painel escuro, leitor de cartão e LED teal.
+  generateDoorServidor(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x080c10);
+    fillRect(grid, 2, 2, s - 4, s - 4, 0x161e24);
+    paintOver(grid, 2, 2, s - 4, 2, 0x2ef0c8);
+    paintOver(grid, 2, s - 4, s - 4, 2, 0x1a3a38);
+    fillRect(grid, s / 2 - 1, 5, 2, s - 12, 0x2ef0c8);
+    paintOver(grid, s / 2 - 1, 5, 1, s - 12, 0xb8fff0);
+    fillRect(grid, s - 9, 12, 5, 8, 0x0a1214);
+    setPixel(grid, s - 7, 14, 0x2ef0c8);
+    setPixel(grid, s - 7, 16, 0xff3d8a);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Parede do hub do Estaleiro — chapa corrugada de contêiner (nervuras
+  // verticais), faixa de risco horizontal e rebites. Nem a rocha do
+  // Submundo, nem o metal arranhado em diagonal do Arsenal.
+  generateWallEstaleiro(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const base = 0x2a3238;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x12181c);
+    fillRect(grid, 1, 1, s - 2, s - 2, base);
+    const rustNoise = createNoise2D();
+    mottle(grid, rustNoise, { color: this._shade(base, -12, -10, -8), threshold: 0.4, scale: 0.45 });
+    mottle(grid, rustNoise, { color: 0x6a3a22, threshold: 0.68, scale: 0.55, offsetX: 28, offsetY: 16 });
+    for (let x = 3; x < s - 2; x += 4) {
+      paintOver(grid, x, 2, 1, s - 4, 0x1a2228);
+      paintOver(grid, x + 1, 2, 1, s - 4, 0x3a4850);
+    }
+    for (let x = 2; x < s - 2; x++) {
+      const on = Math.floor((x + 1) / 3) % 2 === 0;
+      setPixel(grid, x, 14, on ? 0xe8a030 : 0x0c1014);
+      setPixel(grid, x, 15, on ? 0xe8a030 : 0x0c1014);
+    }
+    for (const [cx, cy] of [[4, 5], [s - 5, 5], [4, s - 6], [s - 5, s - 6]]) {
+      fillCircle(grid, cx, cy, 1, 0x1a2228);
+      setPixel(grid, cx, cy, 0x8a9aa4);
+    }
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Portão de baia de carga — lâminas horizontais de enrolar, faixa de
+  // risco embaixo, fresta âmbar no meio. Lê como doca, não porta deslizante.
+  generateDoorEstaleiro(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x101418);
+    fillRect(grid, 2, 2, s - 4, s - 4, 0x2a3238);
+    for (let y = 4; y < s - 4; y += 3) {
+      paintOver(grid, 3, y, s - 6, 1, 0x1a2228);
+    }
+    fillRect(grid, s / 2 - 1, 3, 2, s - 10, 0xe8923d);
+    paintOver(grid, s / 2 - 1, 3, 1, s - 10, 0xffc878);
+    for (let x = 3; x < s - 3; x++) {
+      const on = Math.floor(x / 3) % 2 === 0;
+      setPixel(grid, x, s - 5, on ? 0xe8a030 : 0x0c1014);
+      setPixel(grid, x, s - 4, on ? 0xe8a030 : 0x0c1014);
+    }
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Plataforma de poço de carga — gaiola quadrada com borda de risco e
+  // seta pra cima. Passagem física (sobe/desce), não portal nem buraco.
+  generateLiftProp() {
+    if (this.textures.exists('prop_lift')) return;
+    const s = 36;
+    const grid = createGrid(s, s);
+    fillRect(grid, 4, 4, 28, 28, 0x1a2228);
+    fillRect(grid, 6, 6, 24, 24, 0x2a3238);
+    fillRect(grid, 10, 10, 16, 16, 0x12181c);
+    for (let i = 0; i < 28; i++) {
+      const on = Math.floor(i / 3) % 2 === 0;
+      const c = on ? 0xe8a030 : 0x0c1014;
+      setPixel(grid, 4 + i, 4, c);
+      setPixel(grid, 4 + i, 5, c);
+      setPixel(grid, 4 + i, 30, c);
+      setPixel(grid, 4 + i, 31, c);
+      setPixel(grid, 4, 4 + i, c);
+      setPixel(grid, 5, 4 + i, c);
+      setPixel(grid, 30, 4 + i, c);
+      setPixel(grid, 31, 4 + i, c);
+    }
+    fillRect(grid, 16, 14, 4, 10, 0xe8923d);
+    fillRect(grid, 13, 16, 10, 3, 0xe8923d);
+    fillRect(grid, 14, 13, 8, 3, 0xffc878);
+    setPixel(grid, 17, 12, 0xffc878);
+    setPixel(grid, 18, 12, 0xffc878);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('prop_lift', s, s);
+    g.destroy();
+  }
+
+  // Contêiner ISO pequeno — decoração do cais (silhueta retangular com
+  // nervuras, distinto do caixote de madeira).
+  generateContainerProp() {
+    if (this.textures.exists('prop_container')) return;
+    const grid = createGrid(22, 14);
+    fillRect(grid, 1, 1, 20, 12, 0x3a4a38);
+    paintOver(grid, 1, 1, 20, 2, 0x5a6a50);
+    fillRect(grid, 1, 1, 2, 12, 0x2a3228);
+    fillRect(grid, 19, 1, 2, 12, 0x2a3228);
+    for (let x = 4; x < 19; x += 3) paintOver(grid, x, 3, 1, 8, 0x2a3228);
+    setPixel(grid, 3, 3, 0xe8a030);
+    setPixel(grid, 18, 10, 0xe8a030);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x0c1010);
+    g.generateTexture('prop_container', 22, 14);
+    g.destroy();
+  }
+
+  generateCableTiles() {
+    if (this.textures.exists('tile_cable_straight_0')) return;
+    const s = TILE_SIZE;
+    const types = {
+      straight: { base: 1 | 4, rots: 2 },
+      elbow: { base: 1 | 2, rots: 4 },
+      tee: { base: 1 | 2 | 4, rots: 4 }
+    };
+    const rotate = (mask, times) => {
+      let m = mask;
+      for (let i = 0; i < times; i++) {
+        m = ((m & 1) ? 2 : 0) | ((m & 2) ? 4 : 0) | ((m & 4) ? 8 : 0) | ((m & 8) ? 1 : 0);
+      }
+      return m;
+    };
+    for (const [type, cfg] of Object.entries(types)) {
+      for (let rot = 0; rot < cfg.rots; rot++) {
+        const mask = rotate(cfg.base, rot);
+        const grid = createGrid(s, s);
+        fillRect(grid, 1, 1, s - 2, s - 2, 0x10181c);
+        fillRect(grid, 3, 3, s - 6, s - 6, 0x0a1014);
+        const c = s / 2;
+        fillRect(grid, c - 3, c - 3, 6, 6, 0x1a3a38);
+        if (mask & 1) fillRect(grid, c - 2, 2, 4, c - 2, 0x2ef0c8);
+        if (mask & 2) fillRect(grid, c, c - 2, s - 2 - c, 4, 0x2ef0c8);
+        if (mask & 4) fillRect(grid, c - 2, c, 4, s - 2 - c, 0x2ef0c8);
+        if (mask & 8) fillRect(grid, 2, c - 2, c - 2, 4, 0x2ef0c8);
+        paintOver(grid, c - 2, c - 2, 4, 4, 0xb8fff0);
+        const g = this.add.graphics();
+        renderGrid(g, grid, 0x04080c);
+        g.generateTexture(`tile_cable_${type}_${rot}`, s, s);
+        g.destroy();
+      }
+    }
+  }
+
+  generateRackProp() {
+    if (this.textures.exists('prop_rack')) return;
+    const grid = createGrid(14, 22);
+    fillRect(grid, 2, 1, 10, 20, 0x141c22);
+    paintOver(grid, 3, 2, 8, 18, 0x1a242c);
+    for (const y of [4, 8, 12, 16]) {
+      fillRect(grid, 4, y, 6, 2, 0x0a1014);
+      setPixel(grid, 5, y, 0x2ef0c8);
+      setPixel(grid, 8, y + 1, y === 12 ? 0xff3d8a : 0x2ef0c8);
+    }
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture('prop_rack', 14, 22);
+    g.destroy();
+  }
+
+  // Plugues/soquetes do barramento: 5 cores × 2 silhuetas (soquete oco em
+  // cima, plugue cheio embaixo). Forma distinta por cor pra ler no escuro.
+  generateBusTiles() {
+    if (this.textures.exists('tile_bus_plug_4')) return;
+    const s = TILE_SIZE;
+    const palettes = [
+      { fill: 0x2ef0c8, hi: 0xb8fff0, dim: 0x145a52 },
+      { fill: 0xf0c02e, hi: 0xfff0a8, dim: 0x6a5a10 },
+      { fill: 0xff3d8a, hi: 0xffb0d0, dim: 0x6a1838 },
+      { fill: 0x7ec8ff, hi: 0xd0eeff, dim: 0x1a4a6a },
+      { fill: 0xb07cff, hi: 0xe0c8ff, dim: 0x4a2870 }
+    ];
+    const paintFrame = (grid) => {
+      fillRect(grid, 0, 0, s, s, 0x080c10);
+      fillRect(grid, 1, 1, s - 2, s - 2, 0x1a242c);
+      fillRect(grid, 3, 3, s - 6, s - 6, 0x0e161c);
+    };
+    const paintDiamond = (grid, cx, cy, r, color) => {
+      for (let y = cy - r; y <= cy + r; y++) {
+        for (let x = cx - r; x <= cx + r; x++) {
+          if (Math.abs(x - cx) + Math.abs(y - cy) <= r) setPixel(grid, x, y, color);
+        }
+      }
+    };
+    const paintPlus = (grid, cx, cy, r, t, color) => {
+      fillRect(grid, cx - t, cy - r, t * 2 + 1, r * 2 + 1, color);
+      fillRect(grid, cx - r, cy - t, r * 2 + 1, t * 2 + 1, color);
+    };
+    const paintTriangle = (grid, cx, cy, r, color) => {
+      for (let y = 0; y <= r * 2; y++) {
+        const w = Math.floor((y / (r * 2)) * r);
+        for (let x = -w; x <= w; x++) setPixel(grid, cx + x, cy - r + y, color);
+      }
+    };
+    const paintShape = (grid, kind, color, r, hollow) => {
+      const c = s / 2;
+      if (kind === 0) {
+        fillCircle(grid, c, c, r, color);
+        if (hollow) fillCircle(grid, c, c, r - 4, 0x0e161c);
+      } else if (kind === 1) {
+        paintDiamond(grid, c, c, r, color);
+        if (hollow) paintDiamond(grid, c, c, r - 4, 0x0e161c);
+      } else if (kind === 2) {
+        fillRect(grid, c - r, c - r, r * 2, r * 2, color);
+        if (hollow) fillRect(grid, c - r + 4, c - r + 4, r * 2 - 8, r * 2 - 8, 0x0e161c);
+      } else if (kind === 3) {
+        paintPlus(grid, c, c, r, hollow ? 3 : 4, color);
+        if (hollow) paintPlus(grid, c, c, r - 4, 1, 0x0e161c);
+      } else {
+        paintTriangle(grid, c, c, r, color);
+        if (hollow) paintTriangle(grid, c, c + 2, r - 5, 0x0e161c);
+      }
+    };
+
+    for (let n = 0; n < palettes.length; n++) {
+      const pal = palettes[n];
+      const socket = createGrid(s, s);
+      paintFrame(socket);
+      paintShape(socket, n, pal.dim, 11, false);
+      paintShape(socket, n, pal.fill, 11, true);
+      paintOver(socket, s / 2 - 1, s - 8, 2, 5, pal.fill);
+      const gSock = this.add.graphics();
+      renderGrid(gSock, socket, 0x04080c);
+      gSock.generateTexture(`tile_bus_socket_${n}`, s, s);
+      gSock.destroy();
+
+      const plug = createGrid(s, s);
+      paintFrame(plug);
+      paintShape(plug, n, pal.fill, 11, false);
+      paintShape(plug, n, pal.hi, 5, false);
+      paintOver(plug, s / 2 - 1, 3, 2, 5, pal.fill);
+      const gPlug = this.add.graphics();
+      renderGrid(gPlug, plug, 0x04080c);
+      gPlug.generateTexture(`tile_bus_plug_${n}`, s, s);
+      gPlug.destroy();
+    }
+  }
+
+  generateFirewallProp() {
+    if (this.textures.exists('prop_firewall')) return;
+    const grid = createGrid(16, 24);
+    fillRect(grid, 6, 1, 4, 22, 0x0a2424);
+    paintOver(grid, 7, 2, 2, 20, 0x2ef0c8);
+    for (const y of [4, 10, 16]) setPixel(grid, 7, y, 0xb8fff0);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture('prop_firewall', 16, 24);
+    g.destroy();
+  }
+
+  // Drone de Firewall — caixa baixa com antena e um painel LED vertical.
+  generateFirewallEnemy() {
+    if (this.textures.exists('enemy_firewall')) return;
+    const w = 16;
+    const h = 20;
+    const grid = createGrid(w, h);
+    fillRect(grid, 3, 8, 10, 8, 0x1a242c);
+    paintOver(grid, 4, 9, 8, 4, 0x243038);
+    fillRect(grid, 7, 2, 2, 7, 0x2ef0c8);
+    setPixel(grid, 7, 2, 0xb8fff0);
+    fillRect(grid, 5, 11, 6, 2, 0x0a1014);
+    setPixel(grid, 6, 11, 0x2ef0c8);
+    setPixel(grid, 9, 12, 0xff3d8a);
+    fillRect(grid, 4, 16, 3, 4, 0x141c22);
+    fillRect(grid, 9, 16, 3, 4, 0x141c22);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture('enemy_firewall', w, h);
+    g.destroy();
+  }
+
+  // Sonda Sifão — disco flutuante com funil magenta (drena carga).
+  generateSiphonEnemy() {
+    if (this.textures.exists('enemy_siphon')) return;
+    const w = 22;
+    const h = 22;
+    const grid = createGrid(w, h);
+    fillCircle(grid, 11, 10, 8, 0x1a1824);
+    fillCircle(grid, 11, 10, 5, 0x2a2238);
+    fillCircle(grid, 11, 10, 2, 0xff3d8a);
+    fillRect(grid, 10, 16, 2, 5, 0x2ef0c8);
+    setPixel(grid, 10, 16, 0xff3d8a);
+    setPixel(grid, 7, 8, 0x2ef0c8);
+    setPixel(grid, 15, 8, 0x2ef0c8);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture('enemy_siphon', w, h);
+    g.destroy();
+  }
+
+  // O Sysadmin — humanoide de jaleco escuro, visor teal, tablet na mão.
+  generateSysadminMiniBoss() {
+    if (this.textures.exists('enemy_sysadmin')) return;
+    const w = 24;
+    const h = 28;
+    const grid = createGrid(w, h);
+    fillCircle(grid, 12, 6, 5, 0x3a342c);
+    fillRect(grid, 8, 5, 8, 2, 0x1a242c);
+    fillRect(grid, 8, 6, 8, 2, 0x2ef0c8);
+    setPixel(grid, 9, 6, 0xb8fff0);
+    fillRect(grid, 6, 12, 12, 10, 0x1a242c);
+    paintOver(grid, 7, 13, 10, 4, 0x243038);
+    fillRect(grid, 10, 12, 4, 8, 0x2a3a40);
+    fillRect(grid, 2, 14, 5, 4, 0x3a342c);
+    fillRect(grid, 18, 13, 4, 6, 0x0a1014);
+    setPixel(grid, 19, 15, 0x2ef0c8);
+    fillRect(grid, 7, 22, 4, 6, 0x141018);
+    fillRect(grid, 13, 22, 4, 6, 0x141018);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture('enemy_sysadmin', w, h);
+    g.destroy();
+  }
+
+  // O Administrador — humano com arnês de rack nas costas e visor de dois
+  // monitores. Fecha o Submundo: quem roteava o contrabando, não quem cobrava.
+  generateAdministradorBoss() {
+    if (this.textures.exists('boss_administrador')) return;
+    const w = 44;
+    const h = 46;
+    const grid = createGrid(w, h);
+    const suit = 0x1a242c;
+    const suitLight = 0x2a3840;
+    const visor = 0x2ef0c8;
+    const mag = 0xff3d8a;
+
+    fillCircle(grid, 22, 10, 8, 0x2a241c);
+    fillRect(grid, 14, 8, 16, 5, 0x0a1014);
+    fillRect(grid, 15, 9, 6, 3, visor);
+    fillRect(grid, 23, 9, 6, 3, mag);
+    setPixel(grid, 16, 9, 0xb8fff0);
+    setPixel(grid, 24, 9, 0xff9ad0);
+
+    fillRect(grid, 12, 18, 20, 16, suit);
+    paintOver(grid, 14, 20, 16, 6, suitLight);
+    fillRect(grid, 20, 18, 4, 14, 0x0a1014);
+    for (const y of [20, 24, 28]) setPixel(grid, 21, y, visor);
+
+    fillRect(grid, 6, 16, 7, 12, 0x141c22);
+    fillRect(grid, 31, 16, 7, 12, 0x141c22);
+    for (const x of [8, 33]) {
+      setPixel(grid, x, 18, visor);
+      setPixel(grid, x, 22, mag);
+      setPixel(grid, x, 26, visor);
+    }
+
+    fillRect(grid, 4, 20, 4, 8, 0x3a342c);
+    fillRect(grid, 36, 20, 4, 8, 0x3a342c);
+
+    fillRect(grid, 14, 34, 6, 12, 0x0e1218);
+    fillRect(grid, 24, 34, 6, 12, 0x0e1218);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x243038, threshold: 0.5, scale: 0.3, region: { x0: 12, y0: 18, w: 20, h: 16 } });
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x04080c);
+    g.generateTexture('boss_administrador', w, h);
+    g.destroy();
+  }
+
+  // Drone de Carga — AGV baixo com contêiner no dorso e faróis âmbar.
+  // Silhueta retangular (não disco, não humanoide) pra ler como veículo de pátio.
+  generateCargoDrone() {
+    if (this.textures.exists('enemy_cargo')) return;
+    const w = 20;
+    const h = 16;
+    const grid = createGrid(w, h);
+    fillRect(grid, 2, 8, 16, 6, 0x2a3238);
+    paintOver(grid, 3, 9, 14, 3, 0x3a4850);
+    fillRect(grid, 4, 3, 12, 7, 0x3a4a38);
+    paintOver(grid, 4, 3, 12, 2, 0x5a6a50);
+    for (let x = 6; x < 16; x += 3) paintOver(grid, x, 5, 1, 4, 0x2a3228);
+    setPixel(grid, 5, 4, 0xe8a030);
+    setPixel(grid, 14, 8, 0xe8a030);
+    fillRect(grid, 1, 12, 4, 3, 0x141c22);
+    fillRect(grid, 15, 12, 4, 3, 0x141c22);
+    setPixel(grid, 2, 10, 0xffc878);
+    setPixel(grid, 17, 10, 0xffc878);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_cargo', w, h);
+    g.destroy();
+  }
+
+  // Empilhadeira — mastro alto + garfo, corpo de cabine. Mais alto que o
+  // drone de carga, lê como veículo de corredor, não AGV de avenida.
+  generateStackerEnemy() {
+    if (this.textures.exists('enemy_stacker')) return;
+    const w = 18;
+    const h = 24;
+    const grid = createGrid(w, h);
+    fillRect(grid, 8, 1, 3, 14, 0x2a3238);
+    paintOver(grid, 9, 2, 1, 12, 0xe8a030);
+    fillRect(grid, 3, 14, 12, 8, 0x3a3228);
+    paintOver(grid, 4, 15, 10, 4, 0x4a4238);
+    fillRect(grid, 5, 16, 6, 4, 0x1a2228);
+    setPixel(grid, 7, 17, 0xe8923d);
+    setPixel(grid, 8, 17, 0xffc878);
+    fillRect(grid, 1, 12, 7, 2, 0x8a9aa4);
+    fillRect(grid, 1, 10, 2, 4, 0x6a7a84);
+    fillRect(grid, 3, 22, 4, 2, 0x141c22);
+    fillRect(grid, 11, 22, 4, 2, 0x141c22);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_stacker', w, h);
+    g.destroy();
+  }
+
+  // O Estivador — humanoide de colete âmbar, capacete e gancho na mão.
+  generateEstivadorMiniBoss() {
+    if (this.textures.exists('enemy_estivador')) return;
+    const w = 24;
+    const h = 28;
+    const grid = createGrid(w, h);
+    fillCircle(grid, 12, 6, 5, 0x3a342c);
+    fillRect(grid, 8, 3, 8, 3, 0xe8a030);
+    paintOver(grid, 9, 4, 6, 1, 0xffc878);
+    fillRect(grid, 6, 12, 12, 10, 0x2a3238);
+    paintOver(grid, 7, 13, 10, 4, 0xe8923d);
+    fillRect(grid, 10, 12, 4, 8, 0x1a2228);
+    fillRect(grid, 2, 14, 5, 4, 0x3a342c);
+    fillRect(grid, 17, 12, 5, 8, 0x8a9aa4);
+    setPixel(grid, 19, 11, 0xe8a030);
+    fillRect(grid, 7, 22, 4, 6, 0x141018);
+    fillRect(grid, 13, 22, 4, 6, 0x141018);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_estivador', w, h);
+    g.destroy();
+  }
+
+  // O Empilhador — ponte rolante andante: pernas de pórtico, contêiner
+  // preso no gancho, cabine no meio. Maior que o Estivador, lê como máquina
+  // de pátio, não humano.
+  generateEmpilhadorBoss() {
+    if (this.textures.exists('boss_empilhador')) return;
+    const w = 48;
+    const h = 46;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3238;
+    const steelLight = 0x3a4850;
+    const amber = 0xe8923d;
+    const crate = 0x3a4a38;
+
+    fillRect(grid, 4, 2, 40, 4, steel);
+    paintOver(grid, 6, 3, 36, 2, amber);
+    fillRect(grid, 6, 6, 4, 16, steel);
+    fillRect(grid, 38, 6, 4, 16, steel);
+    paintOver(grid, 7, 6, 2, 16, steelLight);
+    paintOver(grid, 39, 6, 2, 16, steelLight);
+
+    fillRect(grid, 14, 8, 20, 10, crate);
+    paintOver(grid, 14, 8, 20, 2, 0x5a6a50);
+    for (let x = 17; x < 32; x += 4) paintOver(grid, x, 10, 1, 6, 0x2a3228);
+    setPixel(grid, 16, 10, amber);
+    setPixel(grid, 31, 16, amber);
+
+    fillRect(grid, 18, 20, 12, 12, steel);
+    paintOver(grid, 20, 22, 8, 6, steelLight);
+    fillRect(grid, 22, 24, 4, 3, 0x1a2228);
+    setPixel(grid, 23, 25, amber);
+    setPixel(grid, 24, 25, 0xffc878);
+
+    fillRect(grid, 8, 32, 8, 12, 0x1a2228);
+    fillRect(grid, 32, 32, 8, 12, 0x1a2228);
+    paintOver(grid, 10, 34, 4, 8, steel);
+    paintOver(grid, 34, 34, 4, 8, steel);
+    fillRect(grid, 6, 42, 12, 3, 0x141c22);
+    fillRect(grid, 30, 42, 12, 3, 0x141c22);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x6a3a22, threshold: 0.62, scale: 0.4, region: { x0: 14, y0: 8, w: 20, h: 10 } });
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('boss_empilhador', w, h);
     g.destroy();
   }
 }

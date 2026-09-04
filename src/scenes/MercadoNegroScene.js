@@ -60,16 +60,16 @@ function shuffleSequence(n) {
   return arr;
 }
 
-// Decoração de cenário — barracas do mercado (caixote/barril/tubulação já
-// existentes + o quiosque, retintado em âmbar/couro em vez do magenta neon
-// do Distrito).
+// Decoração de cenário — barracas e lanternas do pacote mercado-negro
+// (caixote/barril ainda entram em alguns cantos pra não deixar as salas
+// só com toldo).
 const PROPS = [
-  { gx: 4, gy: 6, texture: 'prop_crate' }, { gx: 19, gy: 4, texture: 'prop_kiosk', tint: 0xc9a06a },
-  { gx: 31, gy: 4, texture: 'prop_barrel' }, { gx: 4, gy: 17, texture: 'prop_pipe' },
-  { gx: 5, gy: 29, texture: 'prop_crate' }, { gx: 17, gy: 27, texture: 'prop_kiosk', tint: 0xc9a06a },
-  { gx: 43, gy: 27, texture: 'prop_barrel' }, { gx: 57, gy: 27, texture: 'prop_kiosk', tint: 0xc9a06a },
-  { gx: 69, gy: 29, texture: 'prop_crate' }, { gx: 57, gy: 39, texture: 'prop_pipe' },
-  { gx: 43, gy: 43, texture: 'prop_barrel' }, { gx: 5, gy: 51, texture: 'prop_crate' }
+  { gx: 4, gy: 6, texture: 'prop_lantern' }, { gx: 19, gy: 4, texture: 'prop_stall' },
+  { gx: 31, gy: 4, texture: 'prop_barrel' }, { gx: 4, gy: 17, texture: 'prop_lantern' },
+  { gx: 5, gy: 29, texture: 'prop_crate' }, { gx: 17, gy: 27, texture: 'prop_stall' },
+  { gx: 43, gy: 27, texture: 'prop_barrel' }, { gx: 57, gy: 27, texture: 'prop_stall' },
+  { gx: 69, gy: 29, texture: 'prop_crate' }, { gx: 57, gy: 39, texture: 'prop_lantern' },
+  { gx: 43, gy: 43, texture: 'prop_barrel' }, { gx: 5, gy: 51, texture: 'prop_stall' }
 ];
 
 export default class MercadoNegroScene extends Phaser.Scene {
@@ -82,11 +82,12 @@ export default class MercadoNegroScene extends Phaser.Scene {
     this.zones = zones;
     this.currentZone = null;
     this.tileMap = new TileMap(this, grid, {
-      wallTexture: 'wall_submundo',
-      floorTexture: 'floor_submundo',
+      wallTexture: 'wall_mercado',
+      floorTexture: 'floor_mercado',
       floorVariants: [
-        { key: 'floor_submundo', weight: 0.85 },
-        { key: 'floor_submundo_vent', weight: 0.15 }
+        { key: 'floor_mercado', weight: 0.7 },
+        { key: 'floor_mercado_stall', weight: 0.15 },
+        { key: 'floor_mercado_vent', weight: 0.15 }
       ],
       markers
     });
@@ -103,11 +104,11 @@ export default class MercadoNegroScene extends Phaser.Scene {
     const onEnemyDeath = (enemy) => this._handleEnemyDrop(enemy);
     this.enemies = [
       ...this.tileMap.allMarkers('X').map((m) => new Enemy(this, this.tileMap, m.gx, m.gy, {
-        hp: 48, speed: 1.1, attackDamage: 15, xpReward: 24, texture: 'enemy_militia',
+        hp: 48, speed: 1.1, attackDamage: 15, xpReward: 24, texture: 'enemy_smuggler',
         ammoDropChance: AMMO_CHANCE_NORMAL, onDeath: onEnemyDeath
       })),
       ...this.tileMap.allMarkers('T').map((m) => new Enemy(this, this.tileMap, m.gx, m.gy, {
-        hp: 195, speed: 1.0, attackDamage: 28, xpReward: 62, texture: 'enemy_tank', hpBarWidth: 32,
+        hp: 195, speed: 1.0, attackDamage: 28, xpReward: 62, texture: 'enemy_enforcer', hpBarWidth: 32,
         ammoDropChance: AMMO_CHANCE_TANK, onDeath: onEnemyDeath
       }))
     ];
@@ -136,12 +137,11 @@ export default class MercadoNegroScene extends Phaser.Scene {
     this.npcs = MERCADO_NEGRO_CAPTIVES
       .map((captive, i) => ({ captive, spot: npcSpawns[i] }))
       .filter(({ captive }) => !GameState.rescuedNpcs.has(captive.id))
-      .map(({ captive, spot }, i) => new NPC(this, this.tileMap, spot.gx, spot.gy, {
+      .map(({ captive, spot }) => new NPC(this, this.tileMap, spot.gx, spot.gy, {
         id: captive.id,
         name: captive.name,
-        texture: 'npc_worker',
-        lines: captive.dungeonLines,
-        tint: i === 1 ? 0xd8c090 : 0xc9a06a
+        texture: 'npc_vendor',
+        lines: captive.dungeonLines
       }));
 
     this.items = ITEMS
@@ -199,7 +199,7 @@ export default class MercadoNegroScene extends Phaser.Scene {
     this.gates = ['L1', 'L2', 'L3', 'L4'].map((key) => {
       const spot = this.tileMap.marker(key);
       const world = this.tileMap.gridToWorld(spot.gx, spot.gy);
-      const sprite = this.add.image(world.x, world.y, 'door').setDepth(9000).setTint(0xff4a5e);
+      const sprite = this.add.image(world.x, world.y, 'door_mercado').setDepth(9000).setTint(0xff4a5e);
       const label = this.add.text(world.x, world.y - 20, 'SELADA', {
         fontFamily: 'Courier New', fontSize: '8px', color: '#ff8a9c'
       }).setOrigin(0.5).setDepth(9001);

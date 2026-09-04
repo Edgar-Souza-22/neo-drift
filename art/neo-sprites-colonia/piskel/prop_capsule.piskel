@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "prop_capsule",
+    "description": "Neo Drift Colonia quarantine capsule",
+    "fps": 1,
+    "height": 22,
+    "width": 14,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":1,\"chunks\":[{\"layout\":[[0]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAWCAYAAADwza0nAAABGUlEQVR4nI2TvUoDQRSFvw3LFsFiiyCLLGEaIdgmWFhY+gI+gbWNT2KXl8kDpJC1DYE0QwhhWVaYQixEjIUG5+fO6Onu3HvmnvuX4aEY5gf/DeD97SOzbccohvlhdjlDqcohad3SPDUOOfNJR5R9h7n+hNXvJzY5l2QBmNEprGJeQSrAeFw7QdvtDiAudXR2Ek8B9PvXuFR1U4okvTCOPfADpvOLZNYjxOZIZH2+/Jv4fJ9o5w8Cqf+Fk1HVE17uCtBVEKjqin7fxDNq3Qaksu/SGfVuze3mKqjRAHqxdt6SNT7OH6K+YHNSC5DcHPsaXJi4VFVPotJ8n1ijf8gSRKI9kq4NxwNCjf7MynwAffd92BbEQ47BPuQv8VFjZmONkzkAAAAASUVORK5CYII=\"}]}]"
+  }
+}

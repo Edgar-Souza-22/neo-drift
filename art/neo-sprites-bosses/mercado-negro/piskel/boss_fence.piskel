@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "boss_fence",
+    "description": "Neo Drift O Cercador idle",
+    "fps": 6,
+    "height": 36,
+    "width": 40,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAkCAYAAAAO7jHjAAAEsUlEQVR4nO2cP0hbQRzHvynmIfqwSltbG1ACbUcncVHMUJDQ4hYQOnXIoqPoYqGlgy6Vjp0EOxUKbl1EakFJF3EtlHZqIbVqi1aCSAykg555ebm7d/fu3nv3Yr7g8C73Lp/8/t3Pe8YENChp2VXa+Fm5lNCxvoqSll1N9drU14r7JWMYaeMmsAUt5Q9osoN5bEQmM0bNRhRkgigtYLKDRdiITGaMOgiDThDfN5vsYBrbyWm57rqj3aq7NoGRpWZOEF83muxgN5ubyy0nZ1SMgDn2IworQa7J3kBzMM3J7vFUr83sJa6S4mA/VoI4f5xSYZMOwDjJq/qJzrlKCjtBlAKw5WA1tewHtEUNEKT2Vr4KzUtPDQZMEk+JJoi7X5WRUgDuPf4E5O4Cq7+489IbWZW3aVq17KejAnoYL2jR+o7ifgmpXhvpqUHh34KL+yXqeoH/5hmx/XgKYwfxDECugzeykTo4adnV8rcnfm8XkvXgXVWV0T1miv1MEDcA4+Dg7a1NnThaFQf70RKE9HUyOwiZJ5sgnhXQZAeflUuJ0XyxupAbwLPVH5fjPV31TTGrSXYb9/C4dk3WVK0wJtvPhAThBiDNwff7uxvmnZxWqPd3tDcu//3nEQB9DnaLxseSm+9mdwdWnndeXFVQyKYwmi/6rjBxsF/UCeK5BYss0tHehqfD1+vG3m7/U8ASk8zBpwhfLfhqKiz7D0LT7QcAo/kiRBJkeuxG3dibrb9aEoQZgEnLrhaWUxdX59VgYuaAtxaW1ncBALPjfcw57jVVnBsEny41k/1IoDn5aMEHnLc/zlbGS9QnIfVwNX14fYu6CK1yiI4VllPSj3CC4nNqeCwjg1QnWb4vHx8JjcXJfqKSPgf8c3RCGe1EJltBJks+QIUxVw80T7r4guqN6HzA3OII5ha95ppuP2cQi1VooWfBKtUgjDV1rUXbgkbzReVG/6rYj1ZBvSq0UADKVIPNNbGiqrPC6OSbmDm4/NERfLJ8r+Y/a19T51qi/hUVNQAvjg8axr2aaADIZOlHCqz7/Tg5KD5dUuGbWxxhvhYn+4lWVS540rKrC7kBoYX8SuUsK2i+pfVdHB6XjeUD1O3X02UFfirAY/QMQPdTBZqce//wxntsP5wEIJZRqg5uBr69nVzt4sU08PINAOD20KoRfDL2c/eBXhWa+YIonFuz433IZCtCziXyY0Q/fH7YwuQDzLYfkSwjj0/7n+Qvre9ic62NeaYUpUxmI7pqjMyD6LCyAzg/PZc5TA2zuoTJB5htPyJZRh5faBXwXrpf91tJi5e5JvABZtuPiMbol69hXxbNjqE73dj5fdQw7rfKAGK9jAqfClsYfKqMYfCpMNL4fFdAFpwpPQyNzxQ2IJ72IwqsB1TtDQC1DPbqZcLuXcLmA8y2H5HOXpq6BfMWof27BvJ9BaKF3AAy2Qom5xv/ps091y3eFhK1gwH+Nhe1g734AD3+Bdg+lvWv9NkRC9C5MPmQInNlpcuAsnOJRHosk/l4EvWv7FyepJ8si3xZ+axcSiQtuxrEt/q9spv1njQDis5tJj4vyfhMh3+b+n/DtGS+tHzPgdcTic7VpRafmsLm+w/Ef4V/HqxYHwAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

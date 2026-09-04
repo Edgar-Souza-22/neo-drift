@@ -1,5 +1,5 @@
-import Phaser from 'phaser';
-import Enemy from './Enemy.js';
+import BossBase from './boss/BossBase.js';
+import { SelfBurstAttack, ProjectileAttack } from './boss/attacks.js';
 import { playSfx } from '../audio/AudioManager.js';
 
 const TELEPORT_COOLDOWN = 5200;
@@ -7,18 +7,14 @@ const TELEPORT_TRIGGER_RANGE = 8;
 const TELEPORT_MIN_DIST = 1.8;
 const TELEPORT_MAX_DIST = 3;
 const FADE_MS = 220;
-
 const SUMMON_COOLDOWN = 7000;
 const MAX_ACTIVE_ADDS = 2;
 const SUMMON_SPAWN_DIST = 2.2;
 
-// Guardião do Nexo (mini-boss da Fase 07) — guarda a única entrada da
-// Câmara do Roteador. Duas habilidades que nenhum semi-boss anterior tem (o
-// Guardião do Cofre genérico é só um "muro de HP" sem ataque especial):
-// teleporta pra flanquear o jogador (reposicionamento, não investida) e
-// invoca Saltadores de Fase através de um portal. Ao morrer, derruba o
-// Núcleo de Sincronia (ver NexusScene) que abre a arena do chefe final.
-export default class PortalGuardian extends Enemy {
+// Guardião do Nexo (mini-chefe da Fase 07) — teleporta pra flanquear,
+// explode ao reaparecer (melee), dispara do portal (ranged) e invoca
+// Saltadores de Fase.
+export default class PortalGuardian extends BossBase {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 380,
@@ -28,34 +24,30 @@ export default class PortalGuardian extends Enemy {
       texture: opts.texture || 'enemy_portalguardian',
       hpBarWidth: 34,
       scale: 1.05,
+      isMiniBoss: true,
+      hasEnrage: false,
+      name: opts.name || 'GUARDIÃO DO NEXO',
+      nameColor: '#ff5fd0',
+      nameOffset: 34,
+      barOffset: 26,
+      auraTint: 0xff5fd0,
+      auraScale: 0.85,
       onDeath: opts.onDeath
     });
-    this.isMiniBoss = true;
-
-    // Callback fornecido pela cena — cria um PhaseJumper, registra em
-    // scene.enemies e devolve a instância (ver NexusScene._spawnGuardianAdd).
     this.spawnAdd = opts.spawnAdd || null;
-
     this.lastTeleportAt = -9999;
-    this.teleporting = false;
     this.lastSummonAt = -1800;
     this.activeAdds = [];
 
-    this.nameTag = this.scene.add.text(this.sprite.x, this.sprite.y - 32, opts.name || 'GUARDIÃO DO NEXO', {
-      fontFamily: 'Courier New',
-      fontSize: '10px',
-      color: '#ff5fd0'
-    }).setOrigin(0.5).setDepth(9002);
-
-    this.auraRing = this.scene.add.image(this.sprite.x, this.sprite.y, 'boss_aura')
-      .setBlendMode(Phaser.BlendModes.ADD).setTint(0xff5fd0).setAlpha(0.5).setScale(0.85);
-    this.scene.tweens.add({ targets: this.auraRing, scale: 1.0, alpha: 0.2, duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-  }
-
-  die() {
-    if (this.nameTag) { this.nameTag.destroy(); this.nameTag = null; }
-    if (this.auraRing) { this.auraRing.destroy(); this.auraRing = null; }
-    super.die();
+    this.burst = this.addAttack(new SelfBurstAttack(this, {
+      damage: 22, cooldown: 900, maxRange: 8, radius: 1.4,
+      telegraphMs: 320, tint: 0xff5fd0, lockMove: true,
+      autoPick: false, firstDelay: 0
+    }));
+    this.addAttack(new ProjectileAttack(this, {
+      damage: 12, cooldown: 2600, maxRange: 6.5, minRange: 1.0,
+      speed: 4.2, tint: 0xff5fd0, windupMs: 180, firstDelay: 1000
+    }));
   }
 
   _pickTeleportSpot(player) {
@@ -70,7 +62,7 @@ export default class PortalGuardian extends Enemy {
   }
 
   _tryTeleport(player) {
-    if (this.teleporting) return;
+    if (this.busy) return;
     const now = this.scene.time.now;
     if (now - this.lastTeleportAt < TELEPORT_COOLDOWN) return;
     const dist = Math.hypot(player.gx - this.gx, player.gy - this.gy);
@@ -79,16 +71,13 @@ export default class PortalGuardian extends Enemy {
     if (!spot) return;
 
     this.lastTeleportAt = now;
-    this.teleporting = true;
+    this.busy = true;
     if (this.auraRing) this.auraRing.setVisible(false);
 
     this.scene.tweens.add({
-      targets: this.sprite,
-      alpha: 0,
-      scale: this.baseScale * 0.5,
-      duration: FADE_MS,
-      ease: 'Cubic.In',
+      targets: this.sprite, alpha: 0, scale: this.baseScale * 0.5, duration: FADE_MS, ease: 'Cubic.In',
       onComplete: () => {
+        if (!this.alive) { this.busy = false; return; }
         this.gx = spot.gx;
         this.gy = spot.gy;
         const world = this.tileMap.gridToWorld(spot.gx, spot.gy);
@@ -97,7 +86,8 @@ export default class PortalGuardian extends Enemy {
         this.sprite.setScale(this.baseScale);
         if (this.auraRing) { this.auraRing.setPosition(world.x, world.y); this.auraRing.setVisible(true); }
         playSfx(this.scene, 'sfx_door', { volume: 0.3 });
-        this.teleporting = false;
+        this.burst.try(player, { force: true });
+        this.busy = false;
       }
     });
   }
@@ -129,26 +119,11 @@ export default class PortalGuardian extends Enemy {
   }
 
   update(deltaSec, player) {
-    if (!this.alive) {
-      if (this.nameTag) { this.nameTag.destroy(); this.nameTag = null; }
-      if (this.auraRing) { this.auraRing.destroy(); this.auraRing = null; }
-      return;
-    }
-
-    if (!this.teleporting) {
-      super.update(deltaSec, player);
+    super.update(deltaSec, player);
+    if (!this.alive || !player?.alive) return;
+    if (!this.busy) {
       this._tryTeleport(player);
       this._trySummon();
     }
-
-    if (this.nameTag) this.nameTag.setPosition(this.sprite.x, this.sprite.y - 34);
-    if (this.auraRing && this.auraRing.visible) {
-      this.auraRing.setPosition(this.sprite.x, this.sprite.y);
-      this.auraRing.setDepth(this.sprite.depth - 1);
-      this.auraRing.angle += deltaSec * 50;
-    }
-    this.hpBarBg.setPosition(this.sprite.x, this.sprite.y - 26);
-    this.hpBarFg.setPosition(this.sprite.x - this.barWidth / 2, this.sprite.y - 26);
-    this.hpBarFg.width = this.barWidth * (this.hp / this.maxHp);
   }
 }

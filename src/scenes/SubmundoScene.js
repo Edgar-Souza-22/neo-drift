@@ -7,6 +7,8 @@ import { DIRECTIONS } from '../utils/constants.js';
 import { GameState } from '../state/GameState.js';
 import { FANTASMA_CAPTIVES } from '../state/FantasmaCaptives.js';
 import { MERCADO_NEGRO_CAPTIVES } from '../state/MercadoNegroCaptives.js';
+import { COLONIA_CAPTIVES } from '../state/ColoniaCaptives.js';
+import { SERVIDOR_CAPTIVES } from '../state/ServidorCaptives.js';
 import { initHud } from '../utils/hud.js';
 import { playMusic, playSfx } from '../audio/AudioManager.js';
 
@@ -26,7 +28,8 @@ export default class SubmundoScene extends Phaser.Scene {
     super('SubmundoScene');
   }
 
-  create() {
+  create(data) {
+    this._justLoaded = !!(data && data.loaded);
     const { grid, markers } = buildSubmundoHub();
     this.tileMap = new TileMap(this, grid, {
       wallTexture: 'wall_submundo',
@@ -63,10 +66,25 @@ export default class SubmundoScene extends Phaser.Scene {
         name: 'Andarilho',
         texture: 'npc_worker',
         tint: 0x8a9a5c,
-        lines: [
-          'Tem mais coisa aqui embaixo do que uma estação velha. Mercado, gente contaminada, servidor escondido — vai com calma.',
-          'Se você desceu pela rachadura do Distrito, já sabe que ninguém lá em cima queria que isso existisse.'
-        ]
+        lines: GameState.servidorCleared
+          ? [
+            'O Administrador caiu. O zumbido dos racks apagou — e um poço de carga abriu numa alcova aqui embaixo.',
+            'Quem roteava o contrabando mandava tudo pras docas. Se você subir, não é mais túnel.'
+          ]
+          : GameState.coloniaCleared
+            ? [
+              'A Colônia calou. Agora o zumbido que sobe não é de inseto — é de servidor.',
+              'Quem realmente move o contrabando nunca apareceu no mercado. Fica atrás de uma porta que não deveria existir.'
+            ]
+            : GameState.mercadoNegroCleared
+              ? [
+                'O Barão caiu. Agora o cheiro que sobe pelos dutos não é de sucata — é da Colônia.',
+                'Se você desceu pela rachadura do Distrito, já sabe que ninguém lá em cima queria que isso existisse.'
+              ]
+              : [
+                'Tem mais coisa aqui embaixo do que uma estação velha. Mercado, gente contaminada, servidor escondido — vai com calma.',
+                'Se você desceu pela rachadura do Distrito, já sabe que ninguém lá em cima queria que isso existisse.'
+              ]
       })
     ];
 
@@ -91,9 +109,36 @@ export default class SubmundoScene extends Phaser.Scene {
       this.npcs.push(new NPC(this, this.tileMap, spot.gx, spot.gy, {
         id: captive.id,
         name: captive.name,
+        texture: 'npc_vendor',
+        lines: captive.townLines
+      }));
+    });
+
+    const coloniaArrivalSpots = this.tileMap.allMarkers('N3');
+    COLONIA_CAPTIVES.forEach((captive, i) => {
+      if (!GameState.rescuedNpcs.has(captive.id)) return;
+      const spot = coloniaArrivalSpots[i];
+      if (!spot) return;
+      this.npcs.push(new NPC(this, this.tileMap, spot.gx, spot.gy, {
+        id: captive.id,
+        name: captive.name,
         texture: 'npc_worker',
-        lines: captive.townLines,
-        tint: i === 1 ? 0xe8b93d : 0x8a6a4a
+        tint: 0x8fbf6a,
+        lines: captive.townLines
+      }));
+    });
+
+    const servidorArrivalSpots = this.tileMap.allMarkers('N4');
+    SERVIDOR_CAPTIVES.forEach((captive, i) => {
+      if (!GameState.rescuedNpcs.has(captive.id)) return;
+      const spot = servidorArrivalSpots[i];
+      if (!spot) return;
+      this.npcs.push(new NPC(this, this.tileMap, spot.gx, spot.gy, {
+        id: captive.id,
+        name: captive.name,
+        texture: 'npc_engineer',
+        tint: 0x2ef0c8,
+        lines: captive.townLines
       }));
     });
 
@@ -124,10 +169,62 @@ export default class SubmundoScene extends Phaser.Scene {
       this.mercadoDoorPos = this.tileMap.marker('E2');
       const mercadoWorld = this.tileMap.gridToWorld(this.mercadoDoorPos.gx, this.mercadoDoorPos.gy);
       this.add.image(mercadoWorld.x, mercadoWorld.y, 'light_pool').setDepth(-999).setBlendMode(Phaser.BlendModes.ADD).setTint(0xe8b93d);
-      this.mercadoDoorSprite = this.add.image(mercadoWorld.x, mercadoWorld.y, 'door').setDepth(9000).setTint(0xe8b93d);
+      this.mercadoDoorSprite = this.add.image(mercadoWorld.x, mercadoWorld.y, 'door_mercado').setDepth(9000);
       this.tweens.add({ targets: this.mercadoDoorSprite, alpha: 0.45, duration: 650, yoyo: true, repeat: -1 });
       this.add.text(mercadoWorld.x, mercadoWorld.y - 22, 'MERCADO NEGRO DOS TÚNEIS →', {
         fontFamily: 'Courier New', fontSize: '9px', color: '#e8b93d'
+      }).setOrigin(0.5).setDepth(9001);
+    }
+
+    this.coloniaDoorPos = null;
+    if (GameState.mercadoNegroCleared) {
+      this.coloniaDoorPos = this.tileMap.marker('E3');
+      const coloniaWorld = this.tileMap.gridToWorld(this.coloniaDoorPos.gx, this.coloniaDoorPos.gy);
+      this.add.image(coloniaWorld.x, coloniaWorld.y, 'light_pool').setDepth(-999).setBlendMode(Phaser.BlendModes.ADD).setTint(0x6dff4a);
+      this.coloniaDoorSprite = this.add.image(coloniaWorld.x, coloniaWorld.y, 'door_colonia').setDepth(9000).setTint(0x7dff6a);
+      this.tweens.add({ targets: this.coloniaDoorSprite, alpha: 0.45, duration: 650, yoyo: true, repeat: -1 });
+      this.add.text(coloniaWorld.x, coloniaWorld.y - 22, 'COLÔNIA DE CONTAMINADOS →', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#7dff6a'
+      }).setOrigin(0.5).setDepth(9001);
+    }
+
+    this.servidorDoorPos = null;
+    if (GameState.coloniaCleared) {
+      this.servidorDoorPos = this.tileMap.marker('E4');
+      const servidorWorld = this.tileMap.gridToWorld(this.servidorDoorPos.gx, this.servidorDoorPos.gy);
+      this.add.image(servidorWorld.x, servidorWorld.y, 'light_pool').setDepth(-999).setBlendMode(Phaser.BlendModes.ADD).setTint(0x2ef0c8);
+      this.servidorDoorSprite = this.add.image(servidorWorld.x, servidorWorld.y, 'door_servidor').setDepth(9000);
+      this.tweens.add({ targets: this.servidorDoorSprite, alpha: 0.45, duration: 650, yoyo: true, repeat: -1 });
+      this.add.text(servidorWorld.x, servidorWorld.y - 22, 'SERVIDOR OCULTO →', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#2ef0c8'
+      }).setOrigin(0.5).setDepth(9001);
+    }
+
+    // Estivadora Ryn + poço de carga pro Estaleiro — só existem depois de
+    // limpar o Servidor Oculto: os logs do Administrador apontavam pras
+    // docas, e o poço de carga (que sobe, não cai) é o contrário do buraco
+    // que trouxe o jogador do Distrito Neon.
+    this.liftPos = null;
+    if (GameState.servidorCleared) {
+      const rynSpot = this.tileMap.marker('RY');
+      this.npcs.push(new NPC(this, this.tileMap, rynSpot.gx, rynSpot.gy, {
+        id: 'estivadora_ryn',
+        name: 'Estivadora Ryn',
+        texture: 'npc_engineer',
+        tint: 0xff8a3d,
+        lines: [
+          'Os logs do Administrador não paravam no Submundo. A rota de carga sobe — literalmente. Achei o poço há duas noites.',
+          'Lá em cima é o Estaleiro Automatizado. Porto robotizado nos limites da cidade. O mapa da Neo não marca ele.'
+        ]
+      }));
+
+      this.liftPos = this.tileMap.marker('L');
+      const liftWorld = this.tileMap.gridToWorld(this.liftPos.gx, this.liftPos.gy);
+      this.add.image(liftWorld.x, liftWorld.y, 'light_pool').setDepth(-999).setScale(1.1).setBlendMode(Phaser.BlendModes.ADD).setTint(0xe8923d);
+      this.liftSprite = this.add.image(liftWorld.x, liftWorld.y, 'prop_lift').setDepth(9000);
+      this.tweens.add({ targets: this.liftSprite, y: liftWorld.y - 3, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+      this.add.text(liftWorld.x, liftWorld.y - 26, 'ESTALEIRO AUTOMATIZADO ↑', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#e8923d'
       }).setOrigin(0.5).setDepth(9001);
     }
 
@@ -141,6 +238,9 @@ export default class SubmundoScene extends Phaser.Scene {
     initHud(this, () => {
       this.game.events.emit('hud-init', { label: 'SUBMUNDO', showEnemies: false, sceneKey: 'SubmundoScene' });
       this._emitStats();
+      if (this._justLoaded) {
+        this.game.events.emit('item-pickup', `Progresso carregado — Nível ${GameState.level}.`);
+      }
     });
   }
 
@@ -237,6 +337,27 @@ export default class SubmundoScene extends Phaser.Scene {
         this._enterMercadoDoor();
       }
     }
+
+    if (this.coloniaDoorPos) {
+      const coloniaDist = Math.hypot(this.player.gx - this.coloniaDoorPos.gx, this.player.gy - this.coloniaDoorPos.gy);
+      if (coloniaDist < 0.6 && !this.transitioning) {
+        this._enterColoniaDoor();
+      }
+    }
+
+    if (this.servidorDoorPos) {
+      const servidorDist = Math.hypot(this.player.gx - this.servidorDoorPos.gx, this.player.gy - this.servidorDoorPos.gy);
+      if (servidorDist < 0.6 && !this.transitioning) {
+        this._enterServidorDoor();
+      }
+    }
+
+    if (this.liftPos) {
+      const liftDist = Math.hypot(this.player.gx - this.liftPos.gx, this.player.gy - this.liftPos.gy);
+      if (liftDist < 0.5 && !this.transitioning) {
+        this._enterLift();
+      }
+    }
   }
 
   // Mesma passagem física (sem flash colorido) usada pra descer.
@@ -279,6 +400,51 @@ export default class SubmundoScene extends Phaser.Scene {
     this.cameras.main.once('camerafadeoutcomplete', () => {
       this.scene.stop('UIScene');
       this.scene.start('MercadoNegroScene');
+    });
+  }
+
+  _enterColoniaDoor() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door');
+
+    this.tweens.add({ targets: this.coloniaDoorSprite, scale: 1.35, duration: 200, yoyo: true, ease: 'Cubic.Out' });
+    this.cameras.main.flash(150, 110, 255, 80);
+    this.cameras.main.fadeOut(420, 10, 18, 8);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('ColoniaScene');
+    });
+  }
+
+  _enterServidorDoor() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door');
+
+    this.tweens.add({ targets: this.servidorDoorSprite, scale: 1.35, duration: 200, yoyo: true, ease: 'Cubic.Out' });
+    this.cameras.main.flash(150, 46, 240, 200);
+    this.cameras.main.fadeOut(420, 6, 16, 18);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('ServidorScene');
+    });
+  }
+
+  // Subida pelo poço de carga: treme (hidráulica) + zoom pra fora (subindo)
+  // + fade aço-âmbar. O contrário do buraco do Distrito (zoom pra dentro,
+  // fade marrom) e do portal da fábrica (giro + flash magenta).
+  _enterLift() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door', { volume: 0.4 });
+
+    this.cameras.main.shake(180, 0.006);
+    this.cameras.main.zoomTo(1.15, 420, 'Cubic.easeOut');
+    this.cameras.main.fadeOut(460, 18, 22, 28);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('EstaleiroScene');
     });
   }
 }

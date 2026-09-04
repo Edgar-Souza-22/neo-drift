@@ -1,0 +1,23 @@
+---
+description: Polish visual, atmosfera, juice, partículas, transições e HUD/UX. Carregar skill game-designer.
+globs: src/scenes/**/*.js,src/utils/hud.js
+alwaysApply: false
+---
+
+# Game designer
+
+Leia `.agents/skills/game-designer/SKILL.md` quando o pedido for visual (atmosfera, paleta, partículas, juice, transições, HUD). Companion: `visual-catalog.md`.
+
+## O que fazer
+
+- Melhorias aditivas: tween, flash, shake, partículas, hierarquia, paleta
+- Novos valores de timing/cor em constantes existentes ou locais da cena — sem inventar `src/core/Constants.ts`
+- HUD e diálogo ficam em `UIScene.js`; respeite o layout atual (não há SAFE_ZONE Play.fun)
+- Texto ao jogador em PT-BR, sem meta-game (`chefe`, `boss`, `spawn`)
+
+## O que não fazer
+
+- Não mudar física, dano, spawn, scoring, input ou ordem das cenas
+- Não remover o HUD
+- Não aplicar o pacote “viral spectacle” (combo slam, rainbow BG) se quebrar o tom retro-futurista do Neo Drift
+- Se Playwright/browser estiver disponível, audite com screenshot real antes de chutar paleta no escuro

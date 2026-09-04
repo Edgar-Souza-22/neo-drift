@@ -1,0 +1,26 @@
+---
+description: Quando carregar as skills do projeto (.agents/skills) e como adaptá-las a este repo
+alwaysApply: true
+---
+
+# Skills do Neo Drift
+
+Antes de implementar, leia o `SKILL.md` em `.agents/skills/<nome>/`. Skills **não** estão em `.claude/skills/`. Elas vêm do plugin game-creator: use o conhecimento, não o scaffold TypeScript.
+
+## Roteamento
+
+| Skill | Dispare quando o pedido envolver… |
+|-------|-----------------------------------|
+| `phaser` | Cenas, entidades, física, input, pooling, performance Phaser, nova fase |
+| `game-assets` | Sprites, pixel art, tiles, itens, props, PNG/Piskel, animação de frames |
+| `game-designer` | Polish, atmosfera, partículas, juice, transições, HUD/UX visual |
+
+Tarefa híbrida (ex.: inimigo novo com arte + ataque) → carregue as skills que cobrem cada parte. Depois leia só os companions necessários (ver `CLAUDE.md`).
+
+## Este repo vence a skill
+
+- JavaScript (não crie TypeScript nem `src/core/EventBus.ts`)
+- Pixel art via `src/scenes/pixelGrid.js` + `BootScene.js` ou PNG em `art/` — não crie `PixelRenderer.js`
+- `UIScene.js` (HUD) permanece; ignore a regra Play.fun de “sem HUD”
+- Passe de design não altera física, dano, spawn ou scoring
+- Texto ao jogador em PT-BR, sem termos de meta-game (chefe, boss, spawn)

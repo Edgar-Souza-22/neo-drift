@@ -1,0 +1,26 @@
+---
+description: Phaser 3 neste repo — cenas, entidades, física e nova fase. Carregar skill phaser.
+globs: src/**/*.js
+alwaysApply: false
+---
+
+# Phaser
+
+Leia `.agents/skills/phaser/SKILL.md` ao criar ou alterar gameplay Phaser. Companions sob demanda:
+
+- `scenes-and-lifecycle.md` — nova cena, transições, `shutdown()`
+- `game-objects.md` — sprites, groups, pooling, containers
+- `physics-and-movement.md` — arcade, colliders, movimento
+- `assets-and-performance.md` — `pixelArt`, partículas, culling
+- `patterns.md` — state machine, managers
+- `no-asset-design.md` — visual procedural (alinhar com `pixelGrid.js`)
+
+Não siga `conventions.md` / `project-setup.md` para recriar o template. Este jogo já tem `src/scenes`, `src/entities`, `src/world`, `src/state/GameState.js`.
+
+## Padrões deste repo
+
+- Nova fase: `*Layout.js` + `*Scene.js` + confronto + `*Captives.js` + flag em `GameState` + `main.js` + sprites no `BootScene`
+- `_checkItemPickups()` no `update()` **antes** de `if (this.levelEnded) return`
+- `PHASE_OUTCOMES` em `UIScene.js` para cada fase nova (texto único + hub de retorno certo)
+- `update()` usa `delta`; limpe listeners na saída da cena
+- Arcade physics; colliders/overlaps explícitos em todo corpo estático

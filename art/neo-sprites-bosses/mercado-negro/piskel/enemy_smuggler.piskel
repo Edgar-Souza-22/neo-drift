@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_smuggler",
+    "description": "Neo Drift smuggler idle",
+    "fps": 6,
+    "height": 20,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAUCAYAAAA9djs/AAABzklEQVR4nNWYQWvCMBTH/xFXpIhMmO4gDAbex2A7+Rm87Wvs4mfY2X2Q7ea+xXbZYTdBEDxMBw5XnNSDO0g0TV5Ck7ZhfSDYNL/38v5tXpIyaOwkqO8AoNOuYzaPsI0jputLsZ12PdHm4sM1vuzHxJI3siRAsXn4KEpApTFLAiK73sSJe2EtsPZhG9/kQ8dWTAmIP2CvJlfWZHLyujbTwF3j6wTUsRWlZ4YE8jKfAlbzGDBln293ievzm+eiQimmE5BPQ9G0ArgksI0jNptj12wEh/6jYQv9wQKAXSHzJSBZBJuNo1JiAstVXHgVzxKfx11vYlLAsBYo42CyA/6fSoCbbhD/hTcJKPNMhEVQni/ivKKeRFl5sgacnYZKW1ir4ut7TXUvNV8B9urFD9foXl6kCiBbmfnDPqD39IPH+18AwEfvxdqRb15ez115xi9ur7oAgPFkagR1888nz+c695WFJ2vAaNgi4f5ggWYjwHJ1PGHJxadoPo3Z8KQAaQPprEx8Fdivi6/vY+VJ2Nh4Mk28Xj75LOM/vAHbOGLLVXIHxzcfcptpNyauv0XwfDMjW9rxy7wyBWxPYjywT57a0bnyuZwGxYLmg3f9PEbxf1B3HCf9YpoOAAAAAElFTkSuQmCC\"}]}]"
+  }
+}

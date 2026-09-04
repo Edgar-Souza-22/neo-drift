@@ -41,6 +41,13 @@ export default class Player {
     this.alive = true;
     this.leveledUpThisFrame = false;
 
+    // Empurrão externo (golpe de chefe) — deslize com desaceleração + uma
+    // janela curta de atordoamento em que o input de movimento é ignorado.
+    this.knockVel = { x: 0, y: 0 };
+    this.knockStartAt = -9999;
+    this.knockDurationMs = 0;
+    this.staggerUntil = -9999;
+
     this.isMoving = false;
 
     const world = tileMap.gridToWorld(this.gx, this.gy);
@@ -68,6 +75,14 @@ export default class Player {
 
   move(dirX, dirY, deltaSec) {
     if (!this.alive) return;
+
+    // Enquanto atordoado (empurrado por um golpe), o input de movimento não
+    // responde — só o deslize do empurrão mexe o jogador.
+    if (this.scene.time.now < this.staggerUntil) {
+      dirX = 0;
+      dirY = 0;
+    }
+
     this.isMoving = dirX !== 0 || dirY !== 0;
     if (this.isMoving) {
       this.facing = { x: dirX, y: dirY };
@@ -80,8 +95,48 @@ export default class Player {
     const ny = this.gy + dirY * speed * deltaSec;
     if (this.canOccupy(this.gx, ny)) this.gy = ny;
 
+    this._applyKnockback(deltaSec);
+
     this.gx = Phaser.Math.Clamp(this.gx, 0, this.tileMap.cols - 1);
     this.gy = Phaser.Math.Clamp(this.gy, 0, this.tileMap.rows - 1);
+  }
+
+  // Arremessa o jogador `distance` tiles na direção (dirX, dirY), desacelerando
+  // até parar em `durationMs`; para em parede. Também atordoa pela mesma janela
+  // (ver move()), pra o empurrão criar distância de verdade.
+  pushBack(dirX, dirY, distance = 2, durationMs = 240) {
+    if (!this.alive) return;
+    const len = Math.hypot(dirX, dirY) || 1;
+    // rampa linear até 0 => velocidade média = v0/2, logo v0 = 2 * dist / tempo
+    const v0 = (distance / (durationMs / 1000)) * 2;
+    this.knockVel = { x: (dirX / len) * v0, y: (dirY / len) * v0 };
+    this.knockStartAt = this.scene.time.now;
+    this.knockDurationMs = durationMs;
+    this.staggerUntil = this.scene.time.now + durationMs;
+  }
+
+  _applyKnockback(deltaSec) {
+    if (!this.knockDurationMs) return;
+    const t = (this.scene.time.now - this.knockStartAt) / this.knockDurationMs;
+    if (t >= 1) {
+      this.knockDurationMs = 0;
+      this.knockVel.x = 0;
+      this.knockVel.y = 0;
+      return;
+    }
+    const ramp = 1 - t; // desaceleração linear
+    let dx = this.knockVel.x * ramp * deltaSec;
+    let dy = this.knockVel.y * ramp * deltaSec;
+    // Sub-passos de no máx. 0.25 tile — não atravessa parede fina num frame.
+    const steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / 0.25));
+    dx /= steps;
+    dy /= steps;
+    for (let i = 0; i < steps; i++) {
+      if (this.knockVel.x && this.canOccupy(this.gx + dx, this.gy)) this.gx += dx;
+      else this.knockVel.x = 0;
+      if (this.knockVel.y && this.canOccupy(this.gx, this.gy + dy)) this.gy += dy;
+      else this.knockVel.y = 0;
+    }
   }
 
   tryAttack(enemies) {

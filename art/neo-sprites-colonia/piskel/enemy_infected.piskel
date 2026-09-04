@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_infected",
+    "description": "Neo Drift infected idle",
+    "fps": 6,
+    "height": 20,
+    "width": 16,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAUCAYAAAA9djs/AAACSklEQVR4nOWXvWvbQBjGfzIilJBBuFspRpQMplOG4LlLSyCrydB/IRBMV83eTadClk4djOdiYiiejQuejAdThCnZKjQEU4RAHeRTJOv0TdyKPmA4393zft3d+75SkODoWPXC/52tq8j2JXG7vQ4A5spCbzcZDWaFZZTVXxQxwVUcODpWvfOLU+nafLzOLeOQAYwsVHFAGG6uLOl6Hkf+RgAbMqIM3V4nFlkZ9HZT+itieFn9IoDmygoOwlxZnF+cJnJVmQNV8bZ/xsRYAHDTvwLgw+WnXNyy+rNuYLfXYTSYefs3IRYAgOd9jV+GDfjOANxefsttzO31V3TtBQAfjaE/qf/Oza+iv2gAG7LJ79fLYDwxFkyMBfpZumBn6yqjwcw3Yuf8dLhk+uUHAPPPP3MnsjL6wxBBA/8G3vSvMBfymxFLguF3OB0uwX3Gm/evKleCPEmsiv5I8rPvg0MQMO176SHEAgCQ5ACkl5R/gZ8WQBlfiSh+vVPckkjf7AxZxg2pM1/JKj8C5p2F/u7xHYorWXe+NAn+T2jsNw4CSfVUQDQmdedH+gDzzidp2gnYYG7iQoTgUFb36syXPgHbfgjG4XcjFGThyfkbP+EltbdF+LFOUNNOosJmTjAXFpyEuvFVvd2MnEymko1fSoIytCsvovQcig9+KdPbTa+M/YIv/RaAx00Qqq8pmI/XkX1Pzc/qKvPyVdEhAbRaL2ObgncWbi6WoXGL4BT3r98h+FXtbzhbV0mLprN1FRFN2ZfWfLyORPvQ/Kr2/wFXB2YSDYBD+AAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

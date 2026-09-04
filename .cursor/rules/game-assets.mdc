@@ -1,0 +1,23 @@
+---
+description: Pixel art, sprites e pipeline de arte (pixelGrid, BootScene, PNG em art/). Carregar skill game-assets.
+globs: src/scenes/BootScene.js,src/scenes/pixelGrid.js,src/entities/**/*.js,art/**
+alwaysApply: false
+---
+
+# Game assets
+
+Leia `.agents/skills/game-assets/SKILL.md` ao criar ou trocar arte. Companions:
+
+- `sprite-catalog.md` — arquétipo (humanóide, tile, item, chefe)
+- `pixel-renderer.md` — matriz/paleta; **implemente em `pixelGrid.js`**, não crie `PixelRenderer.js`
+- `integration-patterns.md` — ligar sprite na entidade / BootScene / PNG
+- `character-pipeline.md` — pule (este jogo não usa South Park / photo-composite)
+
+## Pipeline deste repo
+
+1. Procedural: desenhe no grid (`createGrid`, `fillRect`, `setPixel`, `renderGrid`) dentro de `BootScene.js`.
+2. PNG drop-in: coloque frames em `art/<lote>/`; o boot só substitui se `this.textures.exists(key)`. Sem o arquivo, cai no gerador.
+3. Inimigos animados: chave estática + `tipo_0..N-1` (ver `ENEMY_ANIM_TYPES` no BootScene).
+4. Vinheta, poça de luz e chrome do HUD continuam procedurais (canvas/gradiente).
+
+Silhueta > detalhe. Paleta coerente com a região. Ajuste o body de física se o tamanho do sprite mudar.

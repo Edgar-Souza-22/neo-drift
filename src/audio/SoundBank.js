@@ -179,4 +179,48 @@ export function generateSounds(scene) {
     perc: [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0],
     waveBass: 'triangle', waveLead: 'sine', volBass: 0.2, volLead: 0.12, volPerc: 0.14
   }));
+
+  // Colônia de Contaminados (Fase 11) — andamento viscoso, intervalos menores
+  // (segunda menor) sugerindo infecção, lead esparso tipo "gota" em vez do
+  // eco de trilho da Estação Fantasma.
+  add('music_colonia', renderLoop(ctx, {
+    bpm: 88, stepsPerBeat: 2,
+    bass: ['Eb2', null, null, 'E2', null, null, 'Eb2', null, 'B1', null, null, 'C2', null, null, 'Eb2', null],
+    lead: [null, null, 'Gb3', null, null, null, null, 'G3', null, null, null, null, 'Eb3', null, null, null],
+    perc: [1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0],
+    waveBass: 'sine', waveLead: 'triangle', volBass: 0.22, volLead: 0.1, volPerc: 0.12
+  }));
+
+  // Servidor Oculto (Fase 12) — andamento digital regular (não o viscoso da
+  // Colônia nem o eco de trilho da Estação), baixo em square tipo clock de
+  // rack, lead em blips isolados. Fecha o Submundo.
+  add('music_servidor', renderLoop(ctx, {
+    bpm: 128, stepsPerBeat: 2,
+    bass: ['C2', null, 'C2', null, 'G1', null, 'C2', null, 'Eb2', null, 'C2', null, 'Bb1', null, 'G1', null],
+    lead: [null, null, 'G4', null, null, null, null, 'Bb4', null, null, null, 'C5', null, null, null, null],
+    perc: [1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0],
+    waveBass: 'square', waveLead: 'triangle', volBass: 0.2, volLead: 0.12, volPerc: 0.13
+  }));
+
+  // Estaleiro Automatizado (hub da Região 4) — andamento de máquina, baixo
+  // em triangle tipo hidráulica de guindaste, percussão em "claque" espaçado
+  // (não o vazio cavernoso do Submundo nem o lounge do Distrito).
+  add('music_estaleiro', renderLoop(ctx, {
+    bpm: 104, stepsPerBeat: 2,
+    bass: ['G2', null, null, 'G2', 'Bb2', null, 'F2', null, 'G2', null, null, 'D2', 'Eb2', null, 'F2', null],
+    lead: [null, null, 'D4', null, null, null, 'F4', null, null, null, 'Bb3', null, null, null, 'C4', null],
+    perc: [1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+    waveBass: 'triangle', waveLead: 'square', volBass: 0.22, volLead: 0.11, volPerc: 0.14
+  }));
+
+  // Terminal de Contêineres (Fase 13) — mais rápido que o hub do cais, perc
+  // em "batida de pátio" regular (drones na rota), lead curto tipo apito de
+  // guindaste. Distinto da hidráulica espaçada do Estaleiro e do clock do Servidor.
+  add('music_terminal', renderLoop(ctx, {
+    bpm: 118, stepsPerBeat: 2,
+    bass: ['G2', 'G2', null, 'Bb2', null, null, 'F2', null, 'G2', null, 'D2', null, 'Eb2', 'Eb2', 'F2', null],
+    lead: [null, 'D4', null, null, 'F4', null, null, null, 'Bb3', null, null, 'C4', null, null, 'D4', null],
+    perc: [1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0],
+    waveBass: 'triangle', waveLead: 'square', volBass: 0.22, volLead: 0.12, volPerc: 0.15
+  }));
 }

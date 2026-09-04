@@ -42,9 +42,19 @@ function createInitialState() {
     fantasmaCleared: false,
     // Fica true ao vencer O Barão do Mercado (Fase 10) — 2ª fase do Submundo.
     mercadoNegroCleared: false,
+    // Fica true ao vencer A Matriarca (Fase 11) — 3ª fase do Submundo.
+    coloniaCleared: false,
+    // Fica true ao vencer O Administrador (Fase 12) — fecha o Submundo.
+    servidorCleared: false,
+    // Fica true ao vencer O Empilhador (Fase 13) — primeira fase do Estaleiro.
+    terminalCleared: false,
     // Fica true ao pegar a Blindagem Isolante (cofre da Fase 03) — a partir
     // daí, piso eletrificado para de causar dano, pro resto do jogo.
     insulated: false,
+    // Fica true ao pegar o Traje de Quarentena (Fase 11) — a partir daí,
+    // piso tóxico (e poças deixadas por infectados/A Matriarca) param de
+    // causar dano, pro resto do jogo.
+    toxinImmune: false,
     rescuedNpcs: new Set(),
     itemsTaken: new Set(),
     // Itens-chave (cartões, etc.) mostrados no menu de status — não afetam
@@ -62,7 +72,7 @@ const PLAIN_FIELDS = [
   'weaponName', 'weaponKind', 'armorName', 'armorBonus', 'bootsName', 'speedMul',
   'hasPistol', 'pistolName', 'pistolDamage', 'pistolAmmo', 'rangedKind',
   'stimCharges', 'empCharges',
-  'dungeon1Cleared', 'foundryCleared', 'reactorCleared', 'coreCleared', 'towerCleared', 'arsenalCleared', 'nexusCleared', 'vigilanceCleared', 'fantasmaCleared', 'mercadoNegroCleared', 'insulated'
+  'dungeon1Cleared', 'foundryCleared', 'reactorCleared', 'coreCleared', 'towerCleared', 'arsenalCleared', 'nexusCleared', 'vigilanceCleared', 'fantasmaCleared', 'mercadoNegroCleared', 'coloniaCleared', 'servidorCleared', 'terminalCleared', 'insulated', 'toxinImmune'
 ];
 
 // Falha silenciosamente se localStorage não estiver disponível (modo
@@ -98,6 +108,50 @@ export function loadGame() {
     return true;
   } catch (e) {
     return false;
+  }
+}
+
+// Só consulta o disco — não aplica o save. A tela inicial usa isso pra
+// habilitar "Continuar" sem mutar o estado em memória antes da escolha.
+export function hasSave() {
+  try {
+    return localStorage.getItem(SAVE_KEY) != null;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Hub da região correspondente ao progresso — cada região só é liberada ao
+// vencer a última fase da anterior (Núcleo -> Distrito, Vigilância -> Submundo,
+// Servidor -> Estaleiro). Aceita tanto o GameState em memória quanto o objeto
+// cru de um save (`peekSaveSummary`), já que os dois carregam as flags.
+export function regionHubScene(state = GameState) {
+  if (state.servidorCleared) return 'EstaleiroScene';
+  if (state.vigilanceCleared) return 'SubmundoScene';
+  if (state.coreCleared) return 'DistrictScene';
+  return 'TownScene';
+}
+
+const HUB_LABELS = {
+  TownScene: 'Ala Central',
+  DistrictScene: 'Distrito Neon',
+  SubmundoScene: 'Submundo',
+  EstaleiroScene: 'Estaleiro Automatizado'
+};
+
+export function regionHubLabel(state = GameState) {
+  return HUB_LABELS[regionHubScene(state)] || HUB_LABELS.TownScene;
+}
+
+// Resumo curto pra mostrar no botão Continuar (nível + região). Falha = sem save.
+export function peekSaveSummary() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    return { level: data.level || 1, regionLabel: regionHubLabel(data) };
+  } catch (e) {
+    return null;
   }
 }
 
@@ -138,12 +192,20 @@ export function equipWeapon(name, damage, kind = 'sword') {
   saveGame();
 }
 
-export function equipArmor(name, maxHpBonus, insulated = false) {
+export function equipArmor(name, maxHpBonus, flags = false) {
   GameState.armorName = name;
   GameState.armorBonus = maxHpBonus;
   GameState.maxHp += maxHpBonus;
   GameState.hp += maxHpBonus;
-  if (insulated) GameState.insulated = true;
+  // 3º argumento antigo era o boolean `insulated` (Ala do Reator). Objeto
+  // `{ insulated, toxinImmune }` cobre os dois tipos de piso perigoso sem
+  // uma lista crescente de parâmetros posicionais.
+  if (flags === true) {
+    GameState.insulated = true;
+  } else if (flags && typeof flags === 'object') {
+    if (flags.insulated) GameState.insulated = true;
+    if (flags.toxinImmune) GameState.toxinImmune = true;
+  }
   saveGame();
 }
 

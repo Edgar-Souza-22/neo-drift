@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import BootScene from './scenes/BootScene.js';
+import TitleScene from './scenes/TitleScene.js';
+import IntroScene from './scenes/IntroScene.js';
 import TownScene from './scenes/TownScene.js';
 import DungeonScene from './scenes/DungeonScene.js';
 import FoundryScene from './scenes/FoundryScene.js';
@@ -13,6 +15,10 @@ import VigilanceScene from './scenes/VigilanceScene.js';
 import SubmundoScene from './scenes/SubmundoScene.js';
 import FantasmaScene from './scenes/FantasmaScene.js';
 import MercadoNegroScene from './scenes/MercadoNegroScene.js';
+import ColoniaScene from './scenes/ColoniaScene.js';
+import ServidorScene from './scenes/ServidorScene.js';
+import EstaleiroScene from './scenes/EstaleiroScene.js';
+import TerminalScene from './scenes/TerminalScene.js';
 import UIScene from './scenes/UIScene.js';
 
 const config = {
@@ -29,7 +35,7 @@ const config = {
       debug: false
     }
   },
-  scene: [BootScene, TownScene, DungeonScene, FoundryScene, ReactorScene, CoreScene, DistrictScene, TowerScene, ArsenalScene, NexusScene, VigilanceScene, SubmundoScene, FantasmaScene, MercadoNegroScene, UIScene]
+  scene: [BootScene, TitleScene, IntroScene, TownScene, DungeonScene, FoundryScene, ReactorScene, CoreScene, DistrictScene, TowerScene, ArsenalScene, NexusScene, VigilanceScene, SubmundoScene, FantasmaScene, MercadoNegroScene, ColoniaScene, ServidorScene, EstaleiroScene, TerminalScene, UIScene]
 };
 
 window.__game = new Phaser.Game(config);

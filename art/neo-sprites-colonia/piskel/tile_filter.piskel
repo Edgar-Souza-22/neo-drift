@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "tile_filter",
+    "description": "Neo Drift Colonia filter drums",
+    "fps": 1,
+    "height": 32,
+    "width": 32,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":3,\"chunks\":[{\"layout\":[[0,1,2]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAgCAYAAADtwH1UAAADkUlEQVR4nO2aPUscQRjH/8pyhCvkikOGcBwikiKIHhZiFQ7srpCrU4SQDyCmsLWwClhE/AAhVWqxuCrCkUosZHNYhSByHGE4hBwKEkSSFPqsz+zO7M7uvQg3/qu93dn9zc7zMjPP3sTLpbl/eNKjafKxO+C6PDpon3VGCi7PlpTfrvK9hHZaLVQq2vMt38/aH2f51gbg0N7lRXBcmCoGv3mbQQ/GuPKtDLBQqShQrq6UyOW9SMeEEJBSWnXCZb7RAK9Kz/Gt80sLN+VLnldzeQ8LlUpmT3SFP0HLUN1DKaSoA9RGCKF9GFmcd6QwVdR2wmYSdIFvjACy/M31LXJ5D+2zTgA2hRZdb591AkBXykye6Apfuw/gYWcL59eEEIG35PIeepcXxpWD6/zESdgE3yqoYbjdk0EbIUTQiXCop5WJf7i7pLRb3TgZKX+tuaK0O6geZeJb74QJvlUQyuDTwPPzg1p96PiHu0vK4NPA8/PD5K81V5TBp4Hn59PwIwbg4UfWz/JC5AkUirZpwDW+V5gqAgAKlWLiQ8NpZ7NWw/aXT5E2FBU6mQbBhh9OO8vVeQAnkTYUFYPmh9PO+mIdBziKtKGosOF7wN1MzUUbizht1moAgKvX7wAAO41G4j1hzvR9bs3Cvxt84Mp/AwA4bp6OlL++WAcAfP39AQCw930/Ez9IQS+8h2xEUTEscZbr/ODox+3f4GTYUjpxj7fxfi7OysrnHm/j/YPmc4+38X4TywMeQpFkqnts96QyD+gGPi7/hzmm8yb+6saJMg/oBj4u//fLP6geKfOAbuDj8r+O74W32cDDSqA8W8q8EqB7aB0c3pLHlQJc4luXo+mBfN3PxT3fVCvpR8Tn634u7vnD5PN1Pxf3/DT8RANwL+CeYEo1fNfY7y40jm9KNaPim1JNWr52J9zyfWUlUJ4tKXUOk0xwU0XQJJf4ieVoPiE9Rjl43PmxKajl+0on6CabDxIE70cu8BPngK6UmBYi6MTN9a3RA6h2TvCW7/c9IY47P9EAUkrI+48KANC9lrEfJMjqFHb9VibHnR+ZA8pzAu2f5puSLGr7wqYc7Bo/EgFx8DQALvrAbSPX+Kk2YmnEO2r78i7yrQ2gq2PUzyU2azXsNBrYn1GvD/qrlI7/8e0klqvzOG6e4v1ntcA2Cv7M7jOsL9ax930f5xt/MvEnbP8dnXZJZypoZdW48q0N8KTh6D/nV9FoKTPNGgAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

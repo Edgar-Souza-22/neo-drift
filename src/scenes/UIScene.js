@@ -26,7 +26,10 @@ const PHASE_OUTCOMES = {
   NexusScene: { line: 'Os portais do Nexo de Transporte param de ciclar sozinhos.', region: 'ao Distrito Neon' },
   VigilanceScene: { line: 'A rede de vigilância do Distrito Neon fica cega por um tempo — mas alguém lá em cima ainda não respondeu por isso.', region: 'ao Distrito Neon' },
   FantasmaScene: { line: 'O Trem Fantasma para de cruzar a Estação — os trilhos finalmente ficam quietos.', region: 'ao Submundo' },
-  MercadoNegroScene: { line: 'O Barão do Mercado cai — sem ele, ninguém mais cobra "aluguel" no Submundo.', region: 'ao Submundo' }
+  MercadoNegroScene: { line: 'O Barão do Mercado cai — sem ele, ninguém mais cobra "aluguel" no Submundo.', region: 'ao Submundo' },
+  ColoniaScene: { line: 'A Matriarca cai — o ninho para de pulsar e o ar da Colônia deixa de latejar.', region: 'ao Submundo' },
+  ServidorScene: { line: 'O Administrador cai — os logs do contrabando ficam sem dono, e o zumbido dos racks apaga.', region: 'ao Submundo' },
+  TerminalScene: { line: 'O Empilhador cai — as rotas do pátio param de circular sozinhas, e os guindastes ficam mudos.', region: 'ao Estaleiro Automatizado' }
 };
 
 export default class UIScene extends Phaser.Scene {
@@ -508,7 +511,7 @@ export default class UIScene extends Phaser.Scene {
     const hasArmor = !!GameState.armorName;
     this.menuArmorRow.name.setText(hasArmor ? `Armadura: ${GameState.armorName}` : 'Armadura: nenhuma');
     this.menuArmorRow.stat.setText(hasArmor
-      ? `+${GameState.armorBonus} HP máx. (total ${GameState.maxHp})${GameState.insulated ? ' · imune a choque' : ''}`
+      ? `+${GameState.armorBonus} HP máx. (total ${GameState.maxHp})${GameState.insulated ? ' · imune a choque' : ''}${GameState.toxinImmune ? ' · imune a toxina' : ''}`
       : 'Sem bônus de HP');
     this.menuArmorRow.desc.setText(hasArmor ? 'Bônus passivo — não precisa ser trocado ou usado.' : '');
     this.menuArmorRow.icon.setVisible(hasArmor && onPage0);

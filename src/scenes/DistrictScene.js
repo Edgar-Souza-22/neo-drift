@@ -26,7 +26,8 @@ export default class DistrictScene extends Phaser.Scene {
     super('DistrictScene');
   }
 
-  create() {
+  create(data) {
+    this._justLoaded = !!(data && data.loaded);
     const { grid, markers } = buildNeonDistrict();
     this.tileMap = new TileMap(this, grid, {
       wallTexture: 'wall_district',
@@ -187,6 +188,9 @@ export default class DistrictScene extends Phaser.Scene {
     initHud(this, () => {
       this.game.events.emit('hud-init', { label: 'DISTRITO NEON', showEnemies: false, sceneKey: 'DistrictScene' });
       this._emitStats();
+      if (this._justLoaded) {
+        this.game.events.emit('item-pickup', `Progresso carregado — Nível ${GameState.level}.`);
+      }
     });
   }
 

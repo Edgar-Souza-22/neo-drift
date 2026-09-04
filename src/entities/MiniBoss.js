@@ -1,10 +1,10 @@
-import Enemy from './Enemy.js';
+import BossBase from './boss/BossBase.js';
+import { SelfBurstAttack, ProjectileAttack } from './boss/attacks.js';
 
-// Semi-boss (guardião do cofre) — mais forte que um blindado comum, com
-// nome exibido acima da cabeça como os chefes de verdade, mas sem ataque
-// especial próprio (é um "muro de HP" antes da recompensa do cofre, não um
-// chefe de fase). Reutilizável em qualquer fase que precise de um guardião.
-export default class MiniBoss extends Enemy {
+// Semi-chefe genérico (guardião de cofre/sala). Deixou de ser só um muro
+// de HP: golpe de solo telegrafado + disparo lento. Sem fúria — o confronto
+// de fase é que escala.
+export default class MiniBoss extends BossBase {
   constructor(scene, tileMap, gx, gy, opts = {}) {
     super(scene, tileMap, gx, gy, {
       hp: opts.hp || 240,
@@ -14,27 +14,25 @@ export default class MiniBoss extends Enemy {
       texture: opts.texture || 'enemy_miniboss',
       hpBarWidth: 36,
       scale: 1.05,
+      isMiniBoss: true,
+      hasEnrage: false,
       ammoDropChance: opts.ammoDropChance ?? 0,
+      name: opts.name || 'GUARDIÃO DO COFRE',
+      nameColor: '#ffd27a',
+      nameOffset: 32,
+      barOffset: 26,
+      auraTint: 0xffd27a,
+      auraScale: 0.9,
       onDeath: opts.onDeath
     });
-    this.isMiniBoss = true;
-    this.nameTag = this.scene.add.text(this.sprite.x, this.sprite.y - 30, opts.name || 'GUARDIÃO DO COFRE', {
-      fontFamily: 'Courier New',
-      fontSize: '10px',
-      color: '#ffd27a'
-    }).setOrigin(0.5).setDepth(9002);
-  }
 
-  die() {
-    if (this.nameTag) {
-      this.nameTag.destroy();
-      this.nameTag = null;
-    }
-    super.die();
-  }
-
-  update(deltaSec, player) {
-    super.update(deltaSec, player);
-    if (this.nameTag) this.nameTag.setPosition(this.sprite.x, this.sprite.y - 32);
+    this.addAttack(new SelfBurstAttack(this, {
+      damage: 20, cooldown: 3400, maxRange: 1.7, radius: 1.4,
+      telegraphMs: 480, tint: 0xffd27a, lockMove: true, firstDelay: 900
+    }));
+    this.addAttack(new ProjectileAttack(this, {
+      damage: 12, cooldown: 2800, maxRange: 5.5, minRange: 1.1,
+      speed: 3.8, tint: 0xffd27a, windupMs: 220, firstDelay: 1200
+    }));
   }
 }

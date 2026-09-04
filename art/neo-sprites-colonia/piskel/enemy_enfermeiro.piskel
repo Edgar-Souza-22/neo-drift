@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_enfermeiro",
+    "description": "Neo Drift enfermeiro idle",
+    "fps": 6,
+    "height": 28,
+    "width": 24,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAcCAYAAACeeLqCAAADHklEQVR4nO2aP2gTURzHvykhlNAhyHEE6fAKHUQkBAkdQukoDhlERcRRBBenTg7i7CClQ8cSnEqHKh2di2QIQaRIcQj0DUVKOEoGG8oRGofrO+/f+713l0YfeF84yN179/l9L+/33st7lwI0VCoXJ8FzdzQuyOrJyq6DnzWGCf5l7DkVuFQuTizbQvAQ16N1X57fi5m5Lr6of3D+XjuGKf4p32SmWbaF8vx8Yvno4gLOwPFbu1QuTg463wEAa807ZBZn4aeNYZJ/il2kggjQLPW/86VjoWVbWgBn4AAARAsLUVmUlh/NIlUM0/xTbHIOEHp0fJc8B4DKwjB0pNGn49fk+bQx/rV/iq1s4SSzQh+XvvoZ1FhphMp63Z5WBsm+bAB4uPQu1AN0Y5jmn2JLAzRuLwMAuDOUBmBWxQMe9XF4+CVUVqutkg+Qlg9AO4Zp/tu7H6TsxEnYHY0LvaO+cpwTX0xapeWLHjArflpdJ1/5K0jHDADUaquTx09a4PyU7L5Z+e5oXJhFjL/hn2KHGiCaZd74VffPOT8BY4uh8rQLl5wflt8A3iRXJ6oiBAcAVf2gcn6yYkMQY4uxlgQAzk9RcQYYWjYYq0bK4vUpk1n5nJ/MlD9L/zLFGkBWmbEqwKqoSEC6DzENX0em+peJnITfvpH/xhVqtZ7CruqtCnN+XEXgany7vwzgl3f1bEE743TM53y5/K0IdutGYoXnL14pg7BmCaxZAm4OwJrJuxvT8HVimOpfxfav8B9niYD29pYfZP3Bs8Q6snt16ujwdWKY6l/FngOuVnaf+xBHUhABTwoiyw6hafmqGCb7V7H9HuCOxgVq9bexv4Ph2iU29ndiZbzjYm+zC/y0wTuX0ofIygeAvc0uGcNU/7zjgndcKVu6HV1x4l2nvb7rf9Ydu3M+LWkDDC266wTHvizK+Z7IFzLTZolKOZ96H7BS91uxvb1Fmuh1v4W2jHVeaGfhi3tVMUz0LxRlkw0QVBCSVJZm+zbn/5F0KyJppSeyRHcVSCnneyLnAMYYebOqXKWcr/hjVvA8+gcpWZmucr6n30xX5sEQi7SAAAAAAElFTkSuQmCC\"}]}]"
+  }
+}

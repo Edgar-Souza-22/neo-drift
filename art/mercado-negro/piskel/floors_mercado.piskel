@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "floors_mercado",
+    "description": "Neo Drift Mercado Negro floors",
+    "fps": 1,
+    "height": 32,
+    "width": 32,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":3,\"chunks\":[{\"layout\":[[0,1,2]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAgCAYAAADtwH1UAAACWElEQVR4nO2av0/CQBTHv5jGmDrQAQQTQyTp1MmBMGrCKJMbo5N/g5Ozk3+Ai6uDiYNhM/wBhsFF4kCiYVAqDHVpiCHqoFUope313nEF+tnoj/eau3vv+94dKUPf+kKCNBQA6Fs200vq2irswQfJB2Q0ldk/JbL9r1AZMi8eqUwtFWQTgKsXMlPLhDL6Qy8W0H7qyPoWAD/pTSRBqVPZEOt/+DbufywC2k8d6MUC9GKB2XCuXoFZbfB93S+GppLYmQcU9wV3BNycZVHe3UOudMVkmCeaWpZNJvIOrJF1fZzG0WWWxPd5rYeD03fPeylD3/oSVQWFmQR3FeIMlKgJcNt1+3dSUHZbJ/Xfe24DmExBExEwCq8m8LybIU5D9mAY6b3XuxaX382y4XvftwqSKch9y0bfsnFYTuPiZP3vt3Pt4XZ/4prfc3FFaAoKQ9xTEFUE+KagKKWf6HJxWVAAMastrE11zVuG4qIBDqJ6JLpOmJi4aYAoPWTWgDArgSUCll0DmCPA6ZYTALPa4N6E9O0DpjGL8jRuGuBFrl4B6nw2Eg2QTKQ+IIhEA/4h14AEWiJpQBRY6+h50AAKZhIBZrXBLNyJBnAwqgFmtfF3WJOrVyaeXTQNcEe6dA3wG/xFhDXSAzWAYg8kyuDHRQOC9vN5CZwAp/Od9dmAiLTIwnmtR3wk6X0vtn0ANYamep41T9OAaeysqLj/jD5eoTSglNciO4grLaJFxjP4XnimoGbXQimvodm1SJ2FYXSFykh97hUqmqlVkIzBdyP7T2KzINmKkEwyAZL5BmLk/mz2phkyAAAAAElFTkSuQmCC\"}]}]"
+  }
+}

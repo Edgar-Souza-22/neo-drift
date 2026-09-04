@@ -1,0 +1,11 @@
+{
+  "modelVersion": 2,
+  "piskel": {
+    "name": "enemy_enforcer",
+    "description": "Neo Drift enforcer idle",
+    "fps": 6,
+    "height": 20,
+    "width": 20,
+    "layers": "[{\"name\":\"Layer 1\",\"opacity\":1,\"frameCount\":4,\"chunks\":[{\"layout\":[[0,1,2,3]],\"base64PNG\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAUCAYAAAAa2LrXAAACHUlEQVR4nO2Yv07CQBzHfzWlQVIREkNUpi6OjC4QGYxJX8D4Ai4+gAsPwOIDuPgCxhcgMQ4YcJBFHY0JUxdiImpDTGtSB1Jy/6/ttQTU7wLXu/vc93e//koPDSTKGWaAtn3P1WRzRKxqxcSuOSNXmYm2VVhJJFwszYBZrCyY804ItzPNgEWsLJjzTMhKXHMAANWKSWVqnsrCH48pY+lxFmEtGn5Hs8RbcHj+xORYJzUpM22P5BhZQpwRMEtbJxdBNdzvMIHWjQ0AAAc7ldm162cIfM/VcoYZ9C6q1Jyj1jvXYKicYQY8ZhJ/PJ7UCEcslq4SsEi7e02sPewBWI0ac2z4nGFtVBb+VCqEFLeEL9vrYLVsZp8zcgEAYLxaRK6OqHFnrT6ctusYkww8ZIVByZhx/LF4KglhecM2sNvRoWl/YyZJ8OTLg3LRmLX7h2tQv/qkFru/7ULTnn6S81GhLBkziT8eL06FoEyShW0gai5UIa8L26xARdooFaRjeMwk/kS8KBVSyOsYk2Qp/Qovs3gVwkqASKlvoO+5WuPYCQCm5Rnljltm6VkELHr1SMJa5IToAHjAr+NJ5MmlsnxMHB6PmdQfi0cmRNUb8yj325XmPzZ/cgPTFJYJ3pkwfDFF+7a3Nqlxg8cX6kwclcdj3g0eFoLHi/f/DlQUdQeyHqxvH9PTg6gPgH62qPJI5qLxfM/VUnkPTPtv9GXi/QDxc4RZ9mpbTgAAAABJRU5ErkJggg==\"}]}]"
+  }
+}

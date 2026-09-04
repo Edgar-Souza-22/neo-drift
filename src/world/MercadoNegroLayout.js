@@ -121,7 +121,7 @@ export function buildMercadoNegroWing() {
       { gx: 57, gy: 41 }, // Corredor dos Fundos
       { gx: 43, gy: 41 } // Sala de Distribuição
     ],
-    // Miliciano Blindado — reaproveita a silhueta "enemy_tank".
+    // Enforcer do Mercado — silhueta própria (`enemy_enforcer`), não mais o tank.
     T: [
       { gx: 31, gy: 3 }, // Depósito Alto
       { gx: 69, gy: 27 }, // Barraca do Blindador
