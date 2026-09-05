@@ -223,4 +223,76 @@ export function generateSounds(scene) {
     perc: [1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0],
     waveBass: 'triangle', waveLead: 'square', volBass: 0.22, volLead: 0.12, volPerc: 0.15
   }));
+
+  // Refinaria Offshore (Fase 14) — mais lento e "balançado" que o Terminal,
+  // baixo em sine grave sugerindo o mar embaixo das plataformas, lead
+  // esparso tipo alarme de convés distante. Distinto da batida regular do
+  // pátio do Terminal e da hidráulica do hub.
+  add('music_refinaria', renderLoop(ctx, {
+    bpm: 96, stepsPerBeat: 2,
+    bass: ['D2', null, null, 'D2', null, 'F2', null, null, 'C2', null, null, 'C2', null, 'Bb1', null, null],
+    lead: [null, null, null, 'A3', null, null, null, null, null, null, 'F3', null, null, null, null, null],
+    perc: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+    waveBass: 'sine', waveLead: 'triangle', volBass: 0.24, volLead: 0.1, volPerc: 0.12
+  }));
+
+  // Estaleiro Naval (Fase 15) — andamento mecânico e regular, feito pra
+  // "marchar" (batida constante de estamparia), lead curto e metálico tipo
+  // solda. Mais rápido e martelado que a Refinaria, mais "fabril" que o
+  // pátio do Terminal.
+  add('music_naval', renderLoop(ctx, {
+    bpm: 122, stepsPerBeat: 2,
+    bass: ['C2', 'C2', null, 'C2', 'Eb2', null, 'C2', null, 'Bb1', 'Bb1', null, 'Bb1', 'F2', null, 'C2', null],
+    lead: [null, null, 'G3', null, null, null, 'Bb3', null, null, null, 'F3', null, null, null, 'G3', null],
+    perc: [1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0],
+    waveBass: 'square', waveLead: 'triangle', volBass: 0.22, volLead: 0.11, volPerc: 0.16
+  }));
+
+  // Torre de Controle Logístico (Fase 16, fecha a Região 4) — a mais tensa
+  // da região: bpm mais alto que o Naval, baixo em saw grave (mais "sujo"
+  // que o square da linha de montagem), lead curto e dissonante sugerindo
+  // alarme constante. Reflete ser a fase mais dura do jogo até aqui.
+  add('music_torre', renderLoop(ctx, {
+    bpm: 132, stepsPerBeat: 2,
+    bass: ['D2', 'D2', null, 'F2', 'D2', null, 'Ab1', null, 'D2', 'D2', null, 'C2', 'Ab1', null, 'D2', null],
+    lead: [null, 'Ab3', null, null, 'D4', null, null, 'Ab3', null, null, 'F3', null, null, 'D4', null, null],
+    perc: [1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1],
+    waveBass: 'saw', waveLead: 'square', volBass: 0.22, volLead: 0.1, volPerc: 0.17
+  }));
+
+  // Praça da Matriz (hub da Região 5) — o hub mais "limpo" do jogo: lento,
+  // baixo em sine e lead em triangle numa harmonia maior, quase música de
+  // saguão corporativo. O contraste com o Estaleiro é de propósito — a sede
+  // não soa como um lugar perigoso, e é justamente esse o incômodo.
+  add('music_matriz', renderLoop(ctx, {
+    bpm: 88, stepsPerBeat: 2,
+    bass: ['F2', null, null, null, 'C2', null, null, null, 'A2', null, null, null, 'Bb2', null, null, null],
+    lead: [null, null, 'C4', null, null, null, 'E4', null, null, null, 'A3', null, null, null, 'F4', null],
+    perc: [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+    waveBass: 'sine', waveLead: 'triangle', volBass: 0.2, volLead: 0.1, volPerc: 0.08
+  }));
+
+  // Átrio Executivo (Fase 17) — pega a harmonia maior da Praça e a corrói:
+  // mesma tônica, mas com a sexta menor no baixo e um lead que insiste numa
+  // nota fora. Percussão em passo firme e regular (segurança patrulhando),
+  // não a batida fabril do Estaleiro.
+  add('music_atrio', renderLoop(ctx, {
+    bpm: 110, stepsPerBeat: 2,
+    bass: ['F2', null, 'F2', null, 'Ab2', null, 'C2', null, 'F2', null, 'F2', null, 'Eb2', null, 'C2', null],
+    lead: [null, 'C4', null, null, null, 'Ab3', null, null, null, 'Eb4', null, null, null, 'C4', null, 'Bb3'],
+    perc: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+    waveBass: 'triangle', waveLead: 'square', volBass: 0.22, volLead: 0.11, volPerc: 0.14
+  }));
+
+  // Departamento de P&D (Fase 18) — clínico e um pouco errado: baixo em sine
+  // num pulso regular de equipamento de laboratório, e um lead em square que
+  // insiste numa nota fora da harmonia. Menos marcial que o Átrio, mais
+  // desconfortável — o desconforto aqui é de sala limpa, não de patrulha.
+  add('music_pd', renderLoop(ctx, {
+    bpm: 100, stepsPerBeat: 2,
+    bass: ['A2', null, 'A2', null, 'A2', null, 'F2', null, 'G2', null, 'G2', null, 'Eb2', null, 'F2', null],
+    lead: [null, null, 'E4', null, null, 'Eb4', null, null, null, null, 'C4', null, null, 'Bb3', null, 'E4'],
+    perc: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+    waveBass: 'sine', waveLead: 'square', volBass: 0.21, volLead: 0.1, volPerc: 0.11
+  }));
 }

@@ -48,6 +48,17 @@ function createInitialState() {
     servidorCleared: false,
     // Fica true ao vencer O Empilhador (Fase 13) — primeira fase do Estaleiro.
     terminalCleared: false,
+    // Fica true ao vencer A Perfuratriz (Fase 14) — 2ª fase do Estaleiro.
+    refinariaCleared: false,
+    // Fica true ao vencer O Protótipo (Fase 15) — 3ª fase do Estaleiro.
+    estaleiroNavalCleared: false,
+    // Fica true ao vencer O Regente (Fase 16) — fecha a Região 4.
+    torreControleCleared: false,
+    // Fica true ao vencer A Diretora de Segurança (Fase 17) — primeira fase
+    // da Região 5 (Torre Matriz da Neo Industries).
+    atrioCleared: false,
+    // Fica true ao vencer O Projetista (Fase 18) — 2ª fase da Região 5.
+    pesquisaCleared: false,
     // Fica true ao pegar a Blindagem Isolante (cofre da Fase 03) — a partir
     // daí, piso eletrificado para de causar dano, pro resto do jogo.
     insulated: false,
@@ -72,7 +83,7 @@ const PLAIN_FIELDS = [
   'weaponName', 'weaponKind', 'armorName', 'armorBonus', 'bootsName', 'speedMul',
   'hasPistol', 'pistolName', 'pistolDamage', 'pistolAmmo', 'rangedKind',
   'stimCharges', 'empCharges',
-  'dungeon1Cleared', 'foundryCleared', 'reactorCleared', 'coreCleared', 'towerCleared', 'arsenalCleared', 'nexusCleared', 'vigilanceCleared', 'fantasmaCleared', 'mercadoNegroCleared', 'coloniaCleared', 'servidorCleared', 'terminalCleared', 'insulated', 'toxinImmune'
+  'dungeon1Cleared', 'foundryCleared', 'reactorCleared', 'coreCleared', 'towerCleared', 'arsenalCleared', 'nexusCleared', 'vigilanceCleared', 'fantasmaCleared', 'mercadoNegroCleared', 'coloniaCleared', 'servidorCleared', 'terminalCleared', 'refinariaCleared', 'estaleiroNavalCleared', 'torreControleCleared', 'atrioCleared', 'pesquisaCleared', 'insulated', 'toxinImmune'
 ];
 
 // Falha silenciosamente se localStorage não estiver disponível (modo
@@ -123,9 +134,11 @@ export function hasSave() {
 
 // Hub da região correspondente ao progresso — cada região só é liberada ao
 // vencer a última fase da anterior (Núcleo -> Distrito, Vigilância -> Submundo,
-// Servidor -> Estaleiro). Aceita tanto o GameState em memória quanto o objeto
-// cru de um save (`peekSaveSummary`), já que os dois carregam as flags.
+// Servidor -> Estaleiro, Torre de Controle -> Matriz). Aceita tanto o
+// GameState em memória quanto o objeto cru de um save (`peekSaveSummary`),
+// já que os dois carregam as flags.
 export function regionHubScene(state = GameState) {
+  if (state.torreControleCleared) return 'MatrizScene';
   if (state.servidorCleared) return 'EstaleiroScene';
   if (state.vigilanceCleared) return 'SubmundoScene';
   if (state.coreCleared) return 'DistrictScene';
@@ -136,7 +149,8 @@ const HUB_LABELS = {
   TownScene: 'Ala Central',
   DistrictScene: 'Distrito Neon',
   SubmundoScene: 'Submundo',
-  EstaleiroScene: 'Estaleiro Automatizado'
+  EstaleiroScene: 'Estaleiro Automatizado',
+  MatrizScene: 'Torre Matriz'
 };
 
 export function regionHubLabel(state = GameState) {
@@ -275,4 +289,24 @@ export function addInventoryItem(item) {
   if (GameState.inventory.some((i) => i.id === item.id)) return;
   GameState.inventory.push(item);
   saveGame();
+}
+
+// Cartão que GANHA NÍVEL em vez de só existir/não existir (Torre de Controle
+// Logístico, Fase 16) — mesmo item-chave do menu de status (`item.icon`
+// 'item_keycard'), mas `level` sobe conforme o jogador avança, e o nome
+// exibido é atualizado a cada nível pra mostrar o progresso de verdade.
+export function setCardLevel(id, baseName, level) {
+  const existing = GameState.inventory.find((i) => i.id === id);
+  const name = `${baseName} — Nível ${level}`;
+  if (existing) {
+    existing.level = level;
+    existing.name = name;
+  } else {
+    GameState.inventory.push({ id, name, icon: 'item_keycard', level });
+  }
+  saveGame();
+}
+
+export function getCardLevel(id) {
+  return GameState.inventory.find((i) => i.id === id)?.level || 0;
 }

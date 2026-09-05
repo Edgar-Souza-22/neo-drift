@@ -59,6 +59,12 @@ export default class Player {
     this.slashFx.setBlendMode(Phaser.BlendModes.ADD);
   }
 
+  // Água (Refinaria) conta como piso andável pra colisão — nunca bloqueia
+  // como parede, nem a pé nem empurrado: é assim que dá pra cair de
+  // propósito num buraco de ponte já aberto, e um empurrão de inimigo
+  // sempre completa o arremesso em vez de parar na borda. Quem detecta e
+  // resolve a queda é a cena (RefinariaScene._updateFall), consultando
+  // TileMap.isWater a cada frame — este método só cuida de parede de verdade.
   canOccupy(nx, ny) {
     const r = RADIUS;
     const minX = Math.round(nx - r);

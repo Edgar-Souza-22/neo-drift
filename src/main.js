@@ -19,6 +19,12 @@ import ColoniaScene from './scenes/ColoniaScene.js';
 import ServidorScene from './scenes/ServidorScene.js';
 import EstaleiroScene from './scenes/EstaleiroScene.js';
 import TerminalScene from './scenes/TerminalScene.js';
+import RefinariaScene from './scenes/RefinariaScene.js';
+import EstaleiroNavalScene from './scenes/EstaleiroNavalScene.js';
+import TorreControleScene from './scenes/TorreControleScene.js';
+import MatrizScene from './scenes/MatrizScene.js';
+import AtrioScene from './scenes/AtrioScene.js';
+import PesquisaScene from './scenes/PesquisaScene.js';
 import UIScene from './scenes/UIScene.js';
 
 const config = {
@@ -35,7 +41,7 @@ const config = {
       debug: false
     }
   },
-  scene: [BootScene, TitleScene, IntroScene, TownScene, DungeonScene, FoundryScene, ReactorScene, CoreScene, DistrictScene, TowerScene, ArsenalScene, NexusScene, VigilanceScene, SubmundoScene, FantasmaScene, MercadoNegroScene, ColoniaScene, ServidorScene, EstaleiroScene, TerminalScene, UIScene]
+  scene: [BootScene, TitleScene, IntroScene, TownScene, DungeonScene, FoundryScene, ReactorScene, CoreScene, DistrictScene, TowerScene, ArsenalScene, NexusScene, VigilanceScene, SubmundoScene, FantasmaScene, MercadoNegroScene, ColoniaScene, ServidorScene, EstaleiroScene, TerminalScene, RefinariaScene, EstaleiroNavalScene, TorreControleScene, MatrizScene, AtrioScene, PesquisaScene, UIScene]
 };
 
 window.__game = new Phaser.Game(config);

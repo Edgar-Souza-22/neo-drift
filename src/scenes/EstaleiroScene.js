@@ -49,15 +49,30 @@ export default class EstaleiroScene extends Phaser.Scene {
         name: 'Contramestra Vale',
         texture: 'npc_engineer',
         tint: 0xe8923d,
-        lines: GameState.terminalCleared
+        lines: GameState.torreControleCleared
           ? [
-            'O Terminal parou de circular sozinho. Os drones de carga não passam mais nas avenidas.',
-            'A Refinaria Offshore ainda fuma no berço do meio — mas o portão dela continua selado.'
+            'O Regente caiu — o Estaleiro Automatizado inteiro finalmente sossega. Nenhum sistema aqui responde a mais ninguém.',
+            'A região está limpa. Só resta o que vem depois disso.'
           ]
-          : [
-            'Este é o Estaleiro Automatizado. Os guindastes não param — mesmo sem gente no cais.',
-            'O Terminal de Contêineres fica naquele berço ao norte. Os drones de carga ainda circulam as rotas sozinhos.'
-          ]
+          : GameState.estaleiroNavalCleared
+            ? [
+              'O Protótipo caiu — a linha de montagem finalmente parou. Nenhum braço robótico bate mais sozinho.',
+              'A Torre de Controle Logístico comandava tudo isso de longe. É o último berço — e o portão dela já abriu.'
+            ]
+            : GameState.refinariaCleared
+            ? [
+              'A Perfuratriz caiu — o convés da Refinaria parou de ceder. As pontes ficam firmes agora.',
+              'O Estaleiro Naval é o próximo berço — uma linha de montagem inteira ligada sozinha, fabricando robôs sem parar.'
+            ]
+            : GameState.terminalCleared
+              ? [
+                'O Terminal parou de circular sozinho. Os drones de carga não passam mais nas avenidas.',
+                'A Refinaria Offshore está logo ali no berço do meio — mas eu não pisaria naquelas pontes sem pensar duas vezes.'
+              ]
+              : [
+                'Este é o Estaleiro Automatizado. Os guindastes não param — mesmo sem gente no cais.',
+                'O Terminal de Contêineres fica naquele berço ao norte. Os drones de carga ainda circulam as rotas sozinhos.'
+              ]
       }),
       new NPC(this, this.tileMap, npcSpawns[1].gx, npcSpawns[1].gy, {
         id: 'operador_guindaste',
@@ -105,6 +120,92 @@ export default class EstaleiroScene extends Phaser.Scene {
     this.add.text(gateWorld.x, gateWorld.y - 22, 'TERMINAL DE CONTÊINERES →', {
       fontFamily: 'Courier New', fontSize: '9px', color: '#e8923d'
     }).setOrigin(0.5).setDepth(9001);
+
+    // Portão da Refinaria Offshore — berço do meio, só transiciona depois
+    // d'O Empilhador cair (senão fica visível mas selado, sem interação).
+    this.refinariaDoorPos = this.tileMap.marker('E2');
+    const refinariaWorld = this.tileMap.gridToWorld(this.refinariaDoorPos.gx, this.refinariaDoorPos.gy);
+    if (GameState.terminalCleared) {
+      this.add.image(refinariaWorld.x, refinariaWorld.y, 'light_pool').setDepth(-999).setBlendMode(Phaser.BlendModes.ADD).setTint(0x2f6fa8);
+      this.refinariaDoorSprite = this.add.image(refinariaWorld.x, refinariaWorld.y, 'door_estaleiro').setDepth(9000).setTint(0x2f6fa8);
+      this.tweens.add({ targets: this.refinariaDoorSprite, alpha: 0.45, duration: 650, yoyo: true, repeat: -1 });
+      this.add.text(refinariaWorld.x, refinariaWorld.y - 22, 'REFINARIA OFFSHORE →', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#2f6fa8'
+      }).setOrigin(0.5).setDepth(9001);
+    } else {
+      this.add.image(refinariaWorld.x, refinariaWorld.y, 'door_estaleiro').setDepth(9000).setTint(0x333c44).setAlpha(0.6);
+      this.add.text(refinariaWorld.x, refinariaWorld.y - 22, 'SELADO', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#5a6068'
+      }).setOrigin(0.5).setDepth(9001);
+    }
+
+    // Portão do Estaleiro Naval — berço leste, só transiciona depois d'A
+    // Perfuratriz cair.
+    this.navalDoorPos = this.tileMap.marker('E3');
+    const navalWorld = this.tileMap.gridToWorld(this.navalDoorPos.gx, this.navalDoorPos.gy);
+    if (GameState.refinariaCleared) {
+      this.add.image(navalWorld.x, navalWorld.y, 'light_pool').setDepth(-999).setBlendMode(Phaser.BlendModes.ADD).setTint(0x8fe0ff);
+      this.navalDoorSprite = this.add.image(navalWorld.x, navalWorld.y, 'door_estaleiro').setDepth(9000).setTint(0x8fe0ff);
+      this.tweens.add({ targets: this.navalDoorSprite, alpha: 0.45, duration: 650, yoyo: true, repeat: -1 });
+      this.add.text(navalWorld.x, navalWorld.y - 22, 'ESTALEIRO NAVAL →', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#8fe0ff'
+      }).setOrigin(0.5).setDepth(9001);
+    } else {
+      this.add.image(navalWorld.x, navalWorld.y, 'door_estaleiro').setDepth(9000).setTint(0x333c44).setAlpha(0.6);
+      this.add.text(navalWorld.x, navalWorld.y - 22, 'SELADO', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#5a6068'
+      }).setOrigin(0.5).setDepth(9001);
+    }
+
+    // Portão da Torre de Controle Logístico — alcova leste, só transiciona
+    // depois d'O Protótipo cair. Última fase da região.
+    this.torreDoorPos = this.tileMap.marker('E4');
+    const torreWorld = this.tileMap.gridToWorld(this.torreDoorPos.gx, this.torreDoorPos.gy);
+    if (GameState.estaleiroNavalCleared) {
+      this.add.image(torreWorld.x, torreWorld.y, 'light_pool').setDepth(-999).setBlendMode(Phaser.BlendModes.ADD).setTint(0xffb347);
+      this.torreDoorSprite = this.add.image(torreWorld.x, torreWorld.y, 'door_estaleiro').setDepth(9000).setTint(0xffb347);
+      this.tweens.add({ targets: this.torreDoorSprite, alpha: 0.45, duration: 650, yoyo: true, repeat: -1 });
+      this.add.text(torreWorld.x, torreWorld.y - 22, 'TORRE DE CONTROLE →', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#ffb347'
+      }).setOrigin(0.5).setDepth(9001);
+    } else {
+      this.add.image(torreWorld.x, torreWorld.y, 'door_estaleiro').setDepth(9000).setTint(0x333c44).setAlpha(0.6);
+      this.add.text(torreWorld.x, torreWorld.y - 22, 'SELADO', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#5a6068'
+      }).setOrigin(0.5).setDepth(9001);
+    }
+
+    // Auditora Sload + monotrilho corporativo pra Torre Matriz — só existem
+    // depois d'O Regente cair. O monotrilho corre na HORIZONTAL, o contrário
+    // do portal que gira (fábrica -> cidade), do buraco que desce (cidade ->
+    // submundo) e do poço que sobe (submundo -> estaleiro): a sede não está
+    // acima nem abaixo do porto, está do outro lado da cidade.
+    this.monorailPos = null;
+    if (GameState.torreControleCleared) {
+      const auditorSpot = this.tileMap.marker('NM');
+      this.npcs.push(new NPC(this, this.tileMap, auditorSpot.gx, auditorSpot.gy, {
+        id: 'auditora_sload',
+        name: 'Auditora Sload',
+        texture: 'npc_coordinator',
+        tint: 0xc9a24a,
+        lines: [
+          'Vim de trem quando o Regente parou de responder. Eu assino os relatórios que dizem que este porto não existe.',
+          'A Torre Matriz manda em tudo isso — no Estaleiro, no Submundo, no Distrito. O monotrilho ainda aceita meu crachá. Aceita o seu também, hoje.'
+        ]
+      }));
+
+      this.monorailPos = this.tileMap.marker('MT');
+      const railWorld = this.tileMap.gridToWorld(this.monorailPos.gx, this.monorailPos.gy);
+      this.add.image(railWorld.x, railWorld.y, 'light_pool').setDepth(-999).setScale(1.2)
+        .setBlendMode(Phaser.BlendModes.ADD).setTint(0xc9a24a);
+      this.monorailSprite = this.add.image(railWorld.x, railWorld.y, 'prop_monorail').setDepth(9000);
+      this.tweens.add({
+        targets: this.monorailSprite, x: railWorld.x + 3, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.InOut'
+      });
+      this.add.text(railWorld.x, railWorld.y - 26, 'TORRE MATRIZ →', {
+        fontFamily: 'Courier New', fontSize: '9px', color: '#c9a24a'
+      }).setOrigin(0.5).setDepth(9001);
+    }
 
     this.transitioning = false;
 
@@ -208,6 +309,56 @@ export default class EstaleiroScene extends Phaser.Scene {
     if (doorDist < 0.6 && !this.transitioning) {
       this._enterTerminal();
     }
+
+    if (GameState.terminalCleared) {
+      const refinariaDist = Math.hypot(this.player.gx - this.refinariaDoorPos.gx, this.player.gy - this.refinariaDoorPos.gy);
+      if (refinariaDist < 0.6 && !this.transitioning) {
+        this._enterRefinaria();
+      }
+    }
+
+    if (GameState.refinariaCleared) {
+      const navalDist = Math.hypot(this.player.gx - this.navalDoorPos.gx, this.player.gy - this.navalDoorPos.gy);
+      if (navalDist < 0.6 && !this.transitioning) {
+        this._enterEstaleiroNaval();
+      }
+    }
+
+    if (GameState.estaleiroNavalCleared) {
+      const torreDist = Math.hypot(this.player.gx - this.torreDoorPos.gx, this.player.gy - this.torreDoorPos.gy);
+      if (torreDist < 0.6 && !this.transitioning) {
+        this._enterTorreControle();
+      }
+    }
+
+    if (this.monorailPos) {
+      const railDist = Math.hypot(this.player.gx - this.monorailPos.gx, this.player.gy - this.monorailPos.gy);
+      if (railDist < 0.5 && !this.transitioning) {
+        this._enterMonorail();
+      }
+    }
+  }
+
+  // Partida do monotrilho: a câmera arranca pro lado (movimento horizontal)
+  // + fade claro — o oposto do fade aço-escuro do poço de carga logo acima.
+  _enterMonorail() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door', { volume: 0.4 });
+
+    this.cameras.main.stopFollow();
+    this.tweens.add({
+      targets: this.cameras.main,
+      scrollX: this.cameras.main.scrollX + 260,
+      duration: 460,
+      ease: 'Cubic.In'
+    });
+    this.cameras.main.flash(150, 201, 162, 74);
+    this.cameras.main.fadeOut(460, 30, 34, 44);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('MatrizScene');
+    });
   }
 
   // Descida pelo poço: treme (hidráulica) + zoom pra dentro + fade aço-escuro.
@@ -237,6 +388,48 @@ export default class EstaleiroScene extends Phaser.Scene {
     this.cameras.main.once('camerafadeoutcomplete', () => {
       this.scene.stop('UIScene');
       this.scene.start('TerminalScene');
+    });
+  }
+
+  _enterRefinaria() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door');
+
+    this.tweens.add({ targets: this.refinariaDoorSprite, scale: 1.35, duration: 200, yoyo: true, ease: 'Cubic.Out' });
+    this.cameras.main.flash(150, 47, 111, 168);
+    this.cameras.main.fadeOut(420, 18, 22, 28);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('RefinariaScene');
+    });
+  }
+
+  _enterEstaleiroNaval() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door');
+
+    this.tweens.add({ targets: this.navalDoorSprite, scale: 1.35, duration: 200, yoyo: true, ease: 'Cubic.Out' });
+    this.cameras.main.flash(150, 143, 224, 255);
+    this.cameras.main.fadeOut(420, 18, 22, 28);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('EstaleiroNavalScene');
+    });
+  }
+
+  _enterTorreControle() {
+    this.transitioning = true;
+    this.player.isMoving = false;
+    playSfx(this, 'sfx_door');
+
+    this.tweens.add({ targets: this.torreDoorSprite, scale: 1.35, duration: 200, yoyo: true, ease: 'Cubic.Out' });
+    this.cameras.main.flash(150, 255, 179, 71);
+    this.cameras.main.fadeOut(420, 18, 22, 28);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.scene.stop('UIScene');
+      this.scene.start('TorreControleScene');
     });
   }
 }

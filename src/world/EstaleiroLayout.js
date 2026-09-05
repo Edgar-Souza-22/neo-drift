@@ -44,6 +44,12 @@ export function buildEstaleiroHub() {
   // Leste — alcova da Torre de Controle Logístico (Fase 16, porta depois).
   carveRect(grid, 32, 7, 36, 12);
 
+  // Sul — plataforma do monotrilho corporativo (Região 5, aparece só depois
+  // d'O Regente cair). Fica ao SUL de propósito: as quatro fases da região
+  // saem dos berços ao norte, então a saída pra fora do Estaleiro não pode
+  // ser confundida com mais um berço.
+  carveRect(grid, 16, 13, 23, 15);
+
   // Pilhas de contêineres no cais — bloqueiam passagem, não a rota principal.
   wallRect(grid, 10, 9, 12, 10);
   wallRect(grid, 20, 9, 22, 10);
@@ -60,7 +66,10 @@ export function buildEstaleiroHub() {
     E3: [{ gx: 29, gy: 2 }],
     E4: [{ gx: 34, gy: 9 }],
     N: [{ gx: 7, gy: 11 }, { gx: 16, gy: 12 }],
-    N2: [{ gx: 15, gy: 8 }, { gx: 24, gy: 8 }]
+    N2: [{ gx: 15, gy: 8 }, { gx: 24, gy: 8 }],
+    // Monotrilho pra Torre Matriz + a Auditora que aparece ao lado dele.
+    MT: [{ gx: 19, gy: 14 }],
+    NM: [{ gx: 22, gy: 13 }]
   };
 
   const zones = [

@@ -862,12 +862,22 @@ export default class TerminalScene extends Phaser.Scene {
     this.levelEnded = true;
     this.craneOnline = false;
     this._clearCraneTelegraphs();
+    this._clearAllCargoDrops();
     this.game.events.emit(victory ? 'level-complete' : 'game-over');
     if (victory) {
       GameState.terminalCleared = true;
       for (const captive of TERMINAL_CAPTIVES) rescueNpc(captive.id);
       saveGame();
       this._spawnReturnDoor();
+    }
+  }
+
+  // Guindaste desliga com o chefe: nenhum contêiner deve seguir bloqueando o
+  // pátio depois disso — inclusive o que às vezes cai bem onde a porta de
+  // retorno nasce (spawn do chefe), o que travava a saída da fase.
+  _clearAllCargoDrops() {
+    for (const block of [...this.cargoDrops.values()]) {
+      this.clearCargoDrop(block);
     }
   }
 

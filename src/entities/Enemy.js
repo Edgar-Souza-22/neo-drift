@@ -12,7 +12,12 @@ const HOVER_FRAME_RATES = {
   enemy_smuggler: 6, enemy_enforcer: 6, enemy_capataz: 6, boss_fence: 6,
   enemy_infected: 6, enemy_bloated: 6, enemy_enfermeiro: 6, boss_matriarch: 6,
   enemy_firewall: 6, enemy_siphon: 6, enemy_sysadmin: 6, boss_administrador: 6,
-  enemy_cargo: 6, enemy_stacker: 6, enemy_estivador: 6, boss_empilhador: 6
+  enemy_cargo: 6, enemy_stacker: 6, enemy_estivador: 6, boss_empilhador: 6,
+  enemy_refinaria: 6, enemy_pusher: 6, boss_perfuratriz: 6,
+  enemy_supervisor: 6, boss_prototipo: 6,
+  enemy_operador_mestre: 6, enemy_guardia_trafego: 6, boss_regente: 6,
+  enemy_shieldguard: 6, enemy_concierge: 6, boss_diretora: 6,
+  enemy_prototype: 6, enemy_arquivista: 6, boss_projetista: 6
 };
 
 const SPEED = 1.5;
@@ -34,7 +39,8 @@ const XP_REWARD = 15;
 const PHASE_ORDER = [
   'DungeonScene', 'FoundryScene', 'ReactorScene', 'CoreScene', 'TowerScene',
   'ArsenalScene', 'NexusScene', 'VigilanceScene', 'FantasmaScene', 'MercadoNegroScene',
-  'ColoniaScene', 'ServidorScene', 'TerminalScene'
+  'ColoniaScene', 'ServidorScene', 'TerminalScene', 'RefinariaScene', 'EstaleiroNavalScene', 'TorreControleScene',
+  'AtrioScene', 'PesquisaScene'
 ];
 function phaseHpMultiplier(sceneKey) {
   const idx = PHASE_ORDER.indexOf(sceneKey);
@@ -70,11 +76,16 @@ export default class Enemy {
     this.baseScale = opts.scale || 1;
     this.ammoDropChance = opts.ammoDropChance ?? 0;
     this.onDeath = opts.onDeath || null;
+    // Tint permanente (ex.: variantes "elite" reaproveitando a mesma classe
+    // com stats maiores) — precisa ser reaplicado depois do flash branco/
+    // laranja de takeDamage/ataque, senão o primeiro golpe já apaga a cor.
+    this.tintColor = opts.tint || null;
 
     const world = tileMap.gridToWorld(gx, gy);
     this.sprite = scene.add.sprite(world.x, world.y, opts.texture || 'enemy');
     this.sprite.setOrigin(0.5, 0.5);
     this.sprite.setScale(this.baseScale);
+    if (this.tintColor) this.sprite.setTint(this.tintColor);
     this._setupHoverAnim(opts.texture || 'enemy');
 
     this.hpBarBg = scene.add.rectangle(world.x, world.y - 24, this.barWidth, 4, 0x1a0a10).setOrigin(0.5);
@@ -128,6 +139,9 @@ export default class Enemy {
     for (let y = minY; y <= maxY; y++) {
       for (let x = minX; x <= maxX; x++) {
         if (!this.tileMap.isWalkable(x, y)) return false;
+        // Nenhum inimigo comum entra na água (Refinaria) — sem efeito em
+        // fases sem hazard 'water'.
+        if (this.tileMap.isWater(x, y)) return false;
       }
     }
     return true;
@@ -142,7 +156,7 @@ export default class Enemy {
     this.hp = Math.max(0, this.hp - amount);
     playSfx(this.scene, 'sfx_hit', { volume: 0.35 });
     this.sprite.setTintFill(0xffffff);
-    this.scene.time.delayedCall(90, () => this.alive && this.sprite.clearTint());
+    this.scene.time.delayedCall(90, () => this.alive && (this.tintColor ? this.sprite.setTint(this.tintColor) : this.sprite.clearTint()));
 
     const world = this.tileMap.gridToWorld(this.gx, this.gy);
     if (fromGx != null) {
@@ -242,7 +256,7 @@ export default class Enemy {
           this.lastAttackAt = now;
           player.takeDamage(this.attackDamage);
           this.sprite.setTintFill(0xffb347);
-          this.scene.time.delayedCall(110, () => this.alive && this.sprite.clearTint());
+          this.scene.time.delayedCall(110, () => this.alive && (this.tintColor ? this.sprite.setTint(this.tintColor) : this.sprite.clearTint()));
         }
       }
     } else {

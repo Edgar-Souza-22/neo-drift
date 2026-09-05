@@ -1020,3 +1020,459 @@ export class ContainerDropAttack extends BossAttack {
     this.marks = [];
   }
 }
+
+// ---------------------------------------------------------------------------
+// Protótipos em órbita (Fase 18). Corpos que GIRAM em volta do dono por
+// alguns segundos, ferindo por contato, com o raio "respirando" entre um
+// mínimo e um máximo. É o primeiro ataque da série que nega espaço de forma
+// CONTÍNUA em vez de acontecer num instante: não há telégrafo pra desviar,
+// há uma janela de aproximação pra cronometrar. Não trava o dono, então
+// roda por cima dos outros ataques em vez de substituí-los.
+// Normalmente usado com `autoPick: false` — quem dispara é o chefe, pra não
+// competir com os ataques instantâneos no seletor do BossBase.
+// ---------------------------------------------------------------------------
+export class OrbitAttack extends BossAttack {
+  constructor(owner, cfg = {}) {
+    super(owner, { kind: 'melee', minRange: 0, maxRange: 99, ...cfg });
+    this.count = cfg.count ?? 3;
+    this.baseCount = this.count;
+    this.radius = cfg.radius ?? 2.2;
+    this.radiusSwing = cfg.radiusSwing ?? 0.8;
+    this.swingMs = cfg.swingMs ?? 2000;
+    this.angularSpeed = cfg.angularSpeed ?? 1.9;
+    this.baseAngularSpeed = this.angularSpeed;
+    this.durationMs = cfg.durationMs ?? 6000;
+    this.hitRadius = cfg.hitRadius ?? 0.55;
+    this.tint = cfg.tint ?? 0x8fe0ff;
+    this.texture = cfg.texture ?? 'particle';
+    this.sfx = cfg.sfx ?? 'sfx_menu_open';
+    this.orbs = [];
+    this.angle = 0;
+    this.endsAt = 0;
+  }
+
+  get active() { return this.orbs.length > 0; }
+
+  try(player, opts = {}) {
+    if (this.active) return false;
+    if (!opts.force && !this.ready()) return false;
+    this.lastAt = this.owner.scene.time.now;
+    this.endsAt = this.lastAt + this.durationMs;
+    this.angle = Math.random() * Math.PI * 2;
+    playSfx(this.owner.scene, this.sfx, { volume: 0.3 });
+
+    const world = this.owner.tileMap.gridToWorld(this.owner.gx, this.owner.gy);
+    for (let i = 0; i < this.count; i++) {
+      const sprite = this.owner.scene.add.image(world.x, world.y, this.texture)
+        .setTint(this.tint).setBlendMode(Phaser.BlendModes.ADD).setDepth(9002).setScale(2.2);
+      this.owner.scene.tweens.add({
+        targets: sprite, scale: 2.8, duration: 420, yoyo: true, repeat: -1, ease: 'Sine.InOut'
+      });
+      this.orbs.push({ sprite, phase: (Math.PI * 2 * i) / this.count });
+    }
+    return true;
+  }
+
+  _clear() {
+    for (const orb of this.orbs) destroyObj(orb.sprite);
+    this.orbs = [];
+  }
+
+  update(deltaSec, player) {
+    if (!this.orbs.length) return;
+    const now = this.owner.scene.time.now;
+    if (now >= this.endsAt || !this.owner.alive) {
+      this._clear();
+      return;
+    }
+
+    this.angle += this.angularSpeed * deltaSec;
+    // Raio respirando: fecha e abre, então a janela de aproximação existe
+    // mas muda de tamanho o tempo todo.
+    const swing = Math.sin((now % this.swingMs) / this.swingMs * Math.PI * 2);
+    const radius = this.radius + swing * this.radiusSwing;
+
+    for (const orb of this.orbs) {
+      const a = this.angle + orb.phase;
+      const gx = this.owner.gx + Math.cos(a) * radius;
+      const gy = this.owner.gy + Math.sin(a) * radius;
+      const world = this.owner.tileMap.gridToWorld(gx, gy);
+      orb.sprite.setPosition(world.x, world.y);
+      // O dano por contato se auto-limita: Player.takeDamage tem janela de
+      // invulnerabilidade própria, então encostar não drena o HP por frame.
+      if (player?.alive && Math.hypot(player.gx - gx, player.gy - gy) <= this.hitRadius) {
+        player.takeDamage(this.damage);
+      }
+    }
+  }
+
+  enrage(mods = {}) {
+    super.enrage(mods);
+    this.angularSpeed = this.baseAngularSpeed * (mods.orbitSpeedMul ?? 1.3);
+    if (mods.extraCount) this.count = this.baseCount + mods.extraCount;
+  }
+
+  destroy() {
+    this._clear();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Sucção de bancada (Fase 18): o inverso exato do ShoveAttack. Telegrafa um
+// aro que FECHA (em vez de abrir) e ARRASTA o jogador PRA DENTRO, na direção
+// do dono, em vez de arremessar pra fora. Todo empurrão do jogo até aqui
+// afastava o jogador do perigo; este puxa pra ele — o que faz o piso da
+// arena e os ataques de área ao redor do dono passarem a importar de vez.
+// Reaproveita Player.pushBack com a direção invertida.
+// ---------------------------------------------------------------------------
+export class VacuumAttack extends BossAttack {
+  constructor(owner, cfg = {}) {
+    super(owner, { kind: 'ranged', minRange: 1.2, ...cfg });
+    this.telegraphMs = cfg.telegraphMs ?? 620;
+    this.reach = cfg.reach ?? 6.5;
+    this.pullDistance = cfg.pullDistance ?? 3.4;
+    this.pullMs = cfg.pullMs ?? 300;
+    this.tint = cfg.tint ?? 0x8fe0ff;
+    this.flash = cfg.flash ?? [143, 224, 255];
+    this.sfx = cfg.sfx ?? 'sfx_door';
+    this.phase = 'idle';
+    this.ring = null;
+  }
+
+  get locking() { return this.phase === 'telegraph'; }
+
+  inRange(player) {
+    if (!player?.alive) return false;
+    return hypotTo(this.owner, player) <= this.reach;
+  }
+
+  try(player, opts = {}) {
+    if (this.phase !== 'idle') return false;
+    if (!opts.force && (!this.ready() || !this.inRange(player))) return false;
+    this.lastAt = this.owner.scene.time.now;
+    this.phase = 'telegraph';
+    playSfx(this.owner.scene, this.sfx, { volume: 0.35 });
+
+    const world = this.owner.tileMap.gridToWorld(this.owner.gx, this.owner.gy);
+    // Aro grande que ENCOLHE — a leitura oposta à do empurrão, que cresce.
+    this.ring = this.owner.scene.add.image(world.x, world.y, 'light_pool')
+      .setTint(this.tint).setBlendMode(Phaser.BlendModes.ADD).setDepth(8999)
+      .setScale(this.reach * 0.55).setAlpha(0.25);
+    this.owner.scene.tweens.add({
+      targets: this.ring, scale: 0.4, alpha: 0.85,
+      duration: this.telegraphMs, ease: 'Cubic.In'
+    });
+    this.owner.scene.time.delayedCall(this.telegraphMs, () => this._resolve(player));
+    return true;
+  }
+
+  _resolve(player) {
+    destroyObj(this.ring);
+    this.ring = null;
+    this.phase = 'idle';
+    if (!this.owner.alive) return;
+
+    const world = this.owner.tileMap.gridToWorld(this.owner.gx, this.owner.gy);
+    const pop = this.owner.scene.add.image(world.x, world.y, 'light_pool')
+      .setTint(0xffffff).setBlendMode(Phaser.BlendModes.ADD).setDepth(9002)
+      .setScale(0.3).setAlpha(0.9);
+    this.owner.scene.tweens.add({
+      targets: pop, alpha: 0, scale: 1.6, duration: 200, onComplete: () => pop.destroy()
+    });
+    const [fr, fg, fb] = this.flash;
+    this.owner.scene.cameras.main.flash(60, fr, fg, fb);
+
+    if (!player?.alive) return;
+    const dx = this.owner.gx - player.gx;
+    const dy = this.owner.gy - player.gy;
+    const dist = Math.hypot(dx, dy);
+    if (dist > this.reach || dist < 0.05) return;
+    if (this.damage > 0) player.takeDamage(this.damage);
+    // Direção PRO DONO — é isso que inverte o empurrão em tração.
+    player.pushBack?.(dx / dist, dy / dist, Math.min(this.pullDistance, dist - 0.4), this.pullMs);
+  }
+
+  update() {
+    if (this.phase === 'telegraph' && this.ring) {
+      const world = this.owner.tileMap.gridToWorld(this.owner.gx, this.owner.gy);
+      this.ring.setPosition(world.x, world.y);
+    }
+  }
+
+  destroy() {
+    destroyObj(this.ring);
+    this.ring = null;
+    this.phase = 'idle';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Onda de diagnóstico (Fase 18): anel que se expande a partir do dono COM UMA
+// BRECHA. Correr pra longe não resolve — a onda alcança o mapa inteiro; o que
+// resolve é ler onde está o vão e estar nele quando a frente passar.
+// Diferente do SelfBurstAttack (estouro único num raio) e do GroundMarkAttack
+// (marca a posição do jogador): aqui o perigo é uma FRENTE que viaja, e a
+// resposta é posicionamento angular, não distância.
+// O anel é montado com N sprites soltos ao longo da circunferência, pulando
+// os que caem dentro da brecha — sem isso não haveria como desenhar um arco.
+// ---------------------------------------------------------------------------
+export class SpreadWaveAttack extends BossAttack {
+  constructor(owner, cfg = {}) {
+    super(owner, { kind: 'ranged', minRange: 0, ...cfg });
+    this.telegraphMs = cfg.telegraphMs ?? 520;
+    this.travelMs = cfg.travelMs ?? 1400;
+    this.maxRadius = cfg.maxRadius ?? 8;
+    this.gapDeg = cfg.gapDeg ?? 70;
+    this.segments = cfg.segments ?? 28;
+    this.bandWidth = cfg.bandWidth ?? 0.7;
+    this.tint = cfg.tint ?? 0x8fe0ff;
+    this.sfx = cfg.sfx ?? 'sfx_enrage';
+    this.phase = 'idle';
+    this.wave = null;
+    this.marker = null;
+  }
+
+  get locking() { return this.phase === 'telegraph'; }
+
+  try(player, opts = {}) {
+    if (this.phase !== 'idle') return false;
+    if (!opts.force && (!this.ready() || !this.inRange(player))) return false;
+    this.lastAt = this.owner.scene.time.now;
+    this.phase = 'telegraph';
+    playSfx(this.owner.scene, this.sfx, { volume: 0.3 });
+
+    // Brecha sorteada, NUNCA em cima do jogador: a onda tem que exigir
+    // deslocamento, senão bastaria ficar parado e às vezes dar certo.
+    const toPlayer = Math.atan2(player.gy - this.owner.gy, player.gx - this.owner.gx);
+    const offset = Phaser.Math.DegToRad(Phaser.Math.Between(70, 290));
+    this.gapAngle = Phaser.Math.Angle.Wrap(toPlayer + offset);
+
+    // Telégrafo: só a brecha acende, marcando pra onde correr.
+    const world = this.owner.tileMap.gridToWorld(this.owner.gx, this.owner.gy);
+    this.marker = this.owner.scene.add.image(
+      world.x + Math.cos(this.gapAngle) * TILE_SIZE * 2.2,
+      world.y + Math.sin(this.gapAngle) * TILE_SIZE * 2.2,
+      'light_pool'
+    ).setTint(0x9fffc8).setBlendMode(Phaser.BlendModes.ADD).setDepth(8999).setScale(0.9).setAlpha(0.5);
+    this.owner.scene.tweens.add({
+      targets: this.marker, alpha: 0.95, scale: 1.3, duration: 200, yoyo: true, repeat: -1
+    });
+
+    this.owner.scene.time.delayedCall(this.telegraphMs, () => this._launch());
+    return true;
+  }
+
+  _launch() {
+    destroyObj(this.marker);
+    this.marker = null;
+    if (!this.owner.alive) { this.phase = 'idle'; return; }
+
+    this.phase = 'travel';
+    this.startedAt = this.owner.scene.time.now;
+    this.originGx = this.owner.gx;
+    this.originGy = this.owner.gy;
+    this.hasHit = false;
+
+    const halfGap = Phaser.Math.DegToRad(this.gapDeg / 2);
+    const sprites = [];
+    for (let i = 0; i < this.segments; i++) {
+      const a = (Math.PI * 2 * i) / this.segments;
+      if (Math.abs(Phaser.Math.Angle.Wrap(a - this.gapAngle)) <= halfGap) continue;
+      const sprite = this.owner.scene.add.image(0, 0, 'particle')
+        .setTint(this.tint).setBlendMode(Phaser.BlendModes.ADD).setDepth(9002).setScale(2);
+      sprites.push({ sprite, angle: a });
+    }
+    this.wave = { sprites, halfGap };
+  }
+
+  _clearWave() {
+    if (!this.wave) return;
+    for (const s of this.wave.sprites) destroyObj(s.sprite);
+    this.wave = null;
+  }
+
+  update(deltaSec, player) {
+    if (this.phase !== 'travel' || !this.wave) return;
+    const t = (this.owner.scene.time.now - this.startedAt) / this.travelMs;
+    if (t >= 1 || !this.owner.alive) {
+      this._clearWave();
+      this.phase = 'idle';
+      return;
+    }
+
+    const radius = t * this.maxRadius;
+    for (const seg of this.wave.sprites) {
+      const gx = this.originGx + Math.cos(seg.angle) * radius;
+      const gy = this.originGy + Math.sin(seg.angle) * radius;
+      const world = this.owner.tileMap.gridToWorld(gx, gy);
+      seg.sprite.setPosition(world.x, world.y);
+      seg.sprite.setAlpha(1 - t * 0.35);
+    }
+
+    if (this.hasHit || !player?.alive) return;
+    const dx = player.gx - this.originGx;
+    const dy = player.gy - this.originGy;
+    const dist = Math.hypot(dx, dy);
+    // A frente passou por cima do jogador neste frame?
+    if (Math.abs(dist - radius) > this.bandWidth) return;
+    const angle = Math.atan2(dy, dx);
+    // Dentro da brecha = passa ileso. É esse o único jeito de escapar.
+    if (Math.abs(Phaser.Math.Angle.Wrap(angle - this.gapAngle)) <= this.wave.halfGap) return;
+    this.hasHit = true;
+    player.takeDamage(this.damage);
+    this.owner.scene.cameras.main.shake(140, 0.006);
+  }
+
+  destroy() {
+    destroyObj(this.marker);
+    this.marker = null;
+    this._clearWave();
+    this.phase = 'idle';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Revisão de projeto (Fase 18): o dono planta CÓPIAS-FANTASMA de si mesmo
+// LONGE de onde está, e cada uma detona ali depois de um atraso.
+//
+// A distância mínima é o ponto do ataque. Ele não marca o jogador (isso é o
+// GroundMarkAttack) nem explode em volta do dono (isso é o SelfBurstAttack):
+// ele semeia a PERIFERIA da arena. Junto com o OrbitAttack, que nega o miolo,
+// o par fecha o espaço pelos dois lados — chegar perto dói por causa da
+// órbita, e fugir pro fundo dói por causa das cópias.
+//
+// Quando o dono se moveu o bastante, as cópias reaproveitam pontos reais do
+// rastro dele (o Projetista iterando protótipos pelo caminho); quando não,
+// caem em posições soltas da arena, sempre respeitando a distância mínima.
+// ---------------------------------------------------------------------------
+export class MirrorCloneAttack extends BossAttack {
+  constructor(owner, cfg = {}) {
+    super(owner, { kind: 'ranged', minRange: 0, ...cfg });
+    this.count = cfg.count ?? 2;
+    this.baseCount = this.count;
+    this.delayMs = cfg.delayMs ?? 900;
+    this.radius = cfg.radius ?? 1.8;
+    this.trailMs = cfg.trailMs ?? 2600;
+    // Nenhuma cópia nasce a menos de `minDistance` do dono — é o que impede
+    // o ataque de virar mais um estouro em volta dele.
+    this.minDistance = cfg.minDistance ?? 4.5;
+    this.maxDistance = cfg.maxDistance ?? 8;
+    this.spread = cfg.spread ?? 2.5;
+    this.tint = cfg.tint ?? 0xb37aff;
+    this.flash = cfg.flash ?? [179, 122, 255];
+    this.sfx = cfg.sfx ?? 'sfx_door';
+    this.trail = [];
+    this.ghosts = [];
+  }
+
+  _recordTrail() {
+    const now = this.owner.scene.time.now;
+    const last = this.trail[this.trail.length - 1];
+    if (!last || now - last.at > 220) {
+      this.trail.push({ gx: this.owner.gx, gy: this.owner.gy, at: now });
+    }
+    while (this.trail.length && now - this.trail[0].at > this.trailMs) this.trail.shift();
+  }
+
+  // Posições das cópias: sempre entre `minDistance` e `maxDistance` do dono,
+  // espaçadas entre si, e sempre em piso andável. Primeiro tenta pontos reais
+  // do rastro que já estejam longe o bastante; se o dono não andou o
+  // suficiente (fase ancorada, por exemplo), sorteia posições da arena.
+  _pickSpots(count) {
+    const spots = [];
+    const tileMap = this.owner.tileMap;
+    const farEnough = (gx, gy) => {
+      const d = Math.hypot(gx - this.owner.gx, gy - this.owner.gy);
+      return d >= this.minDistance && d <= this.maxDistance;
+    };
+    const spacedOk = (gx, gy) => spots.every((s) => Math.hypot(s.gx - gx, s.gy - gy) >= this.spread);
+    const usable = (gx, gy) =>
+      farEnough(gx, gy) && spacedOk(gx, gy) && tileMap.isWalkable(Math.round(gx), Math.round(gy));
+
+    for (const point of this.trail) {
+      if (spots.length >= count) break;
+      if (usable(point.gx, point.gy)) spots.push({ gx: point.gx, gy: point.gy });
+    }
+
+    for (let attempt = 0; attempt < 40 && spots.length < count; attempt++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = this.minDistance + Math.random() * (this.maxDistance - this.minDistance);
+      const gx = Math.round(this.owner.gx + Math.cos(angle) * radius);
+      const gy = Math.round(this.owner.gy + Math.sin(angle) * radius);
+      if (usable(gx, gy)) spots.push({ gx, gy });
+    }
+    return spots;
+  }
+
+  try(player, opts = {}) {
+    if (!opts.force && (!this.ready() || !this.inRange(player))) return false;
+    const spots = this._pickSpots(this.count);
+    // Arena apertada demais pra respeitar a distância mínima — não gasta o
+    // cooldown à toa.
+    if (!spots.length) return false;
+    this.lastAt = this.owner.scene.time.now;
+    playSfx(this.owner.scene, this.sfx, { volume: 0.3 });
+    for (const spot of spots) this._spawnGhost(spot, player);
+    return true;
+  }
+
+  _spawnGhost(point, player) {
+    const world = this.owner.tileMap.gridToWorld(point.gx, point.gy);
+    const sprite = this.owner.scene.add.image(world.x, world.y, this.owner.sprite.texture.key)
+      .setTint(this.tint).setAlpha(0.45).setDepth(9001)
+      .setScale(this.owner.baseScale ?? 1);
+    this.owner.scene.tweens.add({ targets: sprite, alpha: 0.85, duration: 180, yoyo: true, repeat: -1 });
+
+    const ring = this.owner.scene.add.image(world.x, world.y, 'light_pool')
+      .setTint(this.tint).setBlendMode(Phaser.BlendModes.ADD).setDepth(8999)
+      .setScale(0.2).setAlpha(0.6);
+    this.owner.scene.tweens.add({
+      targets: ring, scale: this.radius, alpha: 0.85, duration: this.delayMs, ease: 'Cubic.In'
+    });
+
+    const ghost = { gx: point.gx, gy: point.gy, sprite, ring };
+    this.ghosts.push(ghost);
+    this.owner.scene.time.delayedCall(this.delayMs, () => this._resolve(ghost, player));
+  }
+
+  _resolve(ghost, player) {
+    this.ghosts = this.ghosts.filter((g) => g !== ghost);
+    destroyObj(ghost.sprite);
+    destroyObj(ghost.ring);
+
+    const world = this.owner.tileMap.gridToWorld(ghost.gx, ghost.gy);
+    const flash = this.owner.scene.add.image(world.x, world.y, 'light_pool')
+      .setTint(0xffffff).setBlendMode(Phaser.BlendModes.ADD).setDepth(9002)
+      .setScale(this.radius * 0.9).setAlpha(0.9);
+    this.owner.scene.tweens.add({
+      targets: flash, alpha: 0, scale: this.radius * 1.5, duration: 220, onComplete: () => flash.destroy()
+    });
+    const [fr, fg, fb] = this.flash;
+    this.owner.scene.cameras.main.flash(60, fr, fg, fb);
+    this.owner._spawnHitParticles?.(world.x, world.y, 7, 20, this.tint);
+
+    // A cópia detona mesmo se o original já caiu — é um protótipo solto,
+    // não um membro do chefe.
+    if (player?.alive && Math.hypot(player.gx - ghost.gx, player.gy - ghost.gy) <= this.radius) {
+      player.takeDamage(this.damage);
+    }
+  }
+
+  update() {
+    if (this.owner.alive) this._recordTrail();
+  }
+
+  enrage(mods = {}) {
+    super.enrage(mods);
+    if (mods.extraCount) this.count = this.baseCount + mods.extraCount;
+  }
+
+  destroy() {
+    for (const ghost of this.ghosts) {
+      destroyObj(ghost.sprite);
+      destroyObj(ghost.ring);
+    }
+    this.ghosts = [];
+    this.trail = [];
+  }
+}

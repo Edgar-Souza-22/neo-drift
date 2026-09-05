@@ -38,6 +38,10 @@ const TILE_KEYS = [
   'floor_colonia', 'floor_colonia_vent', 'floor_colonia_stain', 'floor_toxic', 'wall_colonia', 'door_colonia',
   'floor_servidor', 'floor_servidor_vent', 'floor_servidor_rack', 'wall_servidor', 'door_servidor',
   'floor_estaleiro', 'floor_estaleiro_stripe', 'wall_estaleiro', 'door_estaleiro',
+  'floor_matriz', 'floor_matriz_inlay', 'wall_matriz', 'door_matriz',
+  'floor_atrio', 'floor_atrio_inlay', 'floor_atrio_polido', 'wall_atrio', 'wall_glass',
+  'floor_pd', 'floor_pd_grid', 'wall_pd',
+  'tile_pressure_off', 'tile_pressure_on',
   'tile_sequence_off', 'tile_sequence_on', 'tile_circuit_off', 'tile_circuit_on',
   'trap_off', 'trap_warn', 'trap_on', 'tile_signal_off', 'tile_signal_on',
   'tile_filter_0', 'tile_filter_1', 'tile_filter_2',
@@ -53,12 +57,12 @@ const FX_KEYS = [
   // ligar o spin/pulso de verdade exigiria trocar add.image por add.sprite
   // em 8 pontos espalhados por 6 arquivos (cenas + Boss.js/RouterBoss.js/
   // ShooterDrone.js), fora do escopo desta troca de arte.
-  'portal', 'bolt', 'particle', 'target_reticle'
+  'portal', 'bolt', 'particle', 'target_reticle', 'fx_shield'
 ];
 
 const ITEM_KEYS_2 = ['item_ammo', 'item_pilebunker', 'item_smg', 'item_shotgun', 'item_railgun', 'item_stim', 'item_emp'];
 
-const PROP_KEYS = ['prop_crate', 'prop_barrel', 'prop_pipe', 'prop_console', 'prop_kiosk', 'prop_hole', 'prop_stall', 'prop_lantern', 'prop_capsule', 'prop_rack', 'prop_firewall', 'prop_lift', 'prop_container'];
+const PROP_KEYS = ['prop_crate', 'prop_barrel', 'prop_pipe', 'prop_console', 'prop_kiosk', 'prop_hole', 'prop_stall', 'prop_lantern', 'prop_capsule', 'prop_rack', 'prop_firewall', 'prop_lift', 'prop_container', 'prop_cable', 'prop_pedestal', 'prop_banquet', 'prop_camera', 'prop_monorail', 'prop_partition', 'prop_tank'];
 
 const NPC_TYPES = ['guard', 'engineer', 'worker', 'coordinator', 'herald', 'vendor'];
 
@@ -192,6 +196,34 @@ export default class BootScene extends Phaser.Scene {
     this.generateFloorServidorRack('floor_servidor_rack');
     this.generateFloor('floor_estaleiro', 0x1a2228, 0x243038);
     this.generateFloorEstaleiroStripe('floor_estaleiro_stripe');
+    // Refinaria Offshore (Fase 14) — placa de convés em aço azulado (mais
+    // frio que o cais do Estaleiro), grade de ventilação reaproveitada como
+    // variante "trilho" de piso, prancha de ponte e água aberta à parte.
+    this.generateFloor('floor_refinaria', 0x1c2830, 0x28343e);
+    this.generateFloorVent('floor_refinaria_stripe', 0x1c2830, 0x28343e);
+    this.generateFloorBridge('floor_bridge');
+    this.generateWaterFloor('floor_water');
+    this.generateOilStainProp();
+    this.generateSmokestackProp();
+    // Estaleiro Naval (Fase 15) — aço mais claro/"limpo" que a Refinaria,
+    // luz de solda azul-branca em vez de âmbar/vermelho.
+    this.generateFloor('floor_naval', 0x1e262c, 0x2a3440);
+    this.generateFloorVent('floor_naval_stripe', 0x1e262c, 0x2a3440);
+    this.generateConveyorTiles();
+    this.generateRobotArmProp();
+    // Torre Matriz (Região 5) — pedra escura polida com fio de latão. Nada
+    // de chapa industrial: é a única região do jogo onde o chão foi feito
+    // pra impressionar visita, não pra aguentar carga.
+    this.generateFloor('floor_matriz', 0x1a1e26, 0x262c38);
+    this.generateFloorGoldInlay('floor_matriz_inlay', 0x1a1e26);
+    this.generateFloor('floor_atrio', 0x1c2028, 0x2a3038);
+    this.generateFloorGoldInlay('floor_atrio_inlay', 0x1c2028);
+    this.generatePolishedFloor('floor_atrio_polido');
+    // Departamento de P&D (Fase 18) — sala limpa: piso mais frio e claro que
+    // o do Átrio, com uma variante de grade de escoamento em vez do embutido
+    // de latão. Laboratório, não saguão.
+    this.generateFloor('floor_pd', 0x1c2230, 0x28303f);
+    this.generateFloorVent('floor_pd_grid', 0x1c2230, 0x28303f);
     this.generateToxicFloor('floor_toxic');
     this.generateCompanyLogo();
     this.generateVignette();
@@ -228,6 +260,11 @@ export default class BootScene extends Phaser.Scene {
     // Estaleiro Automatizado (Região 4): chapa corrugada de contêiner com
     // faixa de risco — porto robotizado, nem rocha nem painel de rack.
     this.generateWallEstaleiro('wall_estaleiro');
+    this.generateWall('wall_naval', { body: 0x3a4048, frame: 0x1c2028, accent: 0x8fe0ff, plate: 0x4a5a68, outline: 0x0c1418 });
+    this.generateWall('wall_matriz', { body: 0x49505f, frame: 0x14171e, accent: 0xc9a24a, plate: 0x5c6478, outline: 0x0a0c10 });
+    this.generateWallAtrio('wall_atrio');
+    this.generateGlassWall('wall_glass');
+    this.generateWall('wall_pd', { body: 0x525c72, frame: 0x161b26, accent: 0x8fe0ff, plate: 0x646f88, outline: 0x0a0d14 });
     if (!this.textures.exists('door')) this.generateDoor('door');
     // Portas de entrada do Distrito Neon — uma pra cada destino, em vez do
     // mesmo 'door' genérico só retintado (o que o pedia pra ser diferenciado).
@@ -239,6 +276,7 @@ export default class BootScene extends Phaser.Scene {
     if (!this.textures.exists('door_colonia')) this.generateDoor('door_colonia');
     this.generateDoorServidor('door_servidor');
     this.generateDoorEstaleiro('door_estaleiro');
+    this.generateDoorMatriz('door_matriz');
     this.generatePlayerFrames();
     if (!this.textures.exists('enemy')) this.generateEnemy();
     this.generateTankEnemy();
@@ -286,10 +324,34 @@ export default class BootScene extends Phaser.Scene {
     this.generateFirewallProp();
     this.generateLiftProp();
     this.generateContainerProp();
+    this.generateCableProp();
     this.generateCargoDrone();
     this.generateStackerEnemy();
     this.generateEstivadorMiniBoss();
     this.generateEmpilhadorBoss();
+    this.generateEnemyRefinaria();
+    this.generatePusherEnemy();
+    this.generateGuincheiroMiniBoss();
+    this.generatePerfuratrizBoss();
+    this.generateSupervisorMiniBoss();
+    this.generatePrototipoBoss();
+    this.generateOperadorMestreMiniBoss();
+    this.generateGuardiaTrafegoMiniBoss();
+    this.generateRegenteBoss();
+    this.generateShieldGuard();
+    this.generateConciergeMiniBoss();
+    this.generateDiretoraBoss();
+    this.generateShieldFx();
+    this.generateUnstablePrototype();
+    this.generateArquivistaMiniBoss();
+    this.generateProjetistaBoss();
+    this.generatePartitionProp();
+    this.generateTankProp();
+    this.generatePressureTiles();
+    this.generatePedestalProp();
+    this.generateBanquetProp();
+    this.generateCameraProp();
+    this.generateMonorailProp();
     this.generatePortal();
     this.generateKiosk();
     this.generateStall();
@@ -3326,6 +3388,33 @@ export default class BootScene extends Phaser.Scene {
     g.destroy();
   }
 
+  // Cabo solto — decal de piso (feixe de fios caído, sem colisão), usado
+  // como detalhe ambiental disperso pela Torre de Controle Logístico.
+  // Curva senoidal simples (não reto) pra não parecer o tile de Cabeamento
+  // (`generateCableTiles`, que é um puzzle de encanamento, coisa distinta).
+  generateCableProp() {
+    if (this.textures.exists('prop_cable')) return;
+    const w = 22;
+    const h = 10;
+    const grid = createGrid(w, h);
+    const rubber = 0x1c1f22;
+    const highlight = 0x33383e;
+    const copper = 0xc2793b;
+    let lastY = Math.round(h / 2);
+    for (let x = 1; x < w - 1; x++) {
+      const y = Math.round(h / 2 + Math.sin(x / 3.4) * 2.6);
+      fillRect(grid, x, y, 1, 2, rubber);
+      setPixel(grid, x, y, highlight);
+      lastY = y;
+    }
+    fillCircle(grid, 1, Math.round(h / 2 + Math.sin(1 / 3.4) * 2.6), 2, copper);
+    fillCircle(grid, w - 2, lastY, 2, copper);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x000000);
+    g.generateTexture('prop_cable', w, h);
+    g.destroy();
+  }
+
   generateCableTiles() {
     if (this.textures.exists('tile_cable_straight_0')) return;
     const s = TILE_SIZE;
@@ -3695,6 +3784,1122 @@ export default class BootScene extends Phaser.Scene {
     const g = this.add.graphics();
     renderGrid(g, grid, 0x080c10);
     g.generateTexture('boss_empilhador', w, h);
+    g.destroy();
+  }
+
+  // --- Fase 14 (Refinaria Offshore) ---------------------------------------
+
+  // Prancha de ponte — grade metálica com faixa de risco nas bordas curtas
+  // (perpendicular ao sentido da travessia). Some/reaparece por cima da
+  // água quando um trecho desmorona (ver RefinariaScene._buildBridges).
+  generateFloorBridge(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const steel = 0x3a4048;
+    const steelLight = 0x4a5460;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, steel);
+    for (let i = -s; i < s * 2; i += 5) {
+      for (let x = 0; x < s; x++) {
+        const y = x + i;
+        if (y >= 0 && y < s) setPixel(grid, x, y, steelLight);
+      }
+    }
+    paintOver(grid, 0, 0, s, 2, 0xe8b93d);
+    paintOver(grid, 0, s - 2, s, 2, 0xe8b93d);
+    for (let x = 2; x < s; x += 6) {
+      setPixel(grid, x, 1, 0x1a1408);
+      setPixel(grid, x + 3, s - 2, 0x1a1408);
+    }
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x14181c);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Água aberta — base azul-petróleo escura com faixas de onda claras
+  // deslocadas por fileira (não mottle orgânico, que lê como sujeira/lodo,
+  // não líquido). Pulsa via HAZARD_PULSE.water (TileMap).
+  generateWaterFloor(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x0c2430);
+    const waveNoise = createNoise2D();
+    mottle(grid, waveNoise, { color: 0x0a1c26, threshold: 0.45, scale: 0.5 });
+    for (let y = 3; y < s; y += 7) {
+      const offset = (y * 3) % 10;
+      for (let x = 0; x < s - 4; x++) {
+        if ((x + offset) % 10 < 3) setPixel(grid, x, y, 0x1c4a5c);
+      }
+    }
+    setPixel(grid, 6, 9, 0x6fd0e8);
+    setPixel(grid, 22, 17, 0x6fd0e8);
+    setPixel(grid, 14, 25, 0x6fd0e8);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x040a0e);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Inimigo comum da Refinaria — drone de manutenção flutuante, corpo
+  // compacto em aço/azul com luz de aviso giratória (distinto do drone de
+  // carga do Terminal, que é mais alongado/veicular).
+  generateEnemyRefinaria() {
+    if (this.textures.exists('enemy_refinaria')) return;
+    const w = 18;
+    const h = 18;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3844;
+    const steelLight = 0x3f5462;
+    fillCircle(grid, 9, 9, 7, steel);
+    fillCircle(grid, 9, 8, 5, steelLight);
+    fillRect(grid, 7, 5, 4, 3, 0x14181c);
+    setPixel(grid, 8, 6, 0x6fd0e8);
+    setPixel(grid, 9, 6, 0x9fe8f8);
+    fillRect(grid, 2, 9, 3, 2, 0x1a2228);
+    fillRect(grid, 13, 9, 3, 2, 0x1a2228);
+    setPixel(grid, 9, 2, 0xc23b3b);
+    setPixel(grid, 9, 1, 0xff7a6a);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_refinaria', w, h);
+    g.destroy();
+  }
+
+  // Operário de Convés — inimigo grande que empurra (PusherEnemy). Corpo
+  // largo e baixo, aríete hidráulico estendido à frente (a parte que golpeia
+  // o jogador) — silhueta bem mais robusta que os grunts, lê como "vai te
+  // empurrar", não "vai te perseguir rápido".
+  generatePusherEnemy() {
+    if (this.textures.exists('enemy_pusher')) return;
+    const w = 26;
+    const h = 26;
+    const grid = createGrid(w, h);
+    const steel = 0x3a3038;
+    const steelLight = 0x4a3c44;
+    const accent = 0xc23b3b;
+    fillCircle(grid, 13, 7, 5, 0x3a342c);
+    fillRect(grid, 9, 4, 8, 3, accent);
+    fillRect(grid, 5, 12, 16, 11, steel);
+    paintOver(grid, 6, 13, 14, 4, steelLight);
+    fillRect(grid, 9, 13, 8, 3, 0x1a2228);
+    setPixel(grid, 11, 14, accent);
+    setPixel(grid, 14, 14, 0xff7a6a);
+    // Aríete — placa larga estendida à frente (sul, direção de golpe padrão).
+    fillRect(grid, 6, 22, 14, 3, 0x8a9aa4);
+    paintOver(grid, 6, 22, 14, 1, 0xc4d0d8);
+    fillRect(grid, 3, 12, 3, 8, steel);
+    fillRect(grid, 20, 12, 3, 8, steel);
+    fillRect(grid, 6, 23, 3, 3, 0x14181c);
+    fillRect(grid, 17, 23, 3, 3, 0x14181c);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_pusher', w, h);
+    g.destroy();
+  }
+
+  // A Perfuratriz (Fase 14) — torre de perfuração ambulante: broca cônica
+  // no topo (gira/desce no ataque de solo), corpo de rig sobre um tripé
+  // largo. Maior que O Empilhador, silhueta vertical (torre), não
+  // horizontal (ponte rolante) — leitura oposta de propósito.
+  generatePerfuratrizBoss() {
+    if (this.textures.exists('boss_perfuratriz')) return;
+    const w = 46;
+    const h = 52;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3844;
+    const steelLight = 0x3f5462;
+    const accent = 0x2f6fa8;
+    const bit = 0x8a9aa4;
+
+    // Broca — cone no topo (fillRect, não paintOver: nada foi preenchido
+    // ainda nesse grid pra "repintar" em cima).
+    for (let i = 0; i < 10; i++) {
+      const width = 12 - i;
+      fillRect(grid, 23 - Math.floor(width / 2), 1 + i, width, 1, i % 2 === 0 ? bit : steelLight);
+    }
+    setPixel(grid, 23, 1, 0xdfe8ec);
+
+    // Torre — corpo alongado com trilhos.
+    fillRect(grid, 17, 11, 12, 20, steel);
+    paintOver(grid, 19, 11, 2, 20, steelLight);
+    paintOver(grid, 27, 11, 2, 20, steelLight);
+    for (let y = 13; y < 30; y += 4) paintOver(grid, 18, y, 10, 1, accent);
+
+    // Cabine central.
+    fillRect(grid, 14, 31, 18, 9, steel);
+    paintOver(grid, 16, 32, 14, 5, steelLight);
+    fillRect(grid, 18, 33, 10, 4, 0x14181c);
+    setPixel(grid, 20, 34, accent);
+    setPixel(grid, 25, 34, 0x6fd0e8);
+
+    // Tripé — três pernas largas plantadas no convés.
+    fillRect(grid, 4, 40, 8, 11, 0x1a2228);
+    fillRect(grid, 19, 40, 8, 11, 0x1a2228);
+    fillRect(grid, 34, 40, 8, 11, 0x1a2228);
+    paintOver(grid, 6, 42, 4, 8, steel);
+    paintOver(grid, 21, 42, 4, 8, steel);
+    paintOver(grid, 36, 42, 4, 8, steel);
+    fillRect(grid, 2, 49, 10, 3, 0x101418);
+    fillRect(grid, 17, 49, 10, 3, 0x101418);
+    fillRect(grid, 32, 49, 10, 3, 0x101418);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x1c2a34, threshold: 0.6, scale: 0.35, region: { x0: 14, y0: 31, w: 18, h: 9 } });
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('boss_perfuratriz', w, h);
+    g.destroy();
+  }
+
+  // Mancha de óleo — decal achatado de piso (sem contorno grosso, quase
+  // sem relevo), usado espalhado pelas plataformas da Refinaria. Formato
+  // irregular (3 círculos sobrepostos), não um círculo perfeito.
+  generateOilStainProp() {
+    if (this.textures.exists('prop_oilstain')) return;
+    const w = 20;
+    const h = 14;
+    const grid = createGrid(w, h);
+    fillCircle(grid, 9, 7, 6, 0x0a0a0c);
+    fillCircle(grid, 5, 6, 4, 0x0a0a0c);
+    fillCircle(grid, 14, 8, 4, 0x0a0a0c);
+    fillCircle(grid, 9, 6, 4, 0x141216);
+    setPixel(grid, 7, 4, 0x2a2430);
+    setPixel(grid, 12, 6, 0x241f28);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x000000);
+    g.generateTexture('prop_oilstain', w, h);
+    g.destroy();
+  }
+
+  // O Guincheiro (Fase 14) — humanoide de guindaste: capacete vermelho,
+  // bobina de cabo (carretel) nas costas em vez de mochila comum, e um
+  // gancho grande pendurado numa corrente na mão — silhueta própria,
+  // distinta do Operário de Convés genérico (enemy_pusher, sem gancho/
+  // carretel) e do gancho pequeno do Estivador (Terminal).
+  generateGuincheiroMiniBoss() {
+    if (this.textures.exists('enemy_guincheiro')) return;
+    const w = 28;
+    const h = 32;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3238;
+    const steelLight = 0x3a4850;
+    const red = 0xc23b3b;
+    const redLight = 0xff7a6a;
+
+    // Cabeça + capacete.
+    fillCircle(grid, 13, 7, 6, 0x3a342c);
+    fillRect(grid, 8, 3, 10, 4, red);
+    paintOver(grid, 9, 4, 8, 1, redLight);
+    setPixel(grid, 11, 8, 0x141018);
+    setPixel(grid, 15, 8, 0x141018);
+
+    // Tronco (colete de estiva vermelho sobre steel).
+    fillRect(grid, 6, 14, 15, 11, steel);
+    paintOver(grid, 7, 15, 13, 4, red);
+    fillRect(grid, 10, 15, 5, 8, 0x1a2228);
+    setPixel(grid, 12, 17, redLight);
+
+    // Braço esquerdo.
+    fillRect(grid, 1, 15, 5, 9, steel);
+    paintOver(grid, 1, 15, 2, 9, steelLight);
+
+    // Carretel de cabo nas costas — dois anéis concêntricos + eixo escuro,
+    // é o que diferencia o Guincheiro de qualquer outro inimigo da fase.
+    fillCircle(grid, 22, 12, 6, 0x4a4a4a);
+    fillCircle(grid, 22, 12, 4, 0x2a2a2a);
+    fillCircle(grid, 22, 12, 1, 0x141414);
+    for (let a = 0; a < 8; a++) {
+      const ang = (Math.PI * 2 * a) / 8;
+      setPixel(grid, Math.round(22 + Math.cos(ang) * 5), Math.round(12 + Math.sin(ang) * 5), 0x6a6a6a);
+    }
+
+    // Braço direito + corrente e gancho grande pendurado.
+    fillRect(grid, 20, 15, 5, 8, steel);
+    paintOver(grid, 22, 15, 2, 8, steelLight);
+    fillRect(grid, 22, 23, 2, 5, 0x6a7a84);
+    fillRect(grid, 20, 27, 3, 2, 0x8a9aa4);
+    fillRect(grid, 20, 29, 2, 2, 0x6a7a84);
+
+    // Pernas/botas.
+    fillRect(grid, 8, 25, 5, 7, 0x141018);
+    fillRect(grid, 15, 25, 5, 7, 0x141018);
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_guincheiro', w, h);
+    g.destroy();
+  }
+
+  // Torre de resfriamento pequena — chaminé industrial estreita, base larga
+  // + corpo afunilado + boca escura no topo (de onde a cena solta partículas
+  // de fumaça, ver RefinariaScene._spawnSmokePuff).
+  generateSmokestackProp() {
+    if (this.textures.exists('prop_smokestack')) return;
+    const w = 12;
+    const h = 26;
+    const grid = createGrid(w, h);
+    const steel = 0x3a4048;
+    const steelLight = 0x4a5460;
+    fillRect(grid, 1, 18, 10, 8, steel);
+    paintOver(grid, 2, 19, 8, 2, steelLight);
+    fillRect(grid, 3, 4, 6, 14, steel);
+    paintOver(grid, 3, 4, 2, 14, steelLight);
+    for (let y = 6; y < 18; y += 4) paintOver(grid, 3, y, 6, 1, 0x2a3238);
+    fillCircle(grid, 6, 4, 3, 0x14181c);
+    paintOver(grid, 0, 17, 12, 1, 0xe8b93d);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('prop_smokestack', w, h);
+    g.destroy();
+  }
+
+  // --- Fase 15 (Estaleiro Naval) -------------------------------------
+
+  // Esteiras transportadoras — 4 variantes direcionais (seta + friso de
+  // esteira). A cor muda com o tint/scale em tempo real só nos braços
+  // robóticos (ver prop_robotarm); aqui a direção já é a própria arte.
+  generateConveyorTiles() {
+    if (this.textures.exists('conveyor_right')) return;
+    const s = TILE_SIZE;
+    const base = 0x232a30;
+    const accent = 0x8fe0ff;
+
+    const drawArrow = (grid, dir, color) => {
+      const half0 = 9;
+      for (let i = 4; i <= 26; i++) {
+        const t = (i - 4) / 22;
+        const half = Math.round(half0 * (1 - t));
+        if (half <= 0) continue;
+        if (dir === 'right') fillRect(grid, i, s / 2 - half, 1, half * 2, color);
+        else if (dir === 'left') fillRect(grid, s - i, s / 2 - half, 1, half * 2, color);
+        else if (dir === 'down') fillRect(grid, s / 2 - half, i, half * 2, 1, color);
+        else fillRect(grid, s / 2 - half, s - i, half * 2, 1, color);
+      }
+    };
+
+    for (const dir of ['right', 'left', 'down', 'up']) {
+      const grid = createGrid(s, s);
+      fillRect(grid, 0, 0, s, s, base);
+      paintOver(grid, 0, 0, s, 2, 0x1a2024);
+      paintOver(grid, 0, s - 2, s, 2, 0x1a2024);
+      drawArrow(grid, dir, accent);
+      const g = this.add.graphics();
+      renderGrid(g, grid, 0x0c1418);
+      g.generateTexture(`conveyor_${dir}`, s, s);
+      g.destroy();
+    }
+  }
+
+  // Braço robótico — poste + braço vertical articulado + cabeça de
+  // estampagem no topo. Estado (idle/telegraph/strike) é só tint/scale
+  // aplicado em tempo real pela cena (EstaleiroNavalScene._updateArms),
+  // não frames separados.
+  generateRobotArmProp() {
+    if (this.textures.exists('prop_robotarm')) return;
+    const w = 20;
+    const h = 28;
+    const grid = createGrid(w, h);
+    const steel = 0x3a4048;
+    const steelLight = 0x4a5460;
+    const joint = 0x1a2228;
+    fillRect(grid, 7, 18, 6, 10, steel);
+    paintOver(grid, 8, 19, 4, 8, steelLight);
+    fillRect(grid, 8, 4, 4, 16, steel);
+    paintOver(grid, 8, 4, 2, 16, steelLight);
+    fillCircle(grid, 10, 18, 3, joint);
+    fillRect(grid, 5, 1, 10, 5, 0x2a3238);
+    paintOver(grid, 6, 2, 8, 2, steelLight);
+    setPixel(grid, 10, 3, 0xffe066);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('prop_robotarm', w, h);
+    g.destroy();
+  }
+
+  // O Supervisor — capataz robótico: capacete escuro com visor âmbar,
+  // scanner/prancheta na mão em vez de gancho ou carretel — silhueta
+  // própria, distinta d'O Guincheiro (Refinaria) e d'O Estivador (Terminal).
+  generateSupervisorMiniBoss() {
+    if (this.textures.exists('enemy_supervisor')) return;
+    const w = 24;
+    const h = 28;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3238;
+    const amber = 0xe8c23d;
+    fillCircle(grid, 12, 6, 6, 0x1a2228);
+    fillRect(grid, 9, 5, 6, 2, amber);
+    setPixel(grid, 12, 6, 0xfff2b0);
+    fillRect(grid, 6, 12, 12, 10, steel);
+    paintOver(grid, 7, 13, 10, 4, amber);
+    fillRect(grid, 10, 12, 4, 8, 0x14181c);
+    fillRect(grid, 2, 14, 5, 8, steel);
+    fillRect(grid, 17, 14, 5, 8, steel);
+    fillRect(grid, 16, 20, 6, 4, 0x14181c);
+    setPixel(grid, 18, 21, amber);
+    fillRect(grid, 7, 22, 4, 6, 0x141018);
+    fillRect(grid, 13, 22, 4, 6, 0x141018);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_supervisor', w, h);
+    g.destroy();
+  }
+
+  // A Protótipo (Fase 15) — o primeiro casco completo saído da linha:
+  // mech humanoide largo com braço-canhão de um lado e braço-marreta do
+  // outro. Maior que qualquer chefe anterior — silhueta de "boss final de
+  // região", não mais um veículo/torre (Empilhador/Perfuratriz).
+  generatePrototipoBoss() {
+    if (this.textures.exists('boss_prototipo')) return;
+    const w = 50;
+    const h = 54;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3844;
+    const steelLight = 0x3f5462;
+    const accent = 0x8fe0ff;
+    const dark = 0x14181c;
+
+    fillRect(grid, 20, 2, 10, 6, steel);
+    paintOver(grid, 21, 3, 8, 2, steelLight);
+    fillCircle(grid, 25, 6, 2, accent);
+
+    fillRect(grid, 14, 9, 22, 16, steel);
+    paintOver(grid, 16, 10, 18, 6, steelLight);
+    fillRect(grid, 20, 12, 10, 6, dark);
+    setPixel(grid, 23, 14, accent);
+    setPixel(grid, 27, 16, accent);
+
+    // Braço-canhão.
+    fillRect(grid, 2, 14, 10, 8, steel);
+    paintOver(grid, 3, 15, 8, 3, steelLight);
+    fillRect(grid, 0, 16, 4, 4, dark);
+    setPixel(grid, 1, 17, accent);
+
+    // Braço-marreta.
+    fillRect(grid, 38, 14, 10, 8, steel);
+    paintOver(grid, 39, 15, 8, 3, steelLight);
+    fillRect(grid, 44, 10, 6, 8, dark);
+    paintOver(grid, 45, 11, 4, 3, steelLight);
+
+    fillRect(grid, 16, 25, 8, 16, dark);
+    fillRect(grid, 26, 25, 8, 16, dark);
+    paintOver(grid, 17, 27, 3, 12, steel);
+    paintOver(grid, 27, 27, 3, 12, steel);
+    fillRect(grid, 14, 41, 12, 4, 0x101418);
+    fillRect(grid, 24, 41, 12, 4, 0x101418);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x1c2a34, threshold: 0.62, scale: 0.35, region: { x0: 14, y0: 9, w: 22, h: 16 } });
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('boss_prototipo', w, h);
+    g.destroy();
+  }
+
+  // --- Fase 16 (Torre de Controle Logístico) --------------------------
+
+  // O Operador Mestre — capacete de guindasteiro + alavanca de controle na
+  // mão (em vez do gancho do Estivador ou do carretel do Guincheiro) —
+  // silhueta própria, âmbar como o resto do Estaleiro.
+  generateOperadorMestreMiniBoss() {
+    if (this.textures.exists('enemy_operador_mestre')) return;
+    const w = 24;
+    const h = 28;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3238;
+    const amber = 0xe8923d;
+    fillCircle(grid, 12, 6, 6, 0x3a342c);
+    fillRect(grid, 8, 3, 8, 4, amber);
+    paintOver(grid, 9, 4, 6, 1, 0xffc878);
+    setPixel(grid, 10, 7, 0x141018);
+    setPixel(grid, 14, 7, 0x141018);
+    fillRect(grid, 6, 12, 12, 10, steel);
+    paintOver(grid, 7, 13, 10, 4, amber);
+    fillRect(grid, 10, 12, 4, 8, 0x14181c);
+    fillRect(grid, 2, 14, 5, 8, steel);
+    // Alavanca de controle na mão direita.
+    fillRect(grid, 17, 10, 2, 10, 0x6a7a84);
+    fillCircle(grid, 18, 9, 2, 0xff4a5e);
+    fillRect(grid, 15, 18, 8, 4, 0x1a2228);
+    fillRect(grid, 7, 22, 4, 6, 0x141018);
+    fillRect(grid, 13, 22, 4, 6, 0x141018);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_operador_mestre', w, h);
+    g.destroy();
+  }
+
+  // A Guardiã de Tráfego — visor azul, capacete com antena curta, e uma
+  // pá/bastão de sinalização erguido em vez de arma — controla o tráfego
+  // da esteira, não ataca de longe.
+  generateGuardiaTrafegoMiniBoss() {
+    if (this.textures.exists('enemy_guardia_trafego')) return;
+    const w = 24;
+    const h = 28;
+    const grid = createGrid(w, h);
+    const steel = 0x2a3844;
+    const accent = 0x8fe0ff;
+    fillCircle(grid, 12, 6, 6, 0x1a2228);
+    fillRect(grid, 9, 5, 6, 2, accent);
+    setPixel(grid, 12, 6, 0xdfffff);
+    fillRect(grid, 11, 1, 2, 4, 0x6a7a84);
+    setPixel(grid, 12, 1, 0xff4a5e);
+    fillRect(grid, 6, 12, 12, 10, steel);
+    paintOver(grid, 7, 13, 10, 4, accent);
+    fillRect(grid, 10, 12, 4, 8, 0x14181c);
+    fillRect(grid, 17, 14, 5, 8, steel);
+    // Pá de sinalização erguida na mão esquerda.
+    fillRect(grid, 3, 4, 2, 12, 0x6a7a84);
+    fillCircle(grid, 4, 4, 4, accent);
+    setPixel(grid, 4, 4, 0xdfffff);
+    fillRect(grid, 7, 22, 4, 6, 0x141018);
+    fillRect(grid, 13, 22, 4, 6, 0x141018);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('enemy_guardia_trafego', w, h);
+    g.destroy();
+  }
+
+  // O Regente (Fase 16) — console-trono fundido a um corpo mecânico: base
+  // larga de comando com telas, torso erguendo-se do meio, braços curtos
+  // de canhão + marreta. Maior que qualquer chefe anterior — a Torre
+  // literalmente vira o comando dela num corpo de combate.
+  generateRegenteBoss() {
+    if (this.textures.exists('boss_regente')) return;
+    const w = 52;
+    const h = 56;
+    const grid = createGrid(w, h);
+    const steel = 0x2a2438;
+    const steelLight = 0x3f3a54;
+    const accent = 0xffb347;
+    const dark = 0x14181c;
+
+    // Cabeça/sensor central.
+    fillRect(grid, 21, 2, 10, 6, steel);
+    paintOver(grid, 22, 3, 8, 2, steelLight);
+    fillCircle(grid, 26, 6, 2, accent);
+
+    // Tronco largo.
+    fillRect(grid, 13, 9, 26, 16, steel);
+    paintOver(grid, 15, 10, 22, 6, steelLight);
+    fillRect(grid, 20, 12, 12, 6, dark);
+    setPixel(grid, 23, 14, accent); setPixel(grid, 26, 14, accent); setPixel(grid, 29, 14, accent);
+    setPixel(grid, 24, 16, 0xffe066); setPixel(grid, 28, 16, 0xffe066);
+
+    // Braço-canhão.
+    fillRect(grid, 1, 14, 11, 8, steel);
+    paintOver(grid, 2, 15, 9, 3, steelLight);
+    fillRect(grid, 0, 16, 4, 4, dark);
+    setPixel(grid, 1, 17, accent);
+
+    // Braço-marreta.
+    fillRect(grid, 40, 14, 11, 8, steel);
+    paintOver(grid, 41, 15, 9, 3, steelLight);
+    fillRect(grid, 47, 10, 6, 8, dark);
+    paintOver(grid, 48, 11, 4, 3, steelLight);
+
+    // Base-console larga (trono).
+    fillRect(grid, 10, 25, 32, 14, dark);
+    paintOver(grid, 12, 27, 28, 8, steel);
+    for (let x = 15; x < 38; x += 6) paintOver(grid, x, 29, 3, 3, accent);
+    fillRect(grid, 8, 39, 10, 8, 0x101418);
+    fillRect(grid, 34, 39, 10, 8, 0x101418);
+    fillRect(grid, 18, 39, 16, 10, 0x101418);
+    paintOver(grid, 20, 41, 12, 6, steel);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x241f38, threshold: 0.62, scale: 0.35, region: { x0: 13, y0: 9, w: 26, h: 16 } });
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080c10);
+    g.generateTexture('boss_regente', w, h);
+    g.destroy();
+  }
+
+  // --- Região 5 / Fase 17 (Torre Matriz, Átrio Executivo) ----------------
+  // Linguagem visual oposta à das quatro regiões anteriores: nada de chapa
+  // corrugada, rebite ou faixa de risco. Pedra escura polida, fio de latão e
+  // vidro — o único lugar do jogo construído pra impressionar visita.
+
+  // Variante de piso com embutido de latão em moldura quadrada — o "tapete"
+  // de pedra da sede, não a faixa de risco amarela do cais.
+  generateFloorGoldInlay(key, base) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    // Latão escurecido: em área grande, o dourado cheio vira bolinha
+    // repetida no chão em vez de ornamento.
+    const brass = 0x6f5628;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, base);
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: this._shade(base, -8, -8, -6), threshold: 0.42, scale: 0.4 });
+    mottle(grid, noise, { color: this._shade(base, 8, 8, 10), threshold: 0.58, scale: 0.4, offsetX: 30, offsetY: 30 });
+    for (let i = 5; i < s - 5; i++) {
+      setPixel(grid, i, 5, brass);
+      setPixel(grid, i, s - 6, brass);
+      setPixel(grid, 5, i, brass);
+      setPixel(grid, s - 6, i, brass);
+    }
+    for (const [x, y] of [[5, 5], [s - 6, 5], [5, s - 6], [s - 6, s - 6]]) {
+      setPixel(grid, x, y, 0xa5813c);
+    }
+    const g = this.add.graphics();
+    renderGrid(g, grid);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Mármore encerado — o piso onde o jogador desliza. Precisa ser lido como
+  // ESCORREGADIO à primeira vista: bem mais claro que o resto do átrio, com
+  // veios finos e uma faixa especular diagonal (o reflexo da luz do teto).
+  generatePolishedFloor(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const base = 0x525c70;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, base);
+    const veins = createNoise2D();
+    mottle(grid, veins, { color: 0x5f6a80, threshold: 0.3, scale: 0.5 });
+    mottle(grid, veins, { color: 0x434c5e, threshold: 0.62, scale: 0.9, offsetX: 40, offsetY: 8 });
+    // Reflexo diagonal discreto — uma linha só, de baixo contraste: em área
+    // grande, um brilho forte por tile vira padrão de listra repetida.
+    for (let i = 0; i < s; i++) setPixel(grid, i, s - 1 - i, 0x606a80);
+    const g = this.add.graphics();
+    renderGrid(g, grid);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Parede do Átrio: lambri claro de pedra com friso de latão em pé —
+  // vertical de propósito, pra puxar o olho pra cima como um saguão de sede
+  // faz. Sem rebite nem placa de canto (isso é linguagem de fábrica), mas
+  // BEM mais clara que o piso: num mapa desta escala, parede e chão do mesmo
+  // valor de cinza deixam a planta ilegível.
+  generateWallAtrio(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const base = 0x4a5265;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x14171e);
+    fillRect(grid, 2, 2, s - 4, s - 4, base);
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: this._shade(base, -12, -12, -10), threshold: 0.45, scale: 0.35 });
+    mottle(grid, noise, { color: this._shade(base, 10, 10, 12), threshold: 0.6, scale: 0.35, offsetX: 22, offsetY: 44 });
+    // Faixa de latão só no alto — a "cimalha" do lambri.
+    paintOver(grid, 2, 2, s - 4, 2, 0xc9a24a);
+    paintOver(grid, 2, 2, s - 4, 1, 0xffe9b8);
+    // Friso vertical central, discreto: dá a verticalidade sem virar listra.
+    paintOver(grid, s / 2 - 1, 5, 1, s - 9, this._shade(base, -22, -22, -18));
+    paintOver(grid, 5, 5, 1, s - 9, this._shade(base, 12, 12, 14));
+    paintOver(grid, s - 6, 5, 1, s - 9, this._shade(base, 12, 12, 14));
+    // Rodapé escuro.
+    paintOver(grid, 2, s - 5, s - 4, 3, 0x2a3040);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Parede de VIDRO — bloqueia igual a qualquer outra (ver TileMap), mas
+  // deixa ver através. Caixilho de latão fino + pane clara com um risco de
+  // reflexo; o TileMap ainda baixa o alpha pra 0.6 por cima disso.
+  generateGlassWall(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x6e93a8);
+    fillRect(grid, 2, 2, s - 4, s - 4, 0x8fbcd4);
+    // Reflexo diagonal — o que faz o vidro parecer vidro e não névoa.
+    for (let i = 4; i < s - 8; i++) {
+      setPixel(grid, i, i + 4, 0xdff4ff);
+      setPixel(grid, i + 1, i + 4, 0xc4e6f5);
+    }
+    // Caixilho de latão.
+    paintOver(grid, 0, 0, s, 2, 0xc9a24a);
+    paintOver(grid, 0, s - 2, s, 2, 0xc9a24a);
+    paintOver(grid, 0, 0, 2, s, 0xc9a24a);
+    paintOver(grid, s - 2, 0, 2, s, 0xc9a24a);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x2a3a44);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  generateDoorMatriz(key) {
+    if (this.textures.exists(key)) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x14171e);
+    fillRect(grid, 2, 2, s - 4, s - 4, 0x2f3542);
+    fillRect(grid, 4, 4, s - 8, s - 8, 0x3d4453);
+    // Batente duplo com puxadores verticais de latão.
+    fillRect(grid, s / 2 - 1, 2, 2, s - 4, 0x14171e);
+    fillRect(grid, s / 2 - 5, 10, 2, 12, 0xc9a24a);
+    fillRect(grid, s / 2 + 3, 10, 2, 12, 0xc9a24a);
+    paintOver(grid, 4, 4, s - 8, 1, 0xc9a24a);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture(key, s, s);
+    g.destroy();
+  }
+
+  // Placas de pressão do quebra-cabeça do mobiliário — quadradas e sóbrias,
+  // deliberadamente diferentes das placas numeradas da Sequência e das
+  // células redondas do Circuito.
+  generatePressureTiles() {
+    const s = TILE_SIZE;
+    const build = (key, pressed) => {
+      if (this.textures.exists(key)) return;
+      const grid = createGrid(s, s);
+      const plate = pressed ? 0x6a5a2e : 0x2a2f3a;
+      const trim = pressed ? 0xffe9b8 : 0x4a5162;
+      fillRect(grid, 3, 3, s - 6, s - 6, plate);
+      fillRect(grid, 6, 6, s - 12, s - 12, pressed ? 0xc9a24a : 0x353c49);
+      for (const [x, y] of [[3, 3], [s - 4, 3], [3, s - 4], [s - 4, s - 4]]) {
+        setPixel(grid, x, y, trim);
+      }
+      paintOver(grid, 3, 3, s - 6, 1, trim);
+      paintOver(grid, 3, s - 4, s - 6, 1, trim);
+      const g = this.add.graphics();
+      renderGrid(g, grid, 0x0a0c10);
+      g.generateTexture(key, s, s);
+      g.destroy();
+    };
+    build('tile_pressure_off', false);
+    build('tile_pressure_on', true);
+  }
+
+  // Pedestal de exposição — decoração da Galeria de Prêmios e da Praça.
+  generatePedestalProp() {
+    if (this.textures.exists('prop_pedestal')) return;
+    const w = 18;
+    const h = 26;
+    const grid = createGrid(w, h);
+    fillRect(grid, 3, 10, 12, 14, 0x2f3542);
+    paintOver(grid, 4, 11, 10, 3, 0x3d4453);
+    fillRect(grid, 2, 22, 14, 4, 0x1a1e26);
+    fillRect(grid, 5, 6, 8, 4, 0x14171e);
+    // Troféu/objeto exposto.
+    fillCircle(grid, 9, 4, 3, 0xc9a24a);
+    setPixel(grid, 8, 3, 0xffe9b8);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('prop_pedestal', w, h);
+    g.destroy();
+  }
+
+  // Mesa de banquete — o objeto EMPURRÁVEL do quebra-cabeça do Refeitório.
+  // Larga e baixa de propósito: precisa parecer algo que desliza pelo chão,
+  // não algo fixo como o pedestal.
+  generateBanquetProp() {
+    if (this.textures.exists('prop_banquet')) return;
+    const w = 28;
+    const h = 22;
+    const grid = createGrid(w, h);
+    fillRect(grid, 1, 6, 26, 9, 0x3d4453);
+    paintOver(grid, 2, 7, 24, 3, 0x4d5566);
+    // Toalha de mesa caindo dos dois lados.
+    fillRect(grid, 1, 12, 26, 5, 0xd8d2c0);
+    paintOver(grid, 2, 13, 24, 2, 0xf0ece0);
+    for (let x = 2; x < 26; x += 4) setPixel(grid, x, 16, 0xc9a24a);
+    fillRect(grid, 3, 17, 3, 4, 0x1a1e26);
+    fillRect(grid, 22, 17, 3, 4, 0x1a1e26);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('prop_banquet', w, h);
+    g.destroy();
+  }
+
+  // Câmera de segurança — desenhada apontando pra DIREITA (+x); a cena gira
+  // o sprite pelo ângulo do cone de visão (ver AtrioScene._buildSecurityCameras).
+  generateCameraProp() {
+    if (this.textures.exists('prop_camera')) return;
+    const w = 22;
+    const h = 14;
+    const grid = createGrid(w, h);
+    fillRect(grid, 0, 5, 6, 4, 0x2f3542);
+    fillRect(grid, 5, 3, 11, 8, 0x3d4453);
+    paintOver(grid, 6, 4, 9, 3, 0x4d5566);
+    fillRect(grid, 15, 5, 5, 4, 0x14171e);
+    fillCircle(grid, 18, 7, 2, 0xff4a5e);
+    setPixel(grid, 18, 6, 0xffd0d6);
+    setPixel(grid, 8, 10, 0xc9a24a);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('prop_camera', w, h);
+    g.destroy();
+  }
+
+  // Monotrilho corporativo — a passagem entre a Região 4 e a 5. Carro
+  // alongado e horizontal: a ligação entre as duas regiões corre PRO LADO,
+  // não pra cima (poço de carga) nem pra baixo (buraco do Distrito).
+  generateMonorailProp() {
+    if (this.textures.exists('prop_monorail')) return;
+    const w = 40;
+    const h = 22;
+    const grid = createGrid(w, h);
+    fillRect(grid, 2, 4, 36, 12, 0xd8dae0);
+    paintOver(grid, 3, 5, 34, 4, 0xf0f2f6);
+    // Faixa de janelas.
+    fillRect(grid, 5, 8, 30, 4, 0x1a2430);
+    for (let x = 6; x < 34; x += 6) paintOver(grid, x, 9, 3, 2, 0x8fbcd4);
+    // Nariz aerodinâmico + friso de latão.
+    fillRect(grid, 36, 6, 3, 8, 0xb8bcc6);
+    fillRect(grid, 2, 15, 36, 2, 0xc9a24a);
+    // Trilho por baixo.
+    fillRect(grid, 0, 18, 40, 3, 0x2f3542);
+    paintOver(grid, 0, 18, 40, 1, 0x4d5566);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('prop_monorail', w, h);
+    g.destroy();
+  }
+
+  // Escudo de choque — marca do lado protegido do Guarda de Escudo e da
+  // Diretora. Desenhado como uma placa VERTICAL curva, e a cena rotaciona
+  // pelo ângulo que a unidade encara (0 = encarando +x), então o escudo fica
+  // sempre perpendicular à direção defendida.
+  generateShieldFx() {
+    if (this.textures.exists('fx_shield')) return;
+    const w = 10;
+    const h = 20;
+    const grid = createGrid(w, h);
+    fillRect(grid, 3, 1, 4, 18, 0x8fb4ff);
+    fillRect(grid, 2, 3, 6, 14, 0x8fb4ff);
+    paintOver(grid, 4, 2, 2, 16, 0xdfeaff);
+    setPixel(grid, 4, 9, 0xffffff);
+    setPixel(grid, 5, 10, 0xffffff);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x2a3a68);
+    g.generateTexture('fx_shield', w, h);
+    g.destroy();
+  }
+
+  // Guarda de Escudo — segurança corporativa em traje de choque. O escudo
+  // de verdade é o `fx_shield` desenhado à parte pela cena (ele gira com a
+  // direção defendida), então o sprite mostra só a unidade: capacete com
+  // viseira, colete pesado e cassetete curto.
+  generateShieldGuard() {
+    if (this.textures.exists('enemy_shieldguard')) return;
+    const w = 22;
+    const h = 26;
+    const grid = createGrid(w, h);
+    const armor = 0x2f3542;
+    const armorLight = 0x434c5e;
+    const brass = 0xc9a24a;
+    fillCircle(grid, 11, 6, 5, 0x1a1e26);
+    fillRect(grid, 7, 5, 8, 3, 0x8fb4ff);
+    setPixel(grid, 9, 6, 0xdfeaff);
+    fillRect(grid, 5, 11, 12, 10, armor);
+    paintOver(grid, 6, 12, 10, 4, armorLight);
+    fillRect(grid, 9, 11, 4, 8, 0x14171e);
+    setPixel(grid, 10, 14, brass);
+    // Braços: cassetete curto de um lado, punho fechado do outro.
+    fillRect(grid, 2, 13, 4, 7, armor);
+    fillRect(grid, 16, 13, 4, 7, armor);
+    fillRect(grid, 18, 9, 2, 6, 0x1a1e26);
+    fillRect(grid, 6, 21, 4, 5, 0x14171e);
+    fillRect(grid, 12, 21, 4, 5, 0x14171e);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('enemy_shieldguard', w, h);
+    g.destroy();
+  }
+
+  // O Concierge — sub-confronto da Antessala. Silhueta formal e alongada
+  // (casaca comprida, ombros estreitos), o oposto do volume blindado do
+  // Guarda de Escudo: aqui a ameaça é postura, não armadura.
+  generateConciergeMiniBoss() {
+    if (this.textures.exists('enemy_concierge')) return;
+    const w = 24;
+    const h = 30;
+    const grid = createGrid(w, h);
+    const coat = 0x232833;
+    const coatLight = 0x343b4a;
+    const brass = 0xc9a24a;
+    fillCircle(grid, 12, 5, 4, 0x3a3128);
+    paintOver(grid, 9, 2, 6, 2, 0x14171e);
+    setPixel(grid, 10, 6, 0x14171e);
+    setPixel(grid, 14, 6, 0x14171e);
+    // Casaca comprida até quase os pés.
+    fillRect(grid, 7, 10, 10, 16, coat);
+    paintOver(grid, 8, 11, 8, 5, coatLight);
+    fillRect(grid, 11, 10, 2, 14, 0xd8d2c0);
+    setPixel(grid, 12, 12, brass);
+    setPixel(grid, 12, 16, brass);
+    // Ombreiras de galão + luvas brancas.
+    fillRect(grid, 5, 10, 3, 3, brass);
+    fillRect(grid, 16, 10, 3, 3, brass);
+    fillRect(grid, 4, 13, 4, 9, coat);
+    fillRect(grid, 16, 13, 4, 9, coat);
+    fillRect(grid, 4, 21, 4, 3, 0xf0ece0);
+    fillRect(grid, 16, 21, 4, 3, 0xf0ece0);
+    fillRect(grid, 8, 26, 3, 4, 0x14171e);
+    fillRect(grid, 13, 26, 3, 4, 0x14171e);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('enemy_concierge', w, h);
+    g.destroy();
+  }
+
+  // A Diretora de Segurança — segunda silhueta HUMANA de confronto do jogo
+  // (depois d'O Barão do Mercado), e a primeira que não é nem robô nem
+  // corpulenta: alta, terno sob o colete tático, escudo de choque grande no
+  // braço esquerdo e pistola no direito. O escudo desenhado aqui é o mesmo
+  // que ela perde na segunda fase da luta (ver DiretoraBoss._breakShield) —
+  // ele fica do lado ESQUERDO do sprite, e a marca giratória de bloqueio
+  // continua sendo o `fx_shield` da cena.
+  generateDiretoraBoss() {
+    if (this.textures.exists('boss_diretora')) return;
+    const w = 40;
+    const h = 50;
+    const grid = createGrid(w, h);
+    const suit = 0x1e222c;
+    const vest = 0x2f3542;
+    const vestLight = 0x434c5e;
+    const brass = 0xc9a24a;
+
+    // Cabeça — cabelo preso, fone de comando.
+    fillCircle(grid, 21, 8, 5, 0x2a2018);
+    paintOver(grid, 17, 6, 9, 3, 0xd8b48a);
+    setPixel(grid, 19, 8, 0x14171e);
+    setPixel(grid, 23, 8, 0x14171e);
+    fillRect(grid, 25, 6, 2, 4, brass);
+
+    // Torso: colete tático por cima do terno.
+    fillRect(grid, 15, 14, 13, 16, suit);
+    fillRect(grid, 16, 15, 11, 11, vest);
+    paintOver(grid, 17, 16, 9, 4, vestLight);
+    fillRect(grid, 20, 15, 3, 10, 0x14171e);
+    setPixel(grid, 21, 18, brass);
+    setPixel(grid, 21, 22, brass);
+
+    // Braço direito com a pistola apontada pra fora.
+    fillRect(grid, 28, 17, 5, 9, suit);
+    fillRect(grid, 32, 20, 6, 3, 0x14171e);
+    setPixel(grid, 37, 21, brass);
+
+    // Escudo de choque no braço esquerdo — placa alta, com o brasão.
+    fillRect(grid, 10, 14, 5, 9, suit);
+    fillRect(grid, 3, 10, 8, 26, 0x8fb4ff);
+    paintOver(grid, 4, 12, 6, 22, 0xb8d0ff);
+    paintOver(grid, 5, 18, 4, 8, 0xdfeaff);
+    fillRect(grid, 5, 21, 4, 2, brass);
+    fillRect(grid, 6, 19, 2, 6, brass);
+
+    // Pernas / saia do terno.
+    fillRect(grid, 16, 30, 11, 8, suit);
+    fillRect(grid, 17, 38, 4, 10, 0x14171e);
+    fillRect(grid, 23, 38, 4, 10, 0x14171e);
+    fillRect(grid, 16, 47, 6, 3, 0x0e1116);
+    fillRect(grid, 22, 47, 6, 3, 0x0e1116);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x272d3a, threshold: 0.62, scale: 0.4, region: { x0: 15, y0: 14, w: 13, h: 16 } });
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('boss_diretora', w, h);
+    g.destroy();
+  }
+
+  // --- Fase 18 (Departamento de P&D) -------------------------------------
+
+  // Parede sobre trilhos — a divisória que corre quando a planta muda. Lê
+  // como painel montado num trilho (guia em cima e embaixo, junta central),
+  // não como porta: porta abre, isto DESLIZA pra dentro do vão.
+  generatePartitionProp() {
+    if (this.textures.exists('prop_partition')) return;
+    const s = TILE_SIZE;
+    const grid = createGrid(s, s);
+    fillRect(grid, 0, 0, s, s, 0x161b26);
+    fillRect(grid, 1, 4, s - 2, s - 8, 0x525c72);
+    paintOver(grid, 2, 5, s - 4, 3, 0x646f88);
+    // Guias do trilho, em cima e embaixo.
+    fillRect(grid, 0, 1, s, 3, 0x2a3242);
+    fillRect(grid, 0, s - 4, s, 3, 0x2a3242);
+    for (let x = 2; x < s - 2; x += 5) {
+      setPixel(grid, x, 2, 0x8fe0ff);
+      setPixel(grid, x, s - 3, 0x8fe0ff);
+    }
+    // Junta central: onde as duas metades se encontram quando fecha.
+    fillRect(grid, s / 2 - 1, 4, 2, s - 8, 0x161b26);
+    paintOver(grid, s / 2 - 1, 8, 1, s - 16, 0x8fe0ff);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('prop_partition', s, s);
+    g.destroy();
+  }
+
+  // Tanque de espécime — cilindro de vidro com líquido e uma silhueta
+  // parada dentro. É o prop que carrega a fantasia da fase inteira.
+  generateTankProp() {
+    if (this.textures.exists('prop_tank')) return;
+    const w = 20;
+    const h = 30;
+    const grid = createGrid(w, h);
+    fillRect(grid, 3, 26, 14, 4, 0x2a3242);
+    fillRect(grid, 4, 2, 12, 3, 0x2a3242);
+    // Cilindro de vidro.
+    fillRect(grid, 4, 5, 12, 21, 0x4a7a8c);
+    paintOver(grid, 5, 6, 10, 19, 0x5f97ac);
+    // Silhueta suspensa lá dentro.
+    fillCircle(grid, 10, 12, 3, 0x1c2430);
+    fillRect(grid, 8, 15, 5, 7, 0x1c2430);
+    // Reflexo na curva do vidro + bolhas.
+    fillRect(grid, 5, 7, 1, 17, 0xbfe6f2);
+    setPixel(grid, 13, 9, 0xbfe6f2);
+    setPixel(grid, 12, 17, 0xbfe6f2);
+    setPixel(grid, 14, 21, 0xbfe6f2);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('prop_tank', w, h);
+    g.destroy();
+  }
+
+  // Protótipo Instável — casco INACABADO de propósito: metade chapeada,
+  // metade com o chassi exposto e cabos soltos. É a leitura que avisa que
+  // derrubar isso não termina o serviço.
+  generateUnstablePrototype() {
+    if (this.textures.exists('enemy_prototype')) return;
+    const w = 22;
+    const h = 26;
+    const grid = createGrid(w, h);
+    const shell = 0x646f88;
+    const guts = 0x2a3242;
+    const accent = 0xb37aff;
+    fillCircle(grid, 11, 6, 5, guts);
+    // Só metade da cabeça tem chapa.
+    fillRect(grid, 6, 2, 5, 8, shell);
+    setPixel(grid, 13, 6, accent);
+    setPixel(grid, 14, 7, accent);
+    fillRect(grid, 5, 11, 12, 10, guts);
+    // Chapeamento parcial: lado esquerdo fechado, direito aberto.
+    fillRect(grid, 5, 11, 6, 10, shell);
+    paintOver(grid, 6, 12, 4, 4, 0x7c88a4);
+    // Chassi exposto do lado direito.
+    for (let y = 12; y < 20; y += 2) paintOver(grid, 12, y, 4, 1, accent);
+    // Cabos soltos pendurados.
+    setPixel(grid, 17, 14, accent);
+    setPixel(grid, 18, 15, accent);
+    setPixel(grid, 18, 16, accent);
+    fillRect(grid, 2, 13, 3, 7, shell);
+    fillRect(grid, 16, 13, 3, 5, guts);
+    fillRect(grid, 6, 21, 4, 5, 0x161b26);
+    fillRect(grid, 12, 21, 4, 5, 0x161b26);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('enemy_prototype', w, h);
+    g.destroy();
+  }
+
+  // O Arquivista — silhueta de armário/estante ambulante: alto, estreito,
+  // com gavetas. Nada de humano nem de robô de combate: é o móvel que guarda
+  // os projetos, e ele não bate, ele puxa.
+  generateArquivistaMiniBoss() {
+    if (this.textures.exists('enemy_arquivista')) return;
+    const w = 24;
+    const h = 30;
+    const grid = createGrid(w, h);
+    const body = 0x3a3350;
+    const bodyLight = 0x4e4568;
+    const accent = 0xb37aff;
+    fillRect(grid, 4, 2, 16, 24, body);
+    paintOver(grid, 5, 3, 14, 5, bodyLight);
+    // Fileiras de gaveta com puxador.
+    for (let y = 6; y < 24; y += 5) {
+      fillRect(grid, 6, y, 12, 4, 0x241f34);
+      paintOver(grid, 10, y + 1, 4, 1, accent);
+    }
+    // Sensor/olho no topo.
+    fillCircle(grid, 12, 4, 2, accent);
+    setPixel(grid, 12, 4, 0xe4d4ff);
+    // Braços de manipulação — é com eles que ele puxa.
+    fillRect(grid, 1, 10, 3, 9, body);
+    fillRect(grid, 20, 10, 3, 9, body);
+    setPixel(grid, 2, 19, accent);
+    setPixel(grid, 21, 19, accent);
+    fillRect(grid, 6, 26, 4, 4, 0x161b26);
+    fillRect(grid, 14, 26, 4, 4, 0x161b26);
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('enemy_arquivista', w, h);
+    g.destroy();
+  }
+
+  // O PROJETISTA — inteligência de projeto num tanque, com braços
+  // manipuladores. Deliberadamente NÃO humano: os dois chefes anteriores da
+  // região (O Barão, A Diretora) foram silhuetas humanas. Aqui o corpo é o
+  // próprio equipamento de laboratório — cuba central com o núcleo dentro,
+  // anel de suporte em volta (que a órbita dos protótipos ecoa) e quatro
+  // braços de bancada saindo da base.
+  generateProjetistaBoss() {
+    if (this.textures.exists('boss_projetista')) return;
+    const w = 48;
+    const h = 54;
+    const grid = createGrid(w, h);
+    const rig = 0x3a3350;
+    const rigLight = 0x50466c;
+    // Cuba deliberadamente ESCURA: BossBase põe um glow por cima de todo
+    // chefe (`auraTint`) e a cena ainda acende uma poça de luz embaixo — com
+    // um vidro claro, um corpo deste tamanho vira uma mancha branca e a
+    // silhueta some.
+    const glass = 0x2c4756;
+    const glassLight = 0x3d6377;
+    const accent = 0xb37aff;
+    const dark = 0x161b26;
+
+    // Anel de suporte — o aro que a órbita dos protótipos repete em jogo.
+    fillCircle(grid, 24, 24, 19, rig);
+    clearCircle(grid, 24, 24, 16);
+    for (let i = 0; i < 8; i++) {
+      const a = (Math.PI * 2 * i) / 8;
+      setPixel(grid, Math.round(24 + Math.cos(a) * 17), Math.round(24 + Math.sin(a) * 17), accent);
+    }
+
+    // Cuba de vidro central.
+    fillCircle(grid, 24, 22, 11, glass);
+    paintOver(grid, 16, 13, 5, 3, glassLight);
+    paintOver(grid, 17, 13, 2, 1, 0x8fc0d4);
+
+    // Núcleo lá dentro: massa irregular com pontos de luz.
+    fillCircle(grid, 24, 22, 6, 0x2a2440);
+    setPixel(grid, 21, 20, accent); setPixel(grid, 26, 21, accent);
+    setPixel(grid, 23, 25, 0xe4d4ff); setPixel(grid, 27, 24, accent);
+    setPixel(grid, 22, 23, 0xe4d4ff);
+
+    // Coroa/tampa da cuba.
+    fillRect(grid, 18, 8, 12, 4, rig);
+    paintOver(grid, 19, 9, 10, 2, rigLight);
+    fillRect(grid, 22, 4, 4, 5, rig);
+    fillCircle(grid, 24, 4, 2, accent);
+
+    // Quatro braços de bancada saindo da base.
+    fillRect(grid, 2, 30, 10, 4, rig);
+    fillRect(grid, 36, 30, 10, 4, rig);
+    fillRect(grid, 0, 32, 4, 3, dark);
+    fillRect(grid, 44, 32, 4, 3, dark);
+    fillRect(grid, 8, 36, 4, 8, rig);
+    fillRect(grid, 36, 36, 4, 8, rig);
+    setPixel(grid, 9, 43, accent);
+    setPixel(grid, 37, 43, accent);
+
+    // Base pesada.
+    fillRect(grid, 14, 42, 20, 8, dark);
+    paintOver(grid, 16, 44, 16, 4, rig);
+    for (let x = 18; x < 32; x += 5) paintOver(grid, x, 45, 2, 2, accent);
+    fillRect(grid, 12, 50, 10, 4, dark);
+    fillRect(grid, 26, 50, 10, 4, dark);
+
+    const noise = createNoise2D();
+    mottle(grid, noise, { color: 0x342e4a, threshold: 0.64, scale: 0.35, region: { x0: 5, y0: 5, w: 38, h: 38 } });
+
+    const g = this.add.graphics();
+    renderGrid(g, grid, 0x080a0e);
+    g.generateTexture('boss_projetista', w, h);
     g.destroy();
   }
 }

@@ -6,7 +6,8 @@ const MARKERS = new Set(['S', 'E', 'B', 'I', 'N', 'X', 'T', 'A']);
 
 const HAZARD_PULSE = {
   electric: { alpha: 0.5, duration: 260 },
-  toxic: { alpha: 0.58, duration: 780 }
+  toxic: { alpha: 0.58, duration: 780 },
+  water: { alpha: 0.72, duration: 900 }
 };
 
 export default class TileMap {
@@ -32,8 +33,17 @@ export default class TileMap {
 
     this.hazardTextures = {
       electric: options.electrifiedTexture || options.hazardTextures?.electric || 'floor_electric',
-      toxic: options.hazardTextures?.toxic || 'floor_toxic'
+      toxic: options.hazardTextures?.toxic || 'floor_toxic',
+      water: options.hazardTextures?.water || 'floor_water'
     };
+
+    // Parede de vidro (Átrio Executivo): bloqueia exatamente como qualquer
+    // outra parede — a diferença é só de LEITURA. Renderizada com textura
+    // translúcida própria, deixa o jogador ver a arena final desde a primeira
+    // sala, o que é o que faz a espiral do Átrio se ler como um átrio só em
+    // vez de doze caixas separadas. Nenhum método de colisão consulta isso.
+    this.glassTexture = options.glassTexture || 'wall_glass';
+    this.glassCells = new Set((options.glassTiles || []).map((t) => `${t.gx},${t.gy}`));
 
     // Piso perigoso por tipo (elétrico, tóxico, …). Cada célula guarda o
     // `kind`; a cena consulta `getHazard` / wrappers e aplica o efeito.
@@ -77,19 +87,23 @@ export default class TileMap {
   }
 
   _buildTiles() {
-    const byKind = { electric: [], toxic: [] };
+    const byKind = { electric: [], toxic: [], water: [] };
     for (let gy = 0; gy < this.rows; gy++) {
       for (let gx = 0; gx < this.cols; gx++) {
         const wall = this.grid[gy][gx] === '#';
+        const glass = wall && this.glassCells.has(`${gx},${gy}`);
         const kind = wall ? null : this.hazardByCell.get(`${gx},${gy}`);
         const world = this.gridToWorld(gx, gy);
-        const key = wall
-          ? this.wallTexture
-          : kind
-            ? this.hazardTextures[kind] || this.floorTexture
-            : this._pickFloorTexture();
+        const key = glass
+          ? this.glassTexture
+          : wall
+            ? this.wallTexture
+            : kind
+              ? this.hazardTextures[kind] || this.floorTexture
+              : this._pickFloorTexture();
         const img = this.scene.add.image(world.x, world.y, key);
         img.setDepth(wall ? gy * 10 + 3 : -5000);
+        if (glass) img.setAlpha(0.6);
         if (kind && byKind[kind]) byKind[kind].push(img);
       }
     }
@@ -126,11 +140,25 @@ export default class TileMap {
     return this.getHazard(gx, gy) === 'toxic';
   }
 
+  isWater(gx, gy) {
+    return this.getHazard(gx, gy) === 'water';
+  }
+
   // Usado por portas trancadas: alterna a colisão de uma célula em tempo real
   // (a célula é renderizada por baixo de um sprite de porta dedicado, então o
   // tile visual original não precisa mudar).
   setWalkable(gx, gy, walkable) {
     this.grid[gy][gx] = walkable ? '.' : '#';
+  }
+
+  // Alterna o hazard de uma célula em tempo real (mesmo espírito de
+  // setWalkable acima) — usado pela ponte que desmorona da Refinaria:
+  // a cena desenha seu próprio sprite de prancha por cima da célula, então
+  // o tile de água que fica embaixo não precisa ser redesenhado aqui.
+  setHazard(gx, gy, kind) {
+    const key = `${gx},${gy}`;
+    if (kind) this.hazardByCell.set(key, kind);
+    else this.hazardByCell.delete(key);
   }
 
   marker(key) {

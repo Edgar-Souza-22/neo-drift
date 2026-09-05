@@ -29,7 +29,12 @@ const PHASE_OUTCOMES = {
   MercadoNegroScene: { line: 'O Barão do Mercado cai — sem ele, ninguém mais cobra "aluguel" no Submundo.', region: 'ao Submundo' },
   ColoniaScene: { line: 'A Matriarca cai — o ninho para de pulsar e o ar da Colônia deixa de latejar.', region: 'ao Submundo' },
   ServidorScene: { line: 'O Administrador cai — os logs do contrabando ficam sem dono, e o zumbido dos racks apaga.', region: 'ao Submundo' },
-  TerminalScene: { line: 'O Empilhador cai — as rotas do pátio param de circular sozinhas, e os guindastes ficam mudos.', region: 'ao Estaleiro Automatizado' }
+  TerminalScene: { line: 'O Empilhador cai — as rotas do pátio param de circular sozinhas, e os guindastes ficam mudos.', region: 'ao Estaleiro Automatizado' },
+  RefinariaScene: { line: 'A Perfuratriz cai — o convés da Refinaria para de tremer, e as pontes finalmente ficam firmes.', region: 'ao Estaleiro Automatizado' },
+  EstaleiroNavalScene: { line: 'O Protótipo cai — a linha de montagem finalmente para, e os braços robóticos ficam mudos.', region: 'ao Estaleiro Automatizado' },
+  TorreControleScene: { line: 'O Regente cai — a Torre de Controle Logístico perde o comando, e todo o Estaleiro Automatizado finalmente sossega.', region: 'ao Estaleiro Automatizado' },
+  AtrioScene: { line: 'A Diretora de Segurança cai — pela primeira vez o átrio da sede fica em silêncio, e o elevador executivo continua subindo sem ninguém.', region: 'à Praça da Matriz' },
+  PesquisaScene: { line: 'O Projetista cai — as paredes do departamento param de correr, e nenhuma prancheta da Neo Industries vai desenhar um inimigo novo.', region: 'à Praça da Matriz' }
 };
 
 export default class UIScene extends Phaser.Scene {
